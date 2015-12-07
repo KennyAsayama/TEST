@@ -1,4 +1,3 @@
-Attribute VB_Name = "md_製品関数"
 Option Compare Database
 Option Explicit
 
@@ -970,6 +969,9 @@ Public Function IsPainted(in_strHinban As Variant) As Boolean
 '   塗装扉確認
 '   サブフォームの条件付書式からの呼び出しで消去した際不要な呼び出しが発生するのでエラーロジックを追加
 '   'ADD by Asayama 201510**
+'   '1.10.4 Change by Asayama 20151207
+'       →全面改訂（リアラートに無塗装ができるので色コードベースに変更）
+'
 '   戻り値:Boolean
 '       →True              塗装扉
 '       →False             塗装扉以外
@@ -984,7 +986,13 @@ Public Function IsPainted(in_strHinban As Variant) As Boolean
     
     If IsNull(in_strHinban) Then Exit Function
     
-    If in_strHinban Like "R*-####*-*" Or in_strHinban Like "特 R*-####*-*" Or in_strHinban Like "B*-####*-*" Or in_strHinban Like "特 B*-####*-*" Then
+'    If in_strHinban Like "R*-####*-*" Or in_strHinban Like "特 R*-####*-*" Or in_strHinban Like "B*-####*-*" Or in_strHinban Like "特 B*-####*-*" Then
+'        IsPainted = True
+'    Else
+'        IsPainted = False
+'    End If
+    
+    If in_strHinban Like "*-####*-*(NW)*" Or in_strHinban Like "*-####*-*(NO)*" Or in_strHinban Like "*-####*-*(NC)*" Or in_strHinban Like "*-####*-*(NK)*" Or in_strHinban Like "*-####*-*(NA)*" Or in_strHinban Like "*-####*-*(NB)*" Then
         IsPainted = True
     Else
         IsPainted = False
@@ -1099,5 +1107,69 @@ Exit_fncbolSxL_Replace:
 
     Set objREMOTEDB = Nothing
     Set objLOCALDB = Nothing
+    
+End Function
+
+Public Function IsREALART(in_strHinban As Variant) As Boolean
+'   *************************************************************
+'   REALART確認
+'   サブフォームの条件付書式からの呼び出しで消去した際不要な呼び出しが発生するのでエラーロジックを追加
+'   '1.10.4 ADD by Asayama 20151207
+'   戻り値:Boolean
+'       →True              REALART
+'       →False             REALART以外
+'
+'    Input項目
+'       in_strHinban        建具品番
+
+'   *************************************************************
+    On Error GoTo Err_IsREALART
+    
+    IsREALART = False
+    
+    If IsNull(in_strHinban) Then Exit Function
+    
+    If in_strHinban Like "R*-####*-*" Or in_strHinban Like "特 R*-####*-*" Then
+        IsREALART = True
+    Else
+        IsREALART = False
+    End If
+    
+    Exit Function
+    
+Err_IsREALART:
+    IsREALART = False
+    
+End Function
+
+Public Function IsPALIO(in_strHinban As Variant) As Boolean
+'   *************************************************************
+'   PALIO確認
+'   サブフォームの条件付書式からの呼び出しで消去した際不要な呼び出しが発生するのでエラーロジックを追加
+'   '1.10.4 ADD by Asayama 20151207
+'   戻り値:Boolean
+'       →True              PALIO
+'       →False             PALIO以外
+'
+'    Input項目
+'       in_strHinban        建具品番
+
+'   *************************************************************
+    On Error GoTo Err_IsPALIO
+    
+    IsPALIO = False
+    
+    If IsNull(in_strHinban) Then Exit Function
+    
+    If in_strHinban Like "B*-####*-*" Or in_strHinban Like "特 B*-####*-*" Then
+        IsPALIO = True
+    Else
+        IsPALIO = False
+    End If
+    
+    Exit Function
+    
+Err_IsPALIO:
+    IsPALIO = False
     
 End Function
