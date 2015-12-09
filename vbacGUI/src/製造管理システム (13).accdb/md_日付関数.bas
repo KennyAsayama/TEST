@@ -1,4 +1,3 @@
-Attribute VB_Name = "md_日付関数"
 Option Compare Database
 Option Explicit
 
@@ -97,6 +96,10 @@ Public Function fncbolCalender_Replace() As Boolean
     
     Dim strSQL_Insert As String
     Dim strSQL As String
+    
+    '1.10.5 ADD By Asayama エラー追加 20151209
+    On Error GoTo Err_fncbolCalender_Replace
+    
     strSQL_Insert = "Insert into WK_Calendar_工場(休日) values (#"
     
     '工場用コピー（T_Calendar_工場)
@@ -169,6 +172,10 @@ Public Function bolfncCalc_DayOn(in_datNouhinDate As Variant, in_varHinban As Va
     Dim i As Integer, j As Integer
     
     bolfncCalc_DayOn = False
+    
+    '1.10.5 ADD By Asayama エラー追加 20151209
+    On Error GoTo Err_bolfncCalc_DayOn
+    
     i = in_intDays
     j = 0
     out_datDay = Null
@@ -286,6 +293,10 @@ Public Function bolfncCalc_DayOff(in_datNouhinDate As Variant, in_intDays As Int
     Dim i As Integer, j As Integer
     
     bolfncCalc_DayOff = False
+    
+    '1.10.5 ADD By Asayama エラー追加 20151209
+    On Error GoTo Err_bolfncCalc_DayOff
+    
     i = in_intDays
     j = 0
     out_datDay = Null
@@ -391,7 +402,11 @@ Public Function bolfncNextDate(in_datStartDate As Variant, ByRef out_datNextDay 
     Dim strSQL As String
     Dim datNextDay As Date
     Dim i As Integer
+    
     bolfncNextDate = False
+    
+    '1.10.5 ADD By Asayama エラー追加 20151209
+    On Error GoTo Err_bolfncNextDate
     
     strSQL = ""
     strSQL = strSQL & "select 休日 from WK_Calendar_工場 "
