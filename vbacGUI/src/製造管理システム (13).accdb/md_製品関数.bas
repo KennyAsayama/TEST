@@ -30,7 +30,7 @@ Public Function IsCloset(in_strSetHinban As Variant) As Boolean
 '       →False             クローゼット以外
 '
 '    Input項目
-'       in_strHinban        建具品番
+'       in_strSetHinban     セット品番
 
 '   *************************************************************
     IsCloset = False
@@ -386,6 +386,8 @@ Public Function IsOyatobira(in_strHinban As Variant) As Boolean
 '
 '    Input項目
 '       in_strHinban        建具品番
+
+'   1.10.6 K.Asayama 1610仕様（隠し丁番）追加
 '   *************************************************************
 
     IsOyatobira = False
@@ -394,6 +396,7 @@ Public Function IsOyatobira(in_strHinban As Variant) As Boolean
     
     If in_strHinban Like "*DO-####*" Or in_strHinban Like "*DOS-####*" _
        Or in_strHinban Like "*CO-####*" Or in_strHinban Like "*COS-####*" _
+        Or in_strHinban Like "*KO-####*" Or in_strHinban Like "*KOS-####*" _
                                                                             Then
         IsOyatobira = True
     Else
@@ -412,13 +415,17 @@ Public Function IsKotobira(in_strHinban As Variant) As Boolean
 '
 '    Input項目
 '       in_strHinban        建具品番
+
+'   1.10.6 K.Asayama 1610仕様（隠し丁番）追加
 '   *************************************************************
 
     IsKotobira = False
     
     If IsNull(in_strHinban) Then Exit Function
     
-    If in_strHinban Like "*DK-####*" Or in_strHinban Like "*DKS-####*" Then
+    If in_strHinban Like "*DK-####*" Or in_strHinban Like "*DKS-####*" _
+            Or in_strHinban Like "*KK-####*" Or in_strHinban Like "*KKS-####*" _
+                                                                                Then
         IsKotobira = True
     Else
         IsKotobira = False
@@ -436,7 +443,10 @@ Public Function IsSxL(in_strHinban As Variant, out_strKamiyahinban As Variant) A
 '
 '    Input項目
 '       in_strHinban        建具品番
+'    Output項目
 '       out_strSxLhinban    神谷品番(Falseの場合はNull)
+
+'   1.10.6 K.Asayama SxLコピー初回のみ実行に変更したため本処理に追加
 '   *************************************************************
     
     Dim objLOCALDB As New cls_LOCALDB
@@ -448,6 +458,14 @@ Public Function IsSxL(in_strHinban As Variant, out_strKamiyahinban As Variant) A
     On Error GoTo Err_IsSxL
     
     If IsNull(in_strHinban) Then GoTo Exit_IsSxL
+
+    '1.10.6 K.Asayama ADD 20161211********
+    If Not fncbolSxL_Replace() Then
+        MsgBox "SxL品番マスタのコピーに失敗しました" & vbCrLf & "ネットワークに問題がある場合は回復後再度実行してください"
+        Err.Raise 9999, , "Quit"
+    End If
+    '*************************************
+    
     
     '下地で面取り記号がある場合は外す
     If in_strHinban Like "*①?②?③?④*" Then
@@ -697,13 +715,17 @@ Public Function isCaro(in_varHinban As Variant) As Boolean
 '    Input項目
 '       in_strHinban        建具品番
 
+'   1.10.6 K.Asayama 1610仕様（AF1～AF3）追加
 '   *************************************************************
 
     isCaro = False
     
     If in_varHinban Like "F_C*-####A*-*" Or in_varHinban Like "F_C*-####B*-*" Or in_varHinban Like "F_C*-####O*-*" _
-        Or in_varHinban Like "特 F_C*-####A*-*" Or in_varHinban Like "特 F_C*-####B*-*" Or in_varHinban Like "特 F_C*-####O*-*" Then
-    
+        Or in_varHinban Like "特 F_C*-####A*-*" Or in_varHinban Like "特 F_C*-####B*-*" Or in_varHinban Like "特 F_C*-####O*-*" _
+            Or in_varHinban Like "F_B*-####A*-*" Or in_varHinban Like "F_B*-####B*-*" Or in_varHinban Like "F_B*-####O*-*" _
+                Or in_varHinban Like "特 F_B*-####A*-*" Or in_varHinban Like "特 F_B*-####B*-*" Or in_varHinban Like "特 F_B*-####O*-*" _
+                                                                                                                                        Then
+        
         isCaro = True
         
     End If
@@ -1063,6 +1085,7 @@ Public Function fncbolSxL_Replace() As Boolean
 '   *************************************************************
 '   SxL品番読替表置換え処理
 '   1.10.3 K.Asayama ADD 20151119 SxL品番表リモートからコピー
+'   1.10.6 K.Asayama ADD 20151211 コピー済みの場合(bolSxLCopy=True）は処理しない
 '
 '   リモートデータベースからローカルにSxL品番読替表をコピーする
 '
@@ -1073,6 +1096,11 @@ Public Function fncbolSxL_Replace() As Boolean
 '   *************************************************************
 
     fncbolSxL_Replace = False
+    
+    If bolSxLCopy Then
+        fncbolSxL_Replace = True
+        Exit Function
+    End If
     
     Dim objREMOTEDB As New cls_BRAND_MASTER
     Dim objLOCALDB As New cls_LOCALDB
@@ -1095,6 +1123,9 @@ Public Function fncbolSxL_Replace() As Boolean
             Loop
         End If
     End If
+    
+    '1.10.6 K.Asayama ADD 20151211 コピー完了の場合共通フラグをTrueにする
+    bolSxLCopy = True
     
     fncbolSxL_Replace = True
     

@@ -1,4 +1,3 @@
-Attribute VB_Name = "md_Common"
 Option Compare Database
 Option Explicit
 '--------------------------------------------------------------------------------------------------------------------
@@ -16,14 +15,24 @@ Public strUserName As String
 Public bolUpdatable As Boolean
 Public bolAdministrator As Boolean
 
+'1.10.6 K.Asayama 20151211 追加
+'SxLローカルコピー,カレンダーコピー
+Public bolSxLCopy As Boolean
+Public bolCalendarCopy As Boolean
+
 Public Sub UserINIT()
 '--------------------------------------------------------------------------------------------------------------------
 'ユーザー関連関数初期化
+
+''1.10.6 K.Asayama bolSxLCopy,bolCalendarCopy 初期化追加 20151211 追加
 '--------------------------------------------------------------------------------------------------------------------
     strUserID = ""
     strUserName = ""
     bolUpdatable = False
     bolAdministrator = False
+    
+    bolSxLCopy = False
+    bolCalendarCopy = False
     
 End Sub
 
@@ -526,14 +535,14 @@ Public Function bolfncinputDate(ByVal in_MidashiText As String, ByRef out_Date A
 '                           :日付入力済み（True）/キャンセル（False）
 '--------------------------------------------------------------------------------------------------------------------
 Dim objLOCALDB As New cls_LOCALDB
-Dim strErrMsg As String
+Dim strErrmsg As String
 
 On Error GoTo Err_bolfncinputDate
 
 out_Date = Null
 
-If Not objLOCALDB.ExecSQL("delete from WK_対象日付", strErrMsg) Then
-    Err.Raise 9999, , strErrMsg
+If Not objLOCALDB.ExecSQL("delete from WK_対象日付", strErrmsg) Then
+    Err.Raise 9999, , strErrmsg
 End If
 
 DoCmd.OpenForm "F_汎用日付入力", acNormal, , , , acDialog, in_MidashiText

@@ -87,9 +87,15 @@ Public Function fncbolCalender_Replace() As Boolean
 '       ¨True              ’uŠ·¬Œ÷
 '       ¨False             ’uŠ·¸”s
 '
+'   1.10.6 K.Asayama ADD 20151211 ƒRƒs[Ï‚İ‚Ìê‡(bolCalendarCopy=Truej‚Íˆ—‚µ‚È‚¢
 '   *************************************************************
 
     fncbolCalender_Replace = False
+    
+    If bolCalendarCopy Then
+        fncbolCalender_Replace = True
+        Exit Function
+    End If
     
     Dim objREMOTEDB As New cls_BRAND_MASTER
     Dim objLOCALDB As New cls_LOCALDB
@@ -132,6 +138,9 @@ Public Function fncbolCalender_Replace() As Boolean
             fncbolCalender_Replace = True
         End If
     End If
+    
+    '1.10.6 K.Asayama ADD 20151211 ƒRƒs[Š®—¹‚Ìê‡‹¤’Êƒtƒ‰ƒO‚ğTrue‚É‚·‚é
+    bolCalendarCopy = True
     
     GoTo Exit_fncbolCalender_Replace
     
@@ -184,7 +193,7 @@ Public Function bolfncCalc_DayOn(in_datNouhinDate As Variant, in_varHinban As Va
     If Not IsDate(in_datNouhinDate) Then GoTo Err_bolfncCalc_DayOn
     
     datDayBefore = DateDiff("d", -1, in_datNouhinDate)
-    
+ 
     strSQL = ""
     strSQL = strSQL & "select ‹x“ú from WK_Calendar_Hê "
     strSQL = strSQL & "where ‹x“ú > #" & in_datNouhinDate & "# "
@@ -280,6 +289,7 @@ Public Function bolfncCalc_DayOff(in_datNouhinDate As Variant, in_intDays As Int
 '    Output€–Ú
 '       out_datDay          Input—p“ú•t‚Éin_intDays‚ğ‰ÁZŒã‚Ì“ú•t
 '       out_datNextDay      out_datDay‚Ì1‰c‹Æ“úŒã‚Ì“ú•t
+
 '   *************************************************************
 
     Dim objLOCALDB As New cls_LOCALDB
@@ -305,7 +315,7 @@ Public Function bolfncCalc_DayOff(in_datNouhinDate As Variant, in_intDays As Int
     If Not IsDate(in_datNouhinDate) Then GoTo Err_bolfncCalc_DayOff
     
     datDayBefore = DateDiff("d", 1, in_datNouhinDate)
-    
+
     strSQL = ""
     strSQL = strSQL & "select ‹x“ú from WK_Calendar_Hê "
     strSQL = strSQL & "where ‹x“ú < #" & in_datNouhinDate & "# "
@@ -396,6 +406,7 @@ Public Function bolfncNextDate(in_datStartDate As Variant, ByRef out_datNextDay 
 '       in_datStartDate     Input—p“ú•t
 '    Output€–Ú
 '       out_datNextDay      Input—p“ú•t‚Ì1‰c‹Æ“úŒã‚Ì“ú•t
+
 '   *************************************************************
     Dim objLOCALDB As New cls_LOCALDB
     
@@ -470,6 +481,7 @@ Public Function fncbolSyukkaBiFromAddress(in_varAddress As Variant, in_varNouhin
 '   :–ß‚è’l
 '       True            :æ“¾¬Œ÷
 '       False           :æ“¾¸”s
+
 '--------------------------------------------------------------------------------------------------------------------
     Dim objLOCALDB As New cls_LOCALDB
     Dim intMinusDays As Integer
@@ -486,7 +498,7 @@ Public Function fncbolSyukkaBiFromAddress(in_varAddress As Variant, in_varNouhin
     If IsNull(in_varAddress) Then
         Exit Function
     End If
-    
+   
     'ˆÈ‰º‚ÉŠY“–‚·‚é“s“¹•{Œ§‚Ìê‡‚Í2“ú
     If in_varAddress Like "–kŠC“¹*" Or _
         in_varAddress Like "ÂXŒ§*" Or in_varAddress Like "ŠâèŒ§*" Or in_varAddress Like "H“cŒ§*" Or _
@@ -590,6 +602,7 @@ Public Function IsHoliday(ByVal in_Date As String) As Boolean
 '
 '    Input€–Ú
 '       in_Date     “ú•ti•¶š—ñŒ^®j
+
 '--------------------------------------------------------------------------------------------------------------------
 
     Dim objLOCALDB As New cls_LOCALDB
