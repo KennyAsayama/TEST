@@ -1,8 +1,7 @@
-Attribute VB_Name = "md_WKテーブル集計"
 Option Compare Database
 Option Explicit
 
-Public Function SetOrderData(ByVal inDate As Date, ByVal inDatekbn As Byte, inSeizoKbn As String) As Boolean
+Public Function SetOrderData(ByVal inDate As Date, ByVal inDateKbn As Byte, inSeizoKbn As String) As Boolean
 '--------------------------------------------------------------------------------------------------------------------
 '製造データをWKファイルに転送する
 '
@@ -14,6 +13,12 @@ Public Function SetOrderData(ByVal inDate As Date, ByVal inDatekbn As Byte, inSe
 '   :戻り値
 '       True            :成功
 '       False           :失敗
+'1.10.7 K.Asayama ADD 201512**
+'       →「F_邸別_数量」工程表ボタンを使用可能にする引数を追加
+'       →「WK_札データ」に出荷方法、色（塗装のみ）を追加
+'       → 製造日ベースの時は未確定も集計
+'       → inDateが[9999/12/31]の時は日付Nullのデータを出力（製造日ベース）
+'       → inDateが[9999/12/30]の時は日付は関係なく未確定のデータを出力（製造日ベース）
 '--------------------------------------------------------------------------------------------------------------------
     Dim objREMOTEDB As New cls_BRAND_MASTER
     Dim objLOCALDB As New cls_LOCALDB
@@ -92,17 +97,45 @@ Public Function SetOrderData(ByVal inDate As Date, ByVal inDatekbn As Byte, inSe
     strSQL = strSQL & ",s.数量 "
     strSQL = strSQL & ",s.確定 "
     strSQL = strSQL & ",y.コメント as 備考 "
+    '1.10.7 ADD
+    strSQL = strSQL & ",dbo.fncNohinHaiso(s.契約番号,s.棟番号,s.部屋番号,s.項,"
+    strSQL = strSQL & "case s.製造区分 "
+    strSQL = strSQL & "when 1 then 1 "
+    strSQL = strSQL & "when 2 then 1 "
+    strSQL = strSQL & "when 3 then 1 "
+    strSQL = strSQL & "when 4 then 2 "
+    strSQL = strSQL & "when 5 then 5 "
+    strSQL = strSQL & "when 6 then 3 "
+    strSQL = strSQL & "when 7 then 3 "
+    strSQL = strSQL & "else 999 "
+    strSQL = strSQL & "end) as 出荷方法 "
+    '1.10.7 ADD End
     strSQL = strSQL & "from T_製造指示 s "
     strSQL = strSQL & "inner join T_受注ﾏｽﾀ m "
     strSQL = strSQL & "on s.契約番号 = m.契約番号 and s.棟番号 = m.棟番号 and s.部屋番号 = m.部屋番号 "
     strSQL = strSQL & "left join T_製造予備 y "
     strSQL = strSQL & "on s.契約番号 = y.契約番号 and s.棟番号 = y.棟番号 and s.部屋番号 = y.部屋番号 and s.製造区分 = y.製造区分 "
     
-    If inDatekbn = 1 Then
+    If inDateKbn = 1 Then
         strSQL = strSQL & "where s.確定日 = '" & Format(inDate, "yyyy/mm/dd") & "' "
     Else
-        strSQL = strSQL & "where s.製造日 = '" & Format(inDate, "yyyy/mm/dd") & "' "
-        strSQL = strSQL & " and 確定 > 0 "
+        '1.10.7 ADD
+        If inDate = #12/31/9999# Then
+            strSQL = strSQL & "where s.製造日 is Null "
+            
+        ElseIf inDate = #12/30/9999# Then
+            strSQL = strSQL & " where 確定 < 2 "
+            
+        Else
+        '1.10.7 ADD End
+            strSQL = strSQL & "where s.製造日 = '" & Format(inDate, "yyyy/mm/dd") & "' "
+            '1.10.7 DEL
+            'strSQL = strSQL & " and 確定 > 0 "
+            '1.10.7 DEL END
+        
+        '1.10.7 ADD
+        End If
+        '1.10.7 ADD End
     End If
     strSQL = strSQL & " and s.製造区分 in ( " & strKubun & ") "
     
@@ -157,6 +190,11 @@ Public Function SetOrderData(ByVal inDate As Date, ByVal inDatekbn As Byte, inSe
                         'End If
                         
                         objLOCALDB.GetRS![確定] = .GetRS![確定]
+                        
+                        '1.10.7 ADD
+                        objLOCALDB.GetRS![出荷方法] = .GetRS![出荷方法]
+                        '1.10.7 ADD End
+                        
                         objLOCALDB.GetRS![Flush数] = .GetRS![Flush数] + .GetRS![F框数]
                         objLOCALDB.GetRS![F框数] = .GetRS![F框数]
                         objLOCALDB.GetRS![框数] = .GetRS![框数]
@@ -188,6 +226,9 @@ Public Function SetOrderData(ByVal inDate As Date, ByVal inDatekbn As Byte, inSe
                             
                             If IsPainted(.GetRS![登録時品番]) Then
                                 objLOCALDB.GetRS![塗装扉数] = .GetRS![Flush数]
+                                '1.10.7 ADD
+                                objLOCALDB.GetRS![色] = fncvalDoorColor(.GetRS![登録時品番])
+                                '1.10.7 ADD End
                             Else
                                 objLOCALDB.GetRS![塗装扉数] = 0
                             End If
@@ -222,6 +263,11 @@ Public Function SetOrderData(ByVal inDate As Date, ByVal inDatekbn As Byte, inSe
         End If
     End With
     
+    '1.10.7 ADD 備考データ呼び出し
+    If Not SetBikouData() Then
+        Err.Raise 9999, , "備考情報呼び出し異常"
+    End If
+    
     DoCmd.SetWarnings False
     
     
@@ -231,9 +277,12 @@ Public Function SetOrderData(ByVal inDate As Date, ByVal inDatekbn As Byte, inSe
     
     
     If Not bolFormOpen Then
-        DoCmd.OpenForm "F_邸別_数量", acNormal, , , , , inDatekbn
+        DoCmd.OpenForm "F_邸別_数量", acNormal, , , , , inDateKbn
     Else
-        If Not Form_F_邸別_数量.bolfncData_Update(inSeizoKbn) Then
+        '1.10.7 Change
+        'If Not Form_F_邸別_数量.bolfncData_Update(inSeizoKbn) Then
+        If Not Form_F_邸別_数量.bolfncData_Update(inSeizoKbn, inDateKbn) Then
+        '1.10.7 Change End
             DoCmd.Close acForm, "F_邸別_数量", acSaveNo
         End If
     End If
@@ -258,7 +307,7 @@ Exit_SetOrderData:
     
 End Function
 
-Public Function SetOrderCount(ByVal inDatekbn As Byte, ByRef Captionctl() As cls_Labelset, ByRef Graphctl() As cls_Labelset, ByRef Graphctl_Kakutei() As cls_Labelset, ByRef Itemctl() As cls_Labelset, ByVal in_HinbanKubun As Integer, ByVal in_KojoCD As Integer)
+Public Function SetOrderCount(ByVal inDateKbn As Byte, ByRef Captionctl() As cls_Labelset, ByRef Graphctl() As cls_Labelset, ByRef Graphctl_Kakutei() As cls_Labelset, ByRef Graphctl_Temp() As cls_Labelset, ByRef Itemctl() As cls_Labelset, ByVal in_HinbanKubun As Integer, ByVal in_KojoCD As Integer)
 '--------------------------------------------------------------------------------------------------------------------
 '数量集計処理
 '
@@ -267,16 +316,19 @@ Public Function SetOrderCount(ByVal inDatekbn As Byte, ByRef Captionctl() As cls
 '       Captionctl      :日付表示ラベル（コントロール配列）
 '       Graphctl        :数量表示ラベル（コントロール配列）
 '       Graphctl_Kakutei:確定数量表示ラベル（コントロール配列）
+'       Graphctl_Temp   :仮確定数量表示ラベル（コントロール配列）
 '       Itemctl         :製品表示ラベル（2次元コントロール配列[日付,製品]）
 '       in_HinbanKubun  :1,建具、2,枠、3,下地
 '       in_KojoCD       :工場CD
+
 '
 '   :戻り値
 '       True            :成功
 '       False           :失敗
 '---------------------------
 '   変更
-'       20151110 K.Asayama 下地数、ステルス数をラベル表示（各々ガラス数、モンスター数を流用）
+'       1.10.1 K.Asayama 下地数、ステルス数をラベル表示（各々ガラス数、モンスター数を流用）
+'       1.10.7 K.Asayama 引数に仮確定（Graphctl_Temp）追加、確定数集計追加 暫定で表示はしない。確定数のラベルにカッコとじで数量表示
 '--------------------------------------------------------------------------------------------------------------------
     Dim objREMOTEDB As New cls_BRAND_MASTER
     Dim strSQL_C As String
@@ -295,6 +347,9 @@ Public Function SetOrderCount(ByVal inDatekbn As Byte, ByRef Captionctl() As cls
     Dim intKakuteiM As Integer
     Dim intShitajiM As Integer
     Dim intStealthM As Integer
+    '1.10.7 ADD
+    Dim intKakuteiTempM As Integer
+    '1.10.7 ADD End
     
     On Error GoTo Err_SetOrderCount
     
@@ -303,7 +358,7 @@ Public Function SetOrderCount(ByVal inDatekbn As Byte, ByRef Captionctl() As cls
         Itemctl(i, 1).CaptionSet ("ガラス")
         Itemctl(i, 4).CaptionSet ("Monster")
         
-        If inDatekbn = 1 Then
+        If inDateKbn = 1 Then
             Itemctl(i, 1).SetWidth (197)
             Itemctl(i, 4).SetWidth (197)
         Else
@@ -330,11 +385,13 @@ Public Function SetOrderCount(ByVal inDatekbn As Byte, ByRef Captionctl() As cls
     
     For i = 0 To UBound(Captionctl)
         strSQL = strSQL_C
-        If inDatekbn = 1 Then
+        If inDateKbn = 1 Then
             strSQL = strSQL & " where s.確定日 = '" & Captionctl(i).GetTag & "'"
         Else
             strSQL = strSQL & " where s.製造日 = '" & Captionctl(i).GetTag & "'"
-            strSQL = strSQL & " and 確定 > 0 "
+            '1.10.7 K.Asayama Change
+            'strSQL = strSQL & " and 確定 > 0 "
+            '1.10.7 K.Asayama Change End
         End If
         strSQL = strSQL & " and s.製造区分 in ( " & strKubun & ")"
 '        Select Case in_HinbanKubun
@@ -366,31 +423,47 @@ Public Function SetOrderCount(ByVal inDatekbn As Byte, ByRef Captionctl() As cls
                 intKakuteiM = 0
                 intShitajiM = 0
                 intStealthM = 0
-                
+                '1.10.7 ADD
+                intKakuteiTempM = 0
+                '1.10.7 ADD End
+    
                 Do Until .GetRS.EOF
                     
                     intFlushM = intFlushM + .GetRS("枚数")
                     
-                    Select Case .GetRS("製造区分")
-                        Case 1, 2, 3
-                            If .GetRS("製造区分") = 2 Then intFkamachiM = intFkamachiM + .GetRS("枚数")
-                            If .GetRS("製造区分") = 3 Then intKamachiM = intKamachiM + .GetRS("枚数")
-                            If IsThruGlass(.GetRS("登録時品番")) Then intThruM = intThruM + .GetRS("枚数")
-                            If IsPainted(.GetRS("登録時品番")) Then intPaintM = intPaintM + .GetRS("枚数")
-                            If IsAir(.GetRS("登録時品番")) Then intAirM = intAirM + .GetRS("枚数")
-                            If IsMonster(.GetRS("登録時品番")) Then intMonsterM = intMonsterM + .GetRS("枚数")
-                        Case 6
-                            If IsStealth_Seizo_TEMP(.GetRS("登録時品番")) Then
-                                intStealthM = intStealthM + .GetRS("枚数")
-                            Else
-                                intShitajiM = intShitajiM + .GetRS("枚数")
-                            End If
-                            
+                    '1.10.7 ADD 製造日ベースの時は未確定は集計しない
+                    If (inDateKbn = 1) Or (inDateKbn = 2 And .GetRS("確定") <> 0) Then
+                    '1.10.7 ADD End
+                        Select Case .GetRS("製造区分")
+                            Case 1, 2, 3
+                                If .GetRS("製造区分") = 2 Then intFkamachiM = intFkamachiM + .GetRS("枚数")
+                                If .GetRS("製造区分") = 3 Then intKamachiM = intKamachiM + .GetRS("枚数")
+                                If IsThruGlass(.GetRS("登録時品番")) Then intThruM = intThruM + .GetRS("枚数")
+                                If IsPainted(.GetRS("登録時品番")) Then intPaintM = intPaintM + .GetRS("枚数")
+                                If IsAir(.GetRS("登録時品番")) Then intAirM = intAirM + .GetRS("枚数")
+                                If IsMonster(.GetRS("登録時品番")) Then intMonsterM = intMonsterM + .GetRS("枚数")
+                            Case 6
+                                If IsStealth_Seizo_TEMP(.GetRS("登録時品番")) Then
+                                    intStealthM = intStealthM + .GetRS("枚数")
+                                Else
+                                    intShitajiM = intShitajiM + .GetRS("枚数")
+                                End If
                                 
-                    End Select
+                                    
+                        End Select
+                    '1.10.7 ADD
+                    End If
+                    '1.10.7 ADD End
                     
-                    If .GetRS("確定") <> 0 Then intKakuteiM = intKakuteiM + .GetRS("枚数")
-        
+                    '1.10.7 Change
+                    'If .GetRS("確定") <> 0 Then intKakuteiM = intKakuteiM + .GetRS("枚数")
+                    If .GetRS("確定") = 2 Then
+                        intKakuteiM = intKakuteiM + .GetRS("枚数")
+                    ElseIf .GetRS("確定") = 1 Then
+                        intKakuteiTempM = intKakuteiTempM + .GetRS("枚数")
+                    End If
+                    '1.10.7 Change End
+                    
                     .GetRS.MoveNext
                 Loop
                 
@@ -404,8 +477,22 @@ Public Function SetOrderCount(ByVal inDatekbn As Byte, ByRef Captionctl() As cls
                     Graphctl_Kakutei(i).SetTag "0"
                     Graphctl_Kakutei(i).myVisible (False)
                 End If
+                               
                 
                 Graphctl_Kakutei(i).CaptionSet Graphctl_Kakutei(i).GetTag
+                
+                '1.10.7 ADD
+                If intKakuteiTempM + intKakuteiM > 0 Then
+                    Graphctl_Temp(i).SetTag (CStr(intKakuteiM + intKakuteiTempM))
+                    Graphctl_Temp(i).myVisible (True)
+                Else
+                    Graphctl_Temp(i).SetTag "0"
+                    Graphctl_Temp(i).myVisible (False)
+                End If
+                
+                Graphctl_Temp(i).CaptionSet Graphctl_Temp(i).GetTag
+                '1.10.7 ADD End
+ 
                 
                 If intFkamachiM > 0 Then Itemctl(i, 0).myVisible (True): Itemctl(i, 0).SetControlTipText (intFkamachiM) Else Itemctl(i, 0).myVisible (False)
                 If intThruM > 0 Then Itemctl(i, 1).myVisible (True): Itemctl(i, 1).SetControlTipText (intThruM) Else Itemctl(i, 1).myVisible (False)
@@ -468,5 +555,120 @@ Exit_fncbolSetComboKubun:
     
 End Function
 
+Public Function SetBikouData() As Boolean
+'--------------------------------------------------------------------------------------------------------------------
+'WK_札データ_備考ファイルを作成する
+'
+'
+'   :戻り値
+'       True            :成功
+'       False           :失敗
+'1.10.7 K.Asayama ADD 201512**
+'       →作成したWK_札データから備考ファイルを作成する
+'--------------------------------------------------------------------------------------------------------------------
+    Dim objLOCALDB As New cls_LOCALDB
+    
+    Dim strSQL As String
+    Dim strErrMsg As String
+    
+    SetBikouData = False
+     
+    On Error GoTo Err_SetBikouData
+    
+    strSQL = ""
+    
+    strSQL = strSQL & "select 契約番号,棟番号,部屋番号"
+    strSQL = strSQL & ",First(IIf([製造区分] = 1,[備考],Null)) as Flush備考 "
+    strSQL = strSQL & ",First(IIf([製造区分] = 2,[備考],Null)) as F框備考 "
+    strSQL = strSQL & ",First(IIf([製造区分] = 3,[備考],Null)) as 框備考 "
+    strSQL = strSQL & ",First(IIf([製造区分] = 4,[備考],Null)) as 枠備考 "
+    strSQL = strSQL & ",First(IIf([製造区分] = 5,[備考],Null)) as 三方枠備考 "
+    strSQL = strSQL & ",First(IIf([製造区分] = 6,[備考],Null)) as 下地備考 "
+    strSQL = strSQL & ",First(IIf([製造区分] = 7,[備考],Null)) as ステルス枠備考 "
+    strSQL = strSQL & "from WK_札データ "
+    strSQL = strSQL & "where 備考 is not null "
+    strSQL = strSQL & "group by 契約番号,棟番号,部屋番号 "
+    
+    If Not objLOCALDB.ExecSQL("delete from WK_札データ_備考") Then
+        Err.Raise 9999, , "備考データワーク（ローカル）初期化エラー"
+    End If
+    
+    With objLOCALDB
+        If .ExecSelect(strSQL) Then
+            
+            Do While Not .GetRS.EOF
+                strSQL = "insert into WK_札データ_備考 ("
+                strSQL = strSQL & "契約番号,棟番号,部屋番号 "
+                strSQL = strSQL & ",Flush備考,F框備考,枠備考,三方枠備考,下地備考,ステルス枠備考"
+                strSQL = strSQL & ") values ( "
+                strSQL = strSQL & "'" & .GetRS![契約番号] & "','" & .GetRS![棟番号] & "','" & .GetRS![部屋番号] & "'"
+                strSQL = strSQL & "," & varNullChk(.GetRS![Flush備考], 1) & " "
+                strSQL = strSQL & "," & varNullChk(.GetRS![F框備考], 1) & " "
+                strSQL = strSQL & "," & varNullChk(.GetRS![枠備考], 1) & " "
+                strSQL = strSQL & "," & varNullChk(.GetRS![三方枠備考], 1) & " "
+                strSQL = strSQL & "," & varNullChk(.GetRS![下地備考], 1) & " "
+                strSQL = strSQL & "," & varNullChk(.GetRS![ステルス枠備考], 1) & " "
+                strSQL = strSQL & ")"
+                
+                Debug.Print strSQL
+                
+                If Not .ExecSQL(strSQL, strErrMsg) Then
+                    Err.Raise 9999, , strErrMsg
+                End If
+                
+                .GetRS.MoveNext
+            Loop
+        Else
+            Err.Raise 9999, , "札データ（ローカル）オープンエラー(Input)"
+        End If
+    End With
+    
+    SetBikouData = True
+    
+    GoTo Exit_SetBikouData
+    
+Err_SetBikouData:
+    SetBikouData = False
+    MsgBox Err.Description
+    
+Exit_SetBikouData:
+     Set objLOCALDB = Nothing
+     
+End Function
 
+Public Function varNullChk(in_Data As Variant, in_DBType As Integer) As Variant
+'--------------------------------------------------------------------------------------------------------------------
+'引数がNullの場合は文字列[Null]を返す。それ以外はそのまま返す(DBインサート用)
+'
+'   :引数
+'       in_Data     Variant(型不定 exデータベースのカラム）
+'       in_DBType   1:Local(Jet) 2:SQLServer
+'
+'   :戻り値
+'       Variant　   引数がNullの場合は文字列[Null]、それ以外はそのまま(日付、文字列は加工する）
+'
+'1.10.7 K.Asayama ADD 201512**
+'
+'--------------------------------------------------------------------------------------------------------------------
 
+    If IsNull(in_Data) Then
+    
+        varNullChk = "Null"
+        
+    ElseIf VarType(in_Data) = vbString Then
+    
+        varNullChk = "'" & in_Data & "'"
+        
+    ElseIf VarType(in_Data) = vbDate Then
+        Select Case in_DBType
+            Case 1
+                varNullChk = "#" & Format(in_Data, "yyyy/mm/dd") & "#"
+            Case Else
+                varNullChk = "'" & Format(in_Data, "yyyy/mm/dd") & "'"
+        End Select
+        
+    Else
+        varNullChk = in_Data
+    End If
+
+End Function

@@ -13,7 +13,9 @@ Public Function intfncSeizoNissu(in_varHinban As Variant) As Integer
 '
 '    Input項目
 '       in_strHinban        建具品番
-
+'
+'   1.10.7
+'           → 製品関数に置換え
 '   *************************************************************
 
     If Not in_varHinban Like "*-####*-*" Then
@@ -54,19 +56,19 @@ Public Function intfncSeizoNissu(in_varHinban As Variant) As Integer
     
         intfncSeizoNissu = 20
     'Air
-    ElseIf in_varHinban Like "A*-####*-*" Then
+    ElseIf IsAir(in_varHinban) Then
     
         intfncSeizoNissu = 20
     'MONSTER
-    ElseIf in_varHinban Like "O*-####*-*" Then
+    ElseIf IsMonster(in_varHinban) Then
     
         intfncSeizoNissu = 20
     'PALIO
-    ElseIf in_varHinban Like "B*-####*-*" Then
+    ElseIf IsPALIO(in_varHinban) Then
     
         intfncSeizoNissu = 23
     'REALART
-    ElseIf in_varHinban Like "R*-####*-*" Then
+    ElseIf IsREALART(in_varHinban) Then
     
         intfncSeizoNissu = 23
         
@@ -631,4 +633,86 @@ Err_IsHoliday:
     
 Exit_IsHoliday:
     Set objLOCALDB = Nothing
+End Function
+
+Public Function intfncSeizoNissu_FromSyukkaBi(in_varHinban As Variant, in_intDefaultDays As Integer) As Integer
+'   *************************************************************
+'   建具製造所要日数確認（出荷日より逆算）
+'   出荷日より製造可能日を計算する
+'
+'   1.10.7 ADD
+'
+'   戻り値:Integer
+'                       →  所要日数
+'                           品番不正の場合は最大日数（塗装扉）を返す
+'                           クローゼットは0を返す (伊勢原生産以外)
+'
+'    Input項目
+'       in_strHinban        建具品番
+'       in_intDefaultDays   標準品(CUBE等所要日数）
+'   *************************************************************
+
+    If Not in_varHinban Like "*-####*-*" Then
+        intfncSeizoNissu_FromSyukkaBi = in_intDefaultDays + 13
+        Exit Function
+    End If
+    
+    'Caro(Flushより先に記載する)
+    If isCaro(in_varHinban) Then
+    
+        intfncSeizoNissu_FromSyukkaBi = in_intDefaultDays + 7
+    'ｸﾛｾﾞｯﾄ(Flushより先に記載する)
+    ElseIf in_varHinban Like "F*CME-####*-*" Then
+    
+        intfncSeizoNissu_FromSyukkaBi = in_intDefaultDays + 7
+    'ｸﾛｾﾞｯﾄ(SINAより先に記載する)
+    ElseIf in_varHinban Like "T*CME-####*-*" Then
+    
+        intfncSeizoNissu_FromSyukkaBi = in_intDefaultDays + 7
+    'ｸﾛｾﾞｯﾄ
+    ElseIf in_varHinban Like "P*CSA-####*-*" Then
+    
+        intfncSeizoNissu_FromSyukkaBi = in_intDefaultDays + 7
+    'Flush
+    ElseIf in_varHinban Like "F*-####*-*" Then
+    
+        intfncSeizoNissu_FromSyukkaBi = in_intDefaultDays
+    'F/S
+    ElseIf in_varHinban Like "S*-####*-*" Then
+    
+        intfncSeizoNissu_FromSyukkaBi = in_intDefaultDays
+    'LUCENTE
+    ElseIf in_varHinban Like "P*-####*-*" Then
+    
+        intfncSeizoNissu_FromSyukkaBi = in_intDefaultDays + 7
+    'SINA
+    ElseIf in_varHinban Like "T*-####*-*" Then
+    
+        intfncSeizoNissu_FromSyukkaBi = in_intDefaultDays + 7
+    'Air
+    ElseIf IsAir(in_varHinban) Then
+    
+        intfncSeizoNissu_FromSyukkaBi = in_intDefaultDays + 7
+    'MONSTER
+    ElseIf IsMonster(in_varHinban) Then
+    
+        intfncSeizoNissu_FromSyukkaBi = in_intDefaultDays + 7
+    'PALIO
+    ElseIf IsPALIO(in_varHinban) Then
+    
+        intfncSeizoNissu_FromSyukkaBi = in_intDefaultDays + 9
+    'REALART
+    ElseIf IsREALART(in_varHinban) Then
+        If IsPainted(in_varHinban) Then
+            intfncSeizoNissu_FromSyukkaBi = in_intDefaultDays + 9
+        Else
+            intfncSeizoNissu_FromSyukkaBi = in_intDefaultDays
+        End If
+        
+    Else
+    
+        intfncSeizoNissu_FromSyukkaBi = in_intDefaultDays + 9
+    
+    End If
+    
 End Function

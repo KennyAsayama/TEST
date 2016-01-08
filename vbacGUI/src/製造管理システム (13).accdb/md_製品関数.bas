@@ -1204,3 +1204,52 @@ Err_IsPALIO:
     IsPALIO = False
     
 End Function
+
+Public Function fncvalDoorColor(inHinban As String) As Variant
+'   *************************************************************
+'   色確認
+'   品番から色を返す。返せない場合は空欄を返す（Nullではない）
+'   '1.10.7 ADD by Asayama 201512**
+'   戻り値:Boolean
+'       →True              REALART
+'       →False             REALART以外
+'
+'    Input項目
+'       in_strHinban        建具品番
+
+'   *************************************************************
+    Dim i As Integer
+    Dim byteHirakiIchi As Byte
+    Dim byteTojiIchi As Byte
+    
+    On Error GoTo Err_fncvalDoorColor
+    
+    fncvalDoorColor = Null
+    
+    byteTojiIchi = 0
+    byteHirakiIchi = 0
+    
+    For i = Len(inHinban) To 1 Step -1
+        If Mid(inHinban, i, 1) = ")" Then
+            byteTojiIchi = i
+        ElseIf Mid(inHinban, i, 1) = "(" Then
+            byteHirakiIchi = i + 1
+        End If
+        
+        If byteHirakiIchi <> 0 And byteTojiIchi <> 0 Then Exit For
+        
+    Next
+        
+    If byteHirakiIchi <> 0 And byteTojiIchi <> 0 And byteTojiIchi > byteHirakiIchi Then
+        fncvalDoorColor = Mid(inHinban, byteHirakiIchi, byteTojiIchi - byteHirakiIchi)
+    End If
+    
+    GoTo Exit_fncvalDoorColor
+    
+Err_fncvalDoorColor:
+    fncvalDoorColor = Null
+    MsgBox Err.Description, , "品番から色コードが取得できません"
+    
+Exit_fncvalDoorColor:
+    
+End Function
