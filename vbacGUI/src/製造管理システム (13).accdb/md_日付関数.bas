@@ -483,7 +483,9 @@ Public Function fncbolSyukkaBiFromAddress(in_varAddress As Variant, in_varNouhin
 '   :–ß‚è’l
 '       True            :æ“¾¬Œ÷
 '       False           :æ“¾¸”s
-
+'
+'   1.10.8 K.Asayama Change 20160114
+'           ¨–kŠC“¹A‰«“ê‚Ì
 '--------------------------------------------------------------------------------------------------------------------
     Dim objLOCALDB As New cls_LOCALDB
     Dim intMinusDays As Integer
@@ -502,8 +504,7 @@ Public Function fncbolSyukkaBiFromAddress(in_varAddress As Variant, in_varNouhin
     End If
    
     'ˆÈ‰º‚ÉŠY“–‚·‚é“s“¹•{Œ§‚Ìê‡‚Í2“ú
-    If in_varAddress Like "–kŠC“¹*" Or _
-        in_varAddress Like "ÂXŒ§*" Or in_varAddress Like "ŠâèŒ§*" Or in_varAddress Like "H“cŒ§*" Or _
+    If in_varAddress Like "ÂXŒ§*" Or in_varAddress Like "ŠâèŒ§*" Or in_varAddress Like "H“cŒ§*" Or _
         in_varAddress Like "‹{éŒ§*" Or in_varAddress Like "•Ÿ“‡Œ§*" Or in_varAddress Like "RŒ`Œ§*" Or _
         in_varAddress Like "OdŒ§*" Or in_varAddress Like "•ºŒÉŒ§*" Or in_varAddress Like "˜a‰ÌRŒ§*" Or _
         in_varAddress Like "“‡ªŒ§*" Or in_varAddress Like "’¹æŒ§*" Or in_varAddress Like "RŒûŒ§*" Or _
@@ -511,10 +512,18 @@ Public Function fncbolSyukkaBiFromAddress(in_varAddress As Variant, in_varNouhin
         in_varAddress Like "ˆ¤•QŒ§*" Or in_varAddress Like "“¿“‡Œ§*" Or in_varAddress Like "‚’mŒ§*" Or _
         in_varAddress Like "•Ÿ‰ªŒ§*" Or in_varAddress Like "‘å•ªŒ§*" Or in_varAddress Like "²‰êŒ§*" Or _
         in_varAddress Like "’·èŒ§*" Or in_varAddress Like "‹{èŒ§*" Or in_varAddress Like "ŒF–{Œ§*" Or _
-        in_varAddress Like "­™“‡Œ§*" Or _
-        in_varAddress Like "‰«“êŒ§*" Then
+        in_varAddress Like "­™“‡Œ§*" _
+    Then
        
-            intMinusDays = 2
+        intMinusDays = 2
+            
+    '1.10.8 ADD
+    ElseIf in_varAddress Like "–kŠC“¹*" Then
+        intMinusDays = 3
+        
+    ElseIf in_varAddress Like "‰«“êŒ§*" Then
+        intMinusDays = 7
+    '1.10.8 ADD End
     Else
     
             intMinusDays = 1

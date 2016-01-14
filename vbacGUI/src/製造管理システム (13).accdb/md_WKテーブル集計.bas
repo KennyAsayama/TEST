@@ -13,12 +13,14 @@ Public Function SetOrderData(ByVal inDate As Date, ByVal inDateKbn As Byte, inSe
 '   :戻り値
 '       True            :成功
 '       False           :失敗
-'1.10.7 K.Asayama ADD 201512**
+'1.10.7 K.Asayama ADD 20160108
 '       →「F_邸別_数量」工程表ボタンを使用可能にする引数を追加
 '       →「WK_札データ」に出荷方法、色（塗装のみ）を追加
 '       → 製造日ベースの時は未確定も集計
 '       → inDateが[9999/12/31]の時は日付Nullのデータを出力（製造日ベース）
 '       → inDateが[9999/12/30]の時は日付は関係なく未確定のデータを出力（製造日ベース）
+'1.10.8 K.Asayama ADD 20160114
+'       →ヴェルチカ分割
 '--------------------------------------------------------------------------------------------------------------------
     Dim objREMOTEDB As New cls_BRAND_MASTER
     Dim objLOCALDB As New cls_LOCALDB
@@ -125,7 +127,6 @@ Public Function SetOrderData(ByVal inDate As Date, ByVal inDateKbn As Byte, inSe
             
         ElseIf inDate = #12/30/9999# Then
             strSQL = strSQL & " where 確定 < 2 "
-            
         Else
         '1.10.7 ADD End
             strSQL = strSQL & "where s.製造日 = '" & Format(inDate, "yyyy/mm/dd") & "' "
@@ -238,11 +239,21 @@ Public Function SetOrderData(ByVal inDate As Date, ByVal inDateKbn As Byte, inSe
                             Else
                                 objLOCALDB.GetRS![モンスター数] = 0
                             End If
+                            '1.10.8 ADD
+                            If IsVertica(.GetRS![登録時品番]) Then
+                                objLOCALDB.GetRS![ヴェルチカ数] = .GetRS![Flush数]
+                            Else
+                                objLOCALDB.GetRS![ヴェルチカ数] = 0
+                            End If
+                            '1.10.8 ADD End
                         Else
                             objLOCALDB.GetRS![スルーガラス数] = 0
                             objLOCALDB.GetRS![ルーバー扉数] = 0
                             objLOCALDB.GetRS![塗装扉数] = 0
                             objLOCALDB.GetRS![モンスター数] = 0
+                            '1.10.8 ADD
+                            objLOCALDB.GetRS![ヴェルチカ数] = 0
+                            '1.10.8 ADD End
                         End If
                         
                         objLOCALDB.GetRS![備考] = .GetRS![備考]
@@ -329,6 +340,9 @@ Public Function SetOrderCount(ByVal inDateKbn As Byte, ByRef Captionctl() As cls
 '   変更
 '       1.10.1 K.Asayama 下地数、ステルス数をラベル表示（各々ガラス数、モンスター数を流用）
 '       1.10.7 K.Asayama 引数に仮確定（Graphctl_Temp）追加、確定数集計追加 暫定で表示はしない。確定数のラベルにカッコとじで数量表示
+'       1.10.8 K.Asayama
+'                       →框用ラベルをヴェルチカ用ラベルに変更
+'                       →グラフラベルの数量（Caption）のControlTipText対応
 '--------------------------------------------------------------------------------------------------------------------
     Dim objREMOTEDB As New cls_BRAND_MASTER
     Dim strSQL_C As String
@@ -350,6 +364,9 @@ Public Function SetOrderCount(ByVal inDateKbn As Byte, ByRef Captionctl() As cls
     '1.10.7 ADD
     Dim intKakuteiTempM As Integer
     '1.10.7 ADD End
+    '1.10.8 ADD
+    Dim intVerticaM As Integer
+    '1.10.8 ADD End
     
     On Error GoTo Err_SetOrderCount
     
@@ -426,6 +443,9 @@ Public Function SetOrderCount(ByVal inDateKbn As Byte, ByRef Captionctl() As cls
                 '1.10.7 ADD
                 intKakuteiTempM = 0
                 '1.10.7 ADD End
+                '1.10.8 ADD
+                intVerticaM = 0
+                '1.10.8 ADD End
     
                 Do Until .GetRS.EOF
                     
@@ -442,6 +462,9 @@ Public Function SetOrderCount(ByVal inDateKbn As Byte, ByRef Captionctl() As cls
                                 If IsPainted(.GetRS("登録時品番")) Then intPaintM = intPaintM + .GetRS("枚数")
                                 If IsAir(.GetRS("登録時品番")) Then intAirM = intAirM + .GetRS("枚数")
                                 If IsMonster(.GetRS("登録時品番")) Then intMonsterM = intMonsterM + .GetRS("枚数")
+                                '1.10.8 K.Asayama ADD
+                                If IsVertica(.GetRS("登録時品番")) Then intVerticaM = intVerticaM + .GetRS("枚数")
+                                '1.10.8 K.Asayama ADD End
                             Case 6
                                 If IsStealth_Seizo_TEMP(.GetRS("登録時品番")) Then
                                     intStealthM = intStealthM + .GetRS("枚数")
@@ -469,6 +492,9 @@ Public Function SetOrderCount(ByVal inDateKbn As Byte, ByRef Captionctl() As cls
                 
                 Graphctl(i).SetTag (CStr(intFlushM))
                 Graphctl(i).CaptionSet Graphctl(i).GetTag
+                '1.10.8 ADD
+                Graphctl(i).SetControlTipText Graphctl(i).GetTag
+                '1.10.8 ADD End
                 
                 If intKakuteiM > 0 Then
                     Graphctl_Kakutei(i).SetTag (CStr(intKakuteiM))
@@ -480,6 +506,9 @@ Public Function SetOrderCount(ByVal inDateKbn As Byte, ByRef Captionctl() As cls
                                
                 
                 Graphctl_Kakutei(i).CaptionSet Graphctl_Kakutei(i).GetTag
+                '1.10.8 ADD
+                Graphctl_Kakutei(i).SetControlTipText Graphctl_Kakutei(i).GetTag
+                '1.10.8 ADD End
                 
                 '1.10.7 ADD
                 If intKakuteiTempM + intKakuteiM > 0 Then
@@ -492,14 +521,19 @@ Public Function SetOrderCount(ByVal inDateKbn As Byte, ByRef Captionctl() As cls
                 
                 Graphctl_Temp(i).CaptionSet Graphctl_Temp(i).GetTag
                 '1.10.7 ADD End
- 
+                '1.10.8 ADD
+                Graphctl_Temp(i).SetControlTipText Graphctl_Temp(i).GetTag
+                '1.10.8 ADD End
                 
                 If intFkamachiM > 0 Then Itemctl(i, 0).myVisible (True): Itemctl(i, 0).SetControlTipText (intFkamachiM) Else Itemctl(i, 0).myVisible (False)
                 If intThruM > 0 Then Itemctl(i, 1).myVisible (True): Itemctl(i, 1).SetControlTipText (intThruM) Else Itemctl(i, 1).myVisible (False)
                 If intPaintM > 0 Then Itemctl(i, 2).myVisible (True): Itemctl(i, 2).SetControlTipText (intPaintM) Else Itemctl(i, 2).myVisible (False)
                 If intAirM > 0 Then Itemctl(i, 3).myVisible (True): Itemctl(i, 3).SetControlTipText (intAirM) Else Itemctl(i, 3).myVisible (False)
                 If intMonsterM > 0 Then Itemctl(i, 4).myVisible (True): Itemctl(i, 4).SetControlTipText (intMonsterM) Else Itemctl(i, 4).myVisible (False)
-                If intKamachiM > 0 Then Itemctl(i, 5).myVisible (True): Itemctl(i, 5).SetControlTipText (intKamachiM) Else Itemctl(i, 5).myVisible (False)
+                '1.10.8 Change
+                'If intKamachiM > 0 Then Itemctl(i, 5).myVisible (True): Itemctl(i, 5).SetControlTipText (intKamachiM) Else Itemctl(i, 5).myVisible (False)
+                If intVerticaM > 0 Then Itemctl(i, 5).myVisible (True): Itemctl(i, 5).SetControlTipText (intVerticaM) Else Itemctl(i, 5).myVisible (False)
+                '1.10.8 Change End
                 
                 If intShitajiM > 0 Then Itemctl(i, 1).myVisible (True): Itemctl(i, 1).SetControlTipText ("下地数"): Itemctl(i, 1).CaptionSet (CStr(intShitajiM)): Itemctl(i, 1).SetWidth (240)
                 If intStealthM > 0 Then Itemctl(i, 4).myVisible (True): Itemctl(i, 4).SetControlTipText ("ステルス数"): Itemctl(i, 4).CaptionSet (CStr(intStealthM)): Itemctl(i, 4).SetWidth (240)
@@ -563,8 +597,10 @@ Public Function SetBikouData() As Boolean
 '   :戻り値
 '       True            :成功
 '       False           :失敗
-'1.10.7 K.Asayama ADD 201512**
+'1.10.7 K.Asayama ADD 20160108
 '       →作成したWK_札データから備考ファイルを作成する
+'1.10.8 K.Asayama Change 201501**
+'       →バグ修正 Firstだとうまくデータが出ないのでMaxに変更
 '--------------------------------------------------------------------------------------------------------------------
     Dim objLOCALDB As New cls_LOCALDB
     
@@ -578,13 +614,22 @@ Public Function SetBikouData() As Boolean
     strSQL = ""
     
     strSQL = strSQL & "select 契約番号,棟番号,部屋番号"
-    strSQL = strSQL & ",First(IIf([製造区分] = 1,[備考],Null)) as Flush備考 "
-    strSQL = strSQL & ",First(IIf([製造区分] = 2,[備考],Null)) as F框備考 "
-    strSQL = strSQL & ",First(IIf([製造区分] = 3,[備考],Null)) as 框備考 "
-    strSQL = strSQL & ",First(IIf([製造区分] = 4,[備考],Null)) as 枠備考 "
-    strSQL = strSQL & ",First(IIf([製造区分] = 5,[備考],Null)) as 三方枠備考 "
-    strSQL = strSQL & ",First(IIf([製造区分] = 6,[備考],Null)) as 下地備考 "
-    strSQL = strSQL & ",First(IIf([製造区分] = 7,[備考],Null)) as ステルス枠備考 "
+'1.10.8 Change
+'    strSQL = strSQL & ",First(IIf([製造区分] = 1,[備考],Null)) as Flush備考 "
+'    strSQL = strSQL & ",First(IIf([製造区分] = 2,[備考],Null)) as F框備考 "
+'    strSQL = strSQL & ",First(IIf([製造区分] = 3,[備考],Null)) as 框備考 "
+'    strSQL = strSQL & ",First(IIf([製造区分] = 4,[備考],Null)) as 枠備考 "
+'    strSQL = strSQL & ",First(IIf([製造区分] = 5,[備考],Null)) as 三方枠備考 "
+'    strSQL = strSQL & ",First(IIf([製造区分] = 6,[備考],Null)) as 下地備考 "
+'    strSQL = strSQL & ",First(IIf([製造区分] = 7,[備考],Null)) as ステルス枠備考 "
+    strSQL = strSQL & ",Max(IIf([製造区分] = 1,[備考],Null)) as Flush備考 "
+    strSQL = strSQL & ",Max(IIf([製造区分] = 2,[備考],Null)) as F框備考 "
+    strSQL = strSQL & ",Max(IIf([製造区分] = 3,[備考],Null)) as 框備考 "
+    strSQL = strSQL & ",Max(IIf([製造区分] = 4,[備考],Null)) as 枠備考 "
+    strSQL = strSQL & ",Max(IIf([製造区分] = 5,[備考],Null)) as 三方枠備考 "
+    strSQL = strSQL & ",Max(IIf([製造区分] = 6,[備考],Null)) as 下地備考 "
+    strSQL = strSQL & ",Max(IIf([製造区分] = 7,[備考],Null)) as ステルス枠備考 "
+'1.10.8 Change End
     strSQL = strSQL & "from WK_札データ "
     strSQL = strSQL & "where 備考 is not null "
     strSQL = strSQL & "group by 契約番号,棟番号,部屋番号 "
@@ -647,7 +692,7 @@ Public Function varNullChk(in_Data As Variant, in_DBType As Integer) As Variant
 '   :戻り値
 '       Variant　   引数がNullの場合は文字列[Null]、それ以外はそのまま(日付、文字列は加工する）
 '
-'1.10.7 K.Asayama ADD 201512**
+'1.10.7 K.Asayama ADD 20160108
 '
 '--------------------------------------------------------------------------------------------------------------------
 
