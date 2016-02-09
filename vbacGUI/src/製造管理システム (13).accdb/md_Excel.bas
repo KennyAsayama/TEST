@@ -1,4 +1,3 @@
-Attribute VB_Name = "md_Excel"
 Option Compare Database
 
 Sub exp_EXCEL(strSQL As String, Optional boolFilter As Boolean, Optional strMIDASHI As String)
@@ -11,6 +10,7 @@ Sub exp_EXCEL(strSQL As String, Optional boolFilter As Boolean, Optional strMIDA
 '       boolFilter      Trueの場合は開始行にオートフィルタを掛ける
 '       strMIDASHI      Trueの場合は1行目に見出しを表示する
 
+'   1.10.9 K.Asayama Bug Fix
 '--------------------------------------------------------------------------------------------------------------------
 '
 
@@ -89,12 +89,14 @@ Sub exp_EXCEL(strSQL As String, Optional boolFilter As Boolean, Optional strMIDA
     
             .cells(j + 1, 1).CopyFromRecordset rsADO
             
-            .Range(.cells(j + 1, 1), .cells(.cells(j + 1, 1).End(xlDown).Row, i)).Borders(xlEdgeLeft).LineStyle = xlContinuous
-            .Range(.cells(j + 1, 1), .cells(.cells(j + 1, 1).End(xlDown).Row, i)).Borders(xlEdgeTop).LineStyle = xlContinuous
-            .Range(.cells(j + 1, 1), .cells(.cells(j + 1, 1).End(xlDown).Row, i)).Borders(xlEdgeBottom).LineStyle = xlContinuous
-            .Range(.cells(j + 1, 1), .cells(.cells(j + 1, 1).End(xlDown).Row, i)).Borders(xlEdgeRight).LineStyle = xlContinuous
-            .Range(.cells(j + 1, 1), .cells(.cells(j + 1, 1).End(xlDown).Row, i)).Borders(xlInsideVertical).LineStyle = xlContinuous
-            .Range(.cells(j + 1, 1), .cells(.cells(j + 1, 1).End(xlDown).Row, i)).Borders(xlInsideHorizontal).LineStyle = xlContinuous
+            '1.10.9 K.Asayama Change Bug Fix
+            .Range(.cells(j, 1), .cells(.cells(j, 1).End(xlDown).Row, i)).Borders(xlEdgeLeft).LineStyle = xlContinuous
+            .Range(.cells(j, 1), .cells(.cells(j, 1).End(xlDown).Row, i)).Borders(xlEdgeTop).LineStyle = xlContinuous
+            .Range(.cells(j, 1), .cells(.cells(j, 1).End(xlDown).Row, i)).Borders(xlEdgeBottom).LineStyle = xlContinuous
+            .Range(.cells(j, 1), .cells(.cells(j, 1).End(xlDown).Row, i)).Borders(xlEdgeRight).LineStyle = xlContinuous
+            .Range(.cells(j, 1), .cells(.cells(j, 1).End(xlDown).Row, i)).Borders(xlInsideVertical).LineStyle = xlContinuous
+            .Range(.cells(j, 1), .cells(.cells(j, 1).End(xlDown).Row, i)).Borders(xlInsideHorizontal).LineStyle = xlContinuous
+            '1.10.9 K.Asayama Change End
             
             .PageSetup.CenterFooter = "&P / &N ページ"
             .PageSetup.PrintTitleRows = "$" & j & ":$" & j
@@ -265,4 +267,3 @@ Exit_exp_EXCEL_LOCAL:
     Set objApp = Nothing
     
 End Sub
-

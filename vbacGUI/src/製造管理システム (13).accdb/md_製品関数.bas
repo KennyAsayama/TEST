@@ -335,11 +335,27 @@ Public Function IsKamachi(in_strHinban As Variant) As Boolean
 '
 '    Input項目
 '       in_strHinban        建具品番
-
+'
+'   1.10.9 201602** K.Asayama ADD
+'           →框条件作成
 '   *************************************************************
-
+    
     IsKamachi = False
     
+    '1.10.9 ADD
+    On Error GoTo Err_IsKamachi
+    
+    If IsNull(in_strHinban) Then Exit Function
+    
+    If in_strHinban Like "??R*-####*-*" Or in_strHinban Like "特 ??R*-####*-*" Then
+        IsKamachi = True
+    End If
+    
+    Exit Function
+    
+Err_IsKamachi:
+    IsKamachi = False
+    '1.10.9 ADD END
 End Function
 
 Public Function IsThruGlass(in_strHinban As Variant) As Boolean
@@ -1070,12 +1086,14 @@ Public Function IsStealth_Seizo_TEMP(in_strHinban As Variant) As Boolean
 '    Input項目
 '       in_strHinban        下地品番
 
+'1.10.9 K.Asayama
+'       →特注開閉様式DVはインセット下地
 '   *************************************************************
     '
     IsStealth_Seizo_TEMP = False
     
     If (in_strHinban Like "*SG*-####*" Or in_strHinban Like "*NG*-####*" Or in_strHinban Like "*AG*-####*" Or in_strHinban Like "*BG*-####*") _
-        And Not in_strHinban Like "*ML-####*" And Not in_strHinban Like "*MK-####*" And Not in_strHinban Like "*MT-####*" And Not in_strHinban Like "*DU-####*" And Not in_strHinban Like "*DN-####*" And Not in_strHinban Like "*CTSG*MK-####*" And Not in_strHinban Like "*CTSG*ML-####*" And Not in_strHinban Like "*CTSG*MT-####*" And Not in_strHinban Like "*KU-####*" And Not in_strHinban Like "*KN-####*" Then
+        And Not in_strHinban Like "*ML-####*" And Not in_strHinban Like "*MK-####*" And Not in_strHinban Like "*MT-####*" And Not in_strHinban Like "*DU-####*" And Not in_strHinban Like "*DN-####*" And Not in_strHinban Like "*CTSG*MK-####*" And Not in_strHinban Like "*CTSG*ML-####*" And Not in_strHinban Like "*CTSG*MT-####*" And Not in_strHinban Like "*KU-####*" And Not in_strHinban Like "*KN-####*" And Not in_strHinban Like "*DV-####*" Then
         IsStealth_Seizo_TEMP = True
     End If
     
@@ -1209,7 +1227,7 @@ Public Function fncvalDoorColor(inHinban As String) As Variant
 '   *************************************************************
 '   色確認
 '   品番から色を返す。返せない場合は空欄を返す（Nullではない）
-'   '1.10.7 ADD by Asayama 201512**
+'   '1.10.7 ADD by Asayama 20160108
 '   戻り値:Boolean
 '       →True              REALART
 '       →False             REALART以外

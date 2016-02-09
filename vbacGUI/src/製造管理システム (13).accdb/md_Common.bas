@@ -535,14 +535,14 @@ Public Function bolfncinputDate(ByVal in_MidashiText As String, ByRef out_Date A
 '                           :日付入力済み（True）/キャンセル（False）
 '--------------------------------------------------------------------------------------------------------------------
 Dim objLOCALDB As New cls_LOCALDB
-Dim strErrmsg As String
+Dim strErrMsg As String
 
 On Error GoTo Err_bolfncinputDate
 
 out_Date = Null
 
-If Not objLOCALDB.ExecSQL("delete from WK_対象日付", strErrmsg) Then
-    Err.Raise 9999, , strErrmsg
+If Not objLOCALDB.ExecSQL("delete from WK_対象日付", strErrMsg) Then
+    Err.Raise 9999, , strErrMsg
 End If
 
 DoCmd.OpenForm "F_汎用日付入力", acNormal, , , , acDialog, in_MidashiText
@@ -571,3 +571,38 @@ Exit_bolfncinputDate:
     Set objLOCALDB = Nothing
     
 End Function
+
+Public Sub subAllbutton_noPrintable(ByVal in_FormName As String)
+'--------------------------------------------------------------------------------------------------------------------
+'
+'   フォームのボタンの印刷不可
+'
+'   :引数
+'       in_FormName         :フォーム名
+'
+'1.10.9 K.Asayama ADD
+'--------------------------------------------------------------------------------------------------------------------
+    Dim ctl As Access.Control
+    Dim i As Byte
+    i = 0
+    
+    On Error GoTo Err_subAllbutton_noPrintable
+    
+    'このフォーム内のすべてのコントロールを検索
+    For Each ctl In Forms(in_FormName).Controls
+        With ctl
+            If .ControlType = acCommandButton Then
+                   
+                ctl.DisplayWhen = 2
+
+            End If
+        End With
+    Next ctl
+        
+    GoTo Exit_subAllbutton_noPrintable
+    
+Err_subAllbutton_noPrintable:
+
+Exit_subAllbutton_noPrintable:
+    Set ctl = Nothing
+End Sub
