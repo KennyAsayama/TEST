@@ -21,6 +21,8 @@ Public Function SetOrderData(ByVal inDate As Date, ByVal inDateKbn As Byte, inSe
 '       → inDateが[9999/12/30]の時は日付は関係なく未確定のデータを出力（製造日ベース）
 '1.10.8 K.Asayama ADD 20160114
 '       →ヴェルチカ分割
+'1.10.10 K.Asayama Change 20160212
+'       →物入れ引き違い片側ミラーオプション追加
 '--------------------------------------------------------------------------------------------------------------------
     Dim objREMOTEDB As New cls_BRAND_MASTER
     Dim objLOCALDB As New cls_LOCALDB
@@ -214,7 +216,10 @@ Public Function SetOrderData(ByVal inDate As Date, ByVal inDateKbn As Byte, inSe
                         
                         If .GetRS![製造区分] >= 1 And .GetRS![製造区分] <= 3 Then
                             If IsThruGlass(.GetRS![登録時品番]) Then
-                                objLOCALDB.GetRS![スルーガラス数] = .GetRS![Flush数]
+                                '1.10.10 K.Asayama Change
+                                'objLOCALDB.GetRS![スルーガラス数] = .GetRS![Flush数]
+                                objLOCALDB.GetRS![スルーガラス数] = fncIntHalfGlassMirror_Maisu(.GetRS![登録時品番], .GetRS![Flush数])
+                                '1.10.10 K.Asayama Change End
                             Else
                                 objLOCALDB.GetRS![スルーガラス数] = 0
                             End If
@@ -343,6 +348,8 @@ Public Function SetOrderCount(ByVal inDateKbn As Byte, ByRef Captionctl() As cls
 '       1.10.8 K.Asayama
 '                       →框用ラベルをヴェルチカ用ラベルに変更
 '                       →グラフラベルの数量（Caption）のControlTipText対応
+'       1.10.10 K.Asayama Change 20160212
+'                       →物入れ引き違い片側ミラーオプション追加
 '--------------------------------------------------------------------------------------------------------------------
     Dim objREMOTEDB As New cls_BRAND_MASTER
     Dim strSQL_C As String
@@ -458,7 +465,10 @@ Public Function SetOrderCount(ByVal inDateKbn As Byte, ByRef Captionctl() As cls
                             Case 1, 2, 3
                                 If .GetRS("製造区分") = 2 Then intFkamachiM = intFkamachiM + .GetRS("枚数")
                                 If .GetRS("製造区分") = 3 Then intKamachiM = intKamachiM + .GetRS("枚数")
-                                If IsThruGlass(.GetRS("登録時品番")) Then intThruM = intThruM + .GetRS("枚数")
+                                '1.10.10 K.Asayama Change
+                                'If IsThruGlass(.GetRS("登録時品番")) Then intThruM = intThruM + .GetRS("枚数")
+                                If IsThruGlass(.GetRS("登録時品番")) Then intThruM = intThruM + fncIntHalfGlassMirror_Maisu(.GetRS("登録時品番"), .GetRS("枚数"))
+                                '1.10.10 K.Asayama Change End
                                 If IsPainted(.GetRS("登録時品番")) Then intPaintM = intPaintM + .GetRS("枚数")
                                 If IsAir(.GetRS("登録時品番")) Then intAirM = intAirM + .GetRS("枚数")
                                 If IsMonster(.GetRS("登録時品番")) Then intMonsterM = intMonsterM + .GetRS("枚数")
@@ -599,7 +609,7 @@ Public Function SetBikouData() As Boolean
 '       False           :失敗
 '1.10.7 K.Asayama ADD 20160108
 '       →作成したWK_札データから備考ファイルを作成する
-'1.10.8 K.Asayama Change 201501**
+'1.10.8 K.Asayama Change 20160114
 '       →バグ修正 Firstだとうまくデータが出ないのでMaxに変更
 '--------------------------------------------------------------------------------------------------------------------
     Dim objLOCALDB As New cls_LOCALDB

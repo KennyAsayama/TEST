@@ -1271,3 +1271,36 @@ Err_fncvalDoorColor:
 Exit_fncvalDoorColor:
     
 End Function
+
+Public Function fncIntHalfGlassMirror_Maisu(in_strHinban As Variant, in_Maisu As Integer) As Integer
+'   *************************************************************
+'   複数枚で片側のみガラス・ミラーの品番確認し、ガラス枚数を返す
+'   サブフォームの条件付書式からの呼び出しで消去した際不要な呼び出しが発生するのでエラーロジックを追加
+'1.10.10 ADD by Asayama
+'   戻り値:Boolean
+'       →True              片側ミラー
+'       →False             ミラー無し又は両側ミラー
+'
+'    Input項目
+'       in_strHinban        建具品番
+'        in_Maisu 建具枚数
+'   *************************************************************
+    On Error GoTo Err_fncIntHalfGlassMirror_Maisu
+    
+    fncIntHalfGlassMirror_Maisu = in_Maisu
+    
+    If IsNull(in_strHinban) Then Exit Function
+    
+    '2で割り切れない場合そのまま返す
+    If in_Maisu Mod 2 <> 0 Then Exit Function
+    
+    If in_strHinban Like "*ME-####MR*-*" Or in_strHinban Like "*ME-####ML*-*" Then
+        
+        fncIntHalfGlassMirror_Maisu = in_Maisu / 2
+    End If
+    
+    Exit Function
+    
+Err_fncIntHalfGlassMirror_Maisu:
+    fncIntHalfGlassMirror_Maisu = in_Maisu
+End Function
