@@ -659,10 +659,14 @@ Public Function intfncSeizoNissu_FromSyukkaBi(in_varHinban As Variant, in_intDef
 '    Input項目
 '       in_strHinban        建具品番
 '       in_intDefaultDays   標準品(CUBE等所要日数）
+
+'   1.10.11 K.Asayama Chenge
+'           →パリオ、リアラートを+9から+11へ
+'           →クロゼットをデフォルト日付へ
 '   *************************************************************
 
     If Not in_varHinban Like "*-####*-*" Then
-        intfncSeizoNissu_FromSyukkaBi = in_intDefaultDays + 13
+        intfncSeizoNissu_FromSyukkaBi = in_intDefaultDays + 11
         Exit Function
     End If
     
@@ -673,15 +677,15 @@ Public Function intfncSeizoNissu_FromSyukkaBi(in_varHinban As Variant, in_intDef
     'ｸﾛｾﾞｯﾄ(Flushより先に記載する)
     ElseIf in_varHinban Like "F*CME-####*-*" Then
     
-        intfncSeizoNissu_FromSyukkaBi = in_intDefaultDays + 7
+        intfncSeizoNissu_FromSyukkaBi = in_intDefaultDays
     'ｸﾛｾﾞｯﾄ(SINAより先に記載する)
     ElseIf in_varHinban Like "T*CME-####*-*" Then
     
-        intfncSeizoNissu_FromSyukkaBi = in_intDefaultDays + 7
+        intfncSeizoNissu_FromSyukkaBi = in_intDefaultDays
     'ｸﾛｾﾞｯﾄ
     ElseIf in_varHinban Like "P*CSA-####*-*" Then
     
-        intfncSeizoNissu_FromSyukkaBi = in_intDefaultDays + 7
+        intfncSeizoNissu_FromSyukkaBi = in_intDefaultDays
     'Flush
     ElseIf in_varHinban Like "F*-####*-*" Then
     
@@ -709,18 +713,18 @@ Public Function intfncSeizoNissu_FromSyukkaBi(in_varHinban As Variant, in_intDef
     'PALIO
     ElseIf IsPALIO(in_varHinban) Then
     
-        intfncSeizoNissu_FromSyukkaBi = in_intDefaultDays + 9
+        intfncSeizoNissu_FromSyukkaBi = in_intDefaultDays + 11
     'REALART
     ElseIf IsREALART(in_varHinban) Then
         If IsPainted(in_varHinban) Then
-            intfncSeizoNissu_FromSyukkaBi = in_intDefaultDays + 9
+            intfncSeizoNissu_FromSyukkaBi = in_intDefaultDays + 11
         Else
             intfncSeizoNissu_FromSyukkaBi = in_intDefaultDays
         End If
         
     Else
     
-        intfncSeizoNissu_FromSyukkaBi = in_intDefaultDays + 9
+        intfncSeizoNissu_FromSyukkaBi = in_intDefaultDays + 11
     
     End If
     

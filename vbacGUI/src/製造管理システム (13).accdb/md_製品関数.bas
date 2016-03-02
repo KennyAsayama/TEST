@@ -313,6 +313,8 @@ Public Function IsFkamachi(in_strHinban As Variant) As Boolean
 '    Input項目
 '       in_strHinban        建具品番
 
+'   1.10.11 20160302 K.Asayama ADD
+'           →エスパスライドウォール追加
 '   *************************************************************
     
     IsFkamachi = False
@@ -320,6 +322,11 @@ Public Function IsFkamachi(in_strHinban As Variant) As Boolean
     If IsNull(in_strHinban) Then Exit Function
        
     If in_strHinban Like "*-####G*-*" Or in_strHinban Like "*-####MF*-*" Or in_strHinban Like "*O*-####P*-*" Then
+        IsFkamachi = True
+    End If
+    
+    '1.10.11 ADD エスパスライドウォール
+    If in_strHinban Like "*PSW*-####FV*-*" Then
         IsFkamachi = True
     End If
     
@@ -338,6 +345,8 @@ Public Function IsKamachi(in_strHinban As Variant) As Boolean
 '
 '   1.10.9 201602** K.Asayama ADD
 '           →框条件作成
+'   1.10.11 20160302 K.Asayama ADD
+'           →エスパリアラート除外
 '   *************************************************************
     
     IsKamachi = False
@@ -348,7 +357,13 @@ Public Function IsKamachi(in_strHinban As Variant) As Boolean
     If IsNull(in_strHinban) Then Exit Function
     
     If in_strHinban Like "??R*-####*-*" Or in_strHinban Like "特 ??R*-####*-*" Then
-        IsKamachi = True
+        '1.10.11 Change
+            'IsKamachi = True
+            If Not in_strHinban Like "HER*-####*-*" And Not in_strHinban Like "特 HER*-####*-*" Then
+            
+                IsKamachi = True
+            End If
+        '1.10.11 Change END
     End If
     
     Exit Function
@@ -1017,6 +1032,8 @@ Public Function IsPainted(in_strHinban As Variant) As Boolean
 '    Input項目
 '       in_strHinban        建具品番
 
+'   1.10.11 K.Asayama ADD
+'           →エスパのリアラートは塗装
 '   *************************************************************
     On Error GoTo Err_IsPainted
     
@@ -1034,6 +1051,11 @@ Public Function IsPainted(in_strHinban As Variant) As Boolean
         IsPainted = True
     Else
         IsPainted = False
+    End If
+    
+    '1.10.11 ADD
+    If in_strHinban Like "*HER*-####*-*" Then
+        IsPainted = True
     End If
     
     Exit Function
