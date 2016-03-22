@@ -315,6 +315,8 @@ Public Function IsFkamachi(in_strHinban As Variant) As Boolean
 
 '   1.10.11 20160302 K.Asayama ADD
 '           →エスパスライドウォール追加
+'   1.10.12 20170322 K.Asayama Change
+'           →AF1～AF3（カロ）追加
 '   *************************************************************
     
     IsFkamachi = False
@@ -323,6 +325,11 @@ Public Function IsFkamachi(in_strHinban As Variant) As Boolean
        
     If in_strHinban Like "*-####G*-*" Or in_strHinban Like "*-####MF*-*" Or in_strHinban Like "*O*-####P*-*" Then
         IsFkamachi = True
+       
+    'Caro
+    ElseIf in_strHinban Like "F?B??*-####A*-*" Or in_strHinban Like "F?B??*-####B*-*" Or in_strHinban Like "F?B??*-####O*-*" Then
+         IsFkamachi = True
+    
     End If
     
     '1.10.11 ADD エスパスライドウォール
@@ -384,7 +391,9 @@ Public Function IsThruGlass(in_strHinban As Variant) As Boolean
 '
 '    Input項目
 '       in_strHinban        建具品番
-
+'
+'   1.10.12 20170322 K.Asayama Change
+'           →AF1～AF3を除外（F框へ)
 '   *************************************************************
     On Error GoTo Err_IsThruGlass
     
@@ -393,7 +402,7 @@ Public Function IsThruGlass(in_strHinban As Variant) As Boolean
     If IsNull(in_strHinban) Then Exit Function
      
     If in_strHinban Like "*-####S*-*" Or in_strHinban Like "*-####C*-*" Or in_strHinban Like "*-####D*-*" _
-        Or in_strHinban Like "*-####A*-*" Or in_strHinban Like "*-####B*-*" Or in_strHinban Like "*-####O*-*" _
+        Or in_strHinban Like "F?C??*-####A*-*" Or in_strHinban Like "F?C??*-####B*-*" Or in_strHinban Like "F?C??*-####O*-*" _
         Or in_strHinban Like "*ME-####M*-*" Or in_strHinban Like "*SA-####M*-*" Or IsVertica(in_strHinban) Then
         
         IsThruGlass = True
