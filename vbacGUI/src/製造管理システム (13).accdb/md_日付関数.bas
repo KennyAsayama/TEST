@@ -485,9 +485,14 @@ Public Function fncbolSyukkaBiFromAddress(in_varAddress As Variant, in_varNouhin
 '       False           :庢摼幐攕
 '
 '   1.10.8 K.Asayama Change 20160114
-'           仺杒奀摴丄壂撽偺
+'           仺杒奀摴丄壂撽偺擔掱捛壛
+'   1.10.13 K.Asayama Change 20170329
+'           仺儌僕儏乕儖傪SQLServer懁偵堏摦
 '--------------------------------------------------------------------------------------------------------------------
-    Dim objLOCALDB As New cls_LOCALDB
+    '1.10.13
+    Dim objREMOTEDB As New cls_BRAND_MASTER
+    
+    'Dim objLOCALDB As New cls_LOCALDB
     Dim intMinusDays As Integer
     Dim datTMPSyukkaBi As Date
     Dim datTMPKeisan As Date
@@ -502,93 +507,118 @@ Public Function fncbolSyukkaBiFromAddress(in_varAddress As Variant, in_varNouhin
     If IsNull(in_varAddress) Then
         Exit Function
     End If
-   
-    '埲壓偵奩摉偡傞搒摴晎導偺応崌偼2擔
-    If in_varAddress Like "惵怷導*" Or in_varAddress Like "娾庤導*" Or in_varAddress Like "廐揷導*" Or _
-        in_varAddress Like "媨忛導*" Or in_varAddress Like "暉搰導*" Or in_varAddress Like "嶳宍導*" Or _
-        in_varAddress Like "嶰廳導*" Or in_varAddress Like "暫屔導*" Or in_varAddress Like "榓壧嶳導*" Or _
-        in_varAddress Like "搰崻導*" Or in_varAddress Like "捁庢導*" Or in_varAddress Like "嶳岥導*" Or _
-        in_varAddress Like "峀搰導*" Or in_varAddress Like "壀嶳導*" Or in_varAddress Like "崄愳導*" Or _
-        in_varAddress Like "垽昋導*" Or in_varAddress Like "摽搰導*" Or in_varAddress Like "崅抦導*" Or _
-        in_varAddress Like "暉壀導*" Or in_varAddress Like "戝暘導*" Or in_varAddress Like "嵅夑導*" Or _
-        in_varAddress Like "挿嶈導*" Or in_varAddress Like "媨嶈導*" Or in_varAddress Like "孎杮導*" Or _
-        in_varAddress Like "幁帣搰導*" _
-    Then
-       
-        intMinusDays = 2
-            
-    '1.10.8 ADD
-    ElseIf in_varAddress Like "杒奀摴*" Then
-        intMinusDays = 3
-        
-    ElseIf in_varAddress Like "壂撽導*" Then
-        intMinusDays = 7
-    '1.10.8 ADD End
-    Else
+
+'1.10.13 201603**
+
+'    '埲壓偵奩摉偡傞搒摴晎導偺応崌偼2擔
+'    If in_varAddress Like "惵怷導*" Or in_varAddress Like "娾庤導*" Or in_varAddress Like "廐揷導*" Or _
+'        in_varAddress Like "媨忛導*" Or in_varAddress Like "暉搰導*" Or in_varAddress Like "嶳宍導*" Or _
+'        in_varAddress Like "嶰廳導*" Or in_varAddress Like "暫屔導*" Or in_varAddress Like "榓壧嶳導*" Or _
+'        in_varAddress Like "搰崻導*" Or in_varAddress Like "捁庢導*" Or in_varAddress Like "嶳岥導*" Or _
+'        in_varAddress Like "峀搰導*" Or in_varAddress Like "壀嶳導*" Or in_varAddress Like "崄愳導*" Or _
+'        in_varAddress Like "垽昋導*" Or in_varAddress Like "摽搰導*" Or in_varAddress Like "崅抦導*" Or _
+'        in_varAddress Like "暉壀導*" Or in_varAddress Like "戝暘導*" Or in_varAddress Like "嵅夑導*" Or _
+'        in_varAddress Like "挿嶈導*" Or in_varAddress Like "媨嶈導*" Or in_varAddress Like "孎杮導*" Or _
+'        in_varAddress Like "幁帣搰導*" _
+'    Then
+'
+'        intMinusDays = 2
+'
+'    '1.10.8 ADD
+'    ElseIf in_varAddress Like "杒奀摴*" Then
+'        intMinusDays = 3
+'
+'    ElseIf in_varAddress Like "壂撽導*" Then
+'        intMinusDays = 7
+'    '1.10.8 ADD End
+'    Else
+'
+'            intMinusDays = 1
+'    End If
+'
+'    '夋柺昞帵梡
+'    out_MinusDay = intMinusDays
+'
+'    '------------------------------------------------------------
+'    '弌壸擔偲擺昳擔偺娫偵擔丄廽偑娷傑傟偰偄傞応崌偼偦偺擔悢傪壛嶼
+'    '乮搚梛偼攝憲擔偵娷傑傟傞乯
+'    datTMPKeisan = in_varNouhinBi
+'
+'    i = intMinusDays
+'
+'    While i <> 0
+'        '廽擔丄擔梛偩偭偨応崌偼1擔壛嶼
+'        If ktHolidayName(datTMPKeisan) <> "" Or Weekday(datTMPKeisan, vbSunday) = 1 Then '廽擔枖偼擔梛
+'            intMinusDays = intMinusDays + 1
+'        Else
+'            i = i - 1
+'
+'        End If
+'
+'        '擔晅偐傜1堷偔
+'        datTMPKeisan = DateDiff("d", 1, datTMPKeisan)
+'    Wend
+'    '------------------------------------------------------------
+'
+'    '弌壸擔庢摼
+'    datTMPSyukkaBi = DateDiff("d", intMinusDays, in_varNouhinBi)
+'
+'    '弌壸擔偑搚擔廽偱側偄偐僠僃僢僋乮塩嬈偺搚梛擔偱傕弌壸偼偟側偄乯
+'    Do
+'        If ktHolidayName(datTMPSyukkaBi) = "" Then '廽擔偱側偄
+'            If Weekday(datTMPSyukkaBi, vbSunday) = 1 Or Weekday(datTMPSyukkaBi, vbSunday) = 7 Then '擔偐搚
+'
+'            Else    '暯擔
+'                Exit Do
+'            End If
+'        End If
+'
+'        datTMPSyukkaBi = DateDiff("d", 1, datTMPSyukkaBi)
+'
+'    Loop
+'
+'    '夛幮偑媥擔偺応崌偼慜塩嬈擔傪曉偡
+'    strSQL = ""
+'    strSQL = strSQL & "select 媥擔 from WK_Calendar_嬈柋 "
+'    strSQL = strSQL & "where 媥擔 =< #" & datTMPSyukkaBi & "# "
+'    strSQL = strSQL & "order by 媥擔 desc "
+'
+'    If objLOCALDB.ExecSelect(strSQL) Then
+'        Do While Not objLOCALDB.GetRS.EOF
+'            If datTMPSyukkaBi <> objLOCALDB.GetRS![媥擔] Then
+'                Exit Do
+'            End If
+'
+'            datTMPSyukkaBi = DateDiff("d", 1, datTMPSyukkaBi)
+'            objLOCALDB.GetRS.MoveNext
+'
+'        Loop
+'    End If
+
     
-            intMinusDays = 1
-    End If
-    
-    '夋柺昞帵梡
-    out_MinusDay = intMinusDays
-    
-    '------------------------------------------------------------
-    '弌壸擔偲擺昳擔偺娫偵擔丄廽偑娷傑傟偰偄傞応崌偼偦偺擔悢傪壛嶼
-    '乮搚梛偼攝憲擔偵娷傑傟傞乯
-    datTMPKeisan = in_varNouhinBi
-        
-    i = intMinusDays
-    
-    While i <> 0
-        '廽擔丄擔梛偩偭偨応崌偼1擔壛嶼
-        If ktHolidayName(datTMPKeisan) <> "" Or Weekday(datTMPKeisan, vbSunday) = 1 Then '廽擔枖偼擔梛
-            intMinusDays = intMinusDays + 1
-        Else
-            i = i - 1
-            
-        End If
-        
-        '擔晅偐傜1堷偔
-        datTMPKeisan = DateDiff("d", 1, datTMPKeisan)
-    Wend
-    '------------------------------------------------------------
-    
-    '弌壸擔庢摼
-    datTMPSyukkaBi = DateDiff("d", intMinusDays, in_varNouhinBi)
-    
-    '弌壸擔偑搚擔廽偱側偄偐僠僃僢僋乮塩嬈偺搚梛擔偱傕弌壸偼偟側偄乯
-    Do
-        If ktHolidayName(datTMPSyukkaBi) = "" Then '廽擔偱側偄
-            If Weekday(datTMPSyukkaBi, vbSunday) = 1 Or Weekday(datTMPSyukkaBi, vbSunday) = 7 Then '擔偐搚
-                
-            Else    '暯擔
-                Exit Do
-            End If
-        End If
-        
-        datTMPSyukkaBi = DateDiff("d", 1, datTMPSyukkaBi)
-        
-    Loop
-    
-    '夛幮偑媥擔偺応崌偼慜塩嬈擔傪曉偡
     strSQL = ""
-    strSQL = strSQL & "select 媥擔 from WK_Calendar_嬈柋 "
-    strSQL = strSQL & "where 媥擔 =< #" & datTMPSyukkaBi & "# "
-    strSQL = strSQL & "order by 媥擔 desc "
-    
-    If objLOCALDB.ExecSelect(strSQL) Then
-        Do While Not objLOCALDB.GetRS.EOF
-            If datTMPSyukkaBi <> objLOCALDB.GetRS![媥擔] Then
-                Exit Do
-            End If
-            
-            datTMPSyukkaBi = DateDiff("d", 1, datTMPSyukkaBi)
-            objLOCALDB.GetRS.MoveNext
-            
-        Loop
+    strSQL = strSQL & "select dbo.fnc弌壸強梫擔悢庢摼('" & in_varAddress & "' ) AS 弌壸強梫擔悢 "
+    If IsDate(in_varNouhinBi) Then
+        strSQL = strSQL & ",dbo.fnc弌壸擔庢摼('" & in_varAddress & "','" & Format(in_varNouhinBi, "yyyy-mm-dd") & "') AS 弌壸擔 "
+    Else
+        strSQL = strSQL & ",Null AS 弌壸擔 "
     End If
     
-    out_SyukkaBi = datTMPSyukkaBi
+    If objREMOTEDB.ExecSelect(strSQL) Then
+        If Not objREMOTEDB.GetRS.EOF Then
+            out_MinusDay = objREMOTEDB.GetRS("弌壸強梫擔悢")
+            out_SyukkaBi = objREMOTEDB.GetRS("弌壸擔")
+        Else
+            out_MinusDay = 0
+            out_SyukkaBi = Null
+        End If
+    Else
+        out_MinusDay = 0
+        out_SyukkaBi = Null
+
+    End If
+    
+    
     fncbolSyukkaBiFromAddress = True
     
     GoTo Exit_fncbolSyukkaBiFromAddress
@@ -596,7 +626,8 @@ Public Function fncbolSyukkaBiFromAddress(in_varAddress As Variant, in_varNouhin
 Err_fncbolSyukkaBiFromAddress:
 
 Exit_fncbolSyukkaBiFromAddress:
-    Set objLOCALDB = Nothing
+    'Set objLOCALDB = Nothing
+    Set objREMOTEDB = Nothing
 End Function
 
 Public Function IsHoliday(ByVal in_Date As String) As Boolean
@@ -644,7 +675,7 @@ Exit_IsHoliday:
     Set objLOCALDB = Nothing
 End Function
 
-Public Function intfncSeizoNissu_FromSyukkaBi(in_varHinban As Variant, in_intDefaultDays As Integer) As Integer
+Public Function intfncSeizoNissu_FromSyukkaBi(in_varHinban As Variant, in_Kubun As Integer) As Integer
 '   *************************************************************
 '   寶嬶惢憿強梫擔悢妋擣乮弌壸擔傛傝媡嶼乯
 '   弌壸擔傛傝惢憿壜擻擔傪寁嶼偡傞
@@ -663,69 +694,190 @@ Public Function intfncSeizoNissu_FromSyukkaBi(in_varHinban As Variant, in_intDef
 '   1.10.11 K.Asayama Chenge
 '           仺僷儕僆丄儕傾儔乕僩傪+9偐傜+11傊
 '           仺僋儘僛僢僩傪僨僼僅儖僩擔晅傊
+'   1.10.13 K.Asayama Change
+'           仺儌僕儏乕儖傪SQLServer懁偵堏摦
+'           仺堷悢曄峏丂in_intDefaultDays仺in_Kubun乮惢憿嬫暘乯
 '   *************************************************************
 
-    If Not in_varHinban Like "*-####*-*" Then
-        intfncSeizoNissu_FromSyukkaBi = in_intDefaultDays + 11
+    Dim objREMOTEDB As New cls_BRAND_MASTER
+    
+    Dim strSQL As String
+    
+    intfncSeizoNissu_FromSyukkaBi = 0
+    
+    On Error GoTo Err_intfncSeizoNissu_FromSyukkaBi
+    
+    If IsNull(in_varHinban) Or in_Kubun = 0 Then
         Exit Function
     End If
     
-    'Caro(Flush傛傝愭偵婰嵹偡傞)
-    If isCaro(in_varHinban) Then
+    strSQL = ""
+    strSQL = strSQL & "select dbo.fncSeizoNissu_FromSyukkaBi('" & in_varHinban & "'," & in_Kubun & ") AS 惢憿擔悢 "
     
-        intfncSeizoNissu_FromSyukkaBi = in_intDefaultDays + 7
-    '港巨(Flush傛傝愭偵婰嵹偡傞)
-    ElseIf in_varHinban Like "F*CME-####*-*" Then
-    
-        intfncSeizoNissu_FromSyukkaBi = in_intDefaultDays
-    '港巨(SINA傛傝愭偵婰嵹偡傞)
-    ElseIf in_varHinban Like "T*CME-####*-*" Then
-    
-        intfncSeizoNissu_FromSyukkaBi = in_intDefaultDays
-    '港巨
-    ElseIf in_varHinban Like "P*CSA-####*-*" Then
-    
-        intfncSeizoNissu_FromSyukkaBi = in_intDefaultDays
-    'Flush
-    ElseIf in_varHinban Like "F*-####*-*" Then
-    
-        intfncSeizoNissu_FromSyukkaBi = in_intDefaultDays
-    'F/S
-    ElseIf in_varHinban Like "S*-####*-*" Then
-    
-        intfncSeizoNissu_FromSyukkaBi = in_intDefaultDays
-    'LUCENTE
-    ElseIf in_varHinban Like "P*-####*-*" Then
-    
-        intfncSeizoNissu_FromSyukkaBi = in_intDefaultDays + 7
-    'SINA
-    ElseIf in_varHinban Like "T*-####*-*" Then
-    
-        intfncSeizoNissu_FromSyukkaBi = in_intDefaultDays + 7
-    'Air
-    ElseIf IsAir(in_varHinban) Then
-    
-        intfncSeizoNissu_FromSyukkaBi = in_intDefaultDays + 7
-    'MONSTER
-    ElseIf IsMonster(in_varHinban) Then
-    
-        intfncSeizoNissu_FromSyukkaBi = in_intDefaultDays + 7
-    'PALIO
-    ElseIf IsPALIO(in_varHinban) Then
-    
-        intfncSeizoNissu_FromSyukkaBi = in_intDefaultDays + 11
-    'REALART
-    ElseIf IsREALART(in_varHinban) Then
-        If IsPainted(in_varHinban) Then
-            intfncSeizoNissu_FromSyukkaBi = in_intDefaultDays + 11
-        Else
-            intfncSeizoNissu_FromSyukkaBi = in_intDefaultDays
+    If objREMOTEDB.ExecSelect(strSQL) Then
+        If Not objREMOTEDB.GetRS.EOF Then
+            intfncSeizoNissu_FromSyukkaBi = objREMOTEDB.GetRS("惢憿擔悢")
         End If
-        
-    Else
-    
-        intfncSeizoNissu_FromSyukkaBi = in_intDefaultDays + 11
-    
     End If
+    
+    GoTo Exit_intfncSeizoNissu_FromSyukkaBi
+    
+Err_intfncSeizoNissu_FromSyukkaBi:
+    MsgBox Err.Description
+    intfncSeizoNissu_FromSyukkaBi = 0
+    
+Exit_intfncSeizoNissu_FromSyukkaBi:
+    Set objREMOTEDB = Nothing
+    
+'    If Not in_varHinban Like "*-####*-*" Then
+'        intfncSeizoNissu_FromSyukkaBi = in_intDefaultDays + 11
+'        Exit Function
+'    End If
+'
+'    'Caro(Flush傛傝愭偵婰嵹偡傞)
+'    If isCaro(in_varHinban) Then
+'
+'        intfncSeizoNissu_FromSyukkaBi = in_intDefaultDays + 7
+'    '港巨(Flush傛傝愭偵婰嵹偡傞)
+'    ElseIf in_varHinban Like "F*CME-####*-*" Then
+'
+'        intfncSeizoNissu_FromSyukkaBi = in_intDefaultDays
+'    '港巨(SINA傛傝愭偵婰嵹偡傞)
+'    ElseIf in_varHinban Like "T*CME-####*-*" Then
+'
+'        intfncSeizoNissu_FromSyukkaBi = in_intDefaultDays
+'    '港巨
+'    ElseIf in_varHinban Like "P*CSA-####*-*" Then
+'
+'        intfncSeizoNissu_FromSyukkaBi = in_intDefaultDays
+'    'Flush
+'    ElseIf in_varHinban Like "F*-####*-*" Then
+'
+'        intfncSeizoNissu_FromSyukkaBi = in_intDefaultDays
+'    'F/S
+'    ElseIf in_varHinban Like "S*-####*-*" Then
+'
+'        intfncSeizoNissu_FromSyukkaBi = in_intDefaultDays
+'    'LUCENTE
+'    ElseIf in_varHinban Like "P*-####*-*" Then
+'
+'        intfncSeizoNissu_FromSyukkaBi = in_intDefaultDays + 7
+'    'SINA
+'    ElseIf in_varHinban Like "T*-####*-*" Then
+'
+'        intfncSeizoNissu_FromSyukkaBi = in_intDefaultDays + 7
+'    'Air
+'    ElseIf IsAir(in_varHinban) Then
+'
+'        intfncSeizoNissu_FromSyukkaBi = in_intDefaultDays + 7
+'    'MONSTER
+'    ElseIf IsMonster(in_varHinban) Then
+'
+'        intfncSeizoNissu_FromSyukkaBi = in_intDefaultDays + 7
+'    'PALIO
+'    ElseIf IsPALIO(in_varHinban) Then
+'
+'        intfncSeizoNissu_FromSyukkaBi = in_intDefaultDays + 11
+'    'REALART
+'    ElseIf IsREALART(in_varHinban) Then
+'        If IsPainted(in_varHinban) Then
+'            intfncSeizoNissu_FromSyukkaBi = in_intDefaultDays + 11
+'        Else
+'            intfncSeizoNissu_FromSyukkaBi = in_intDefaultDays
+'        End If
+'
+'    Else
+'
+'        intfncSeizoNissu_FromSyukkaBi = in_intDefaultDays + 11
+'
+'    End If
+    
+End Function
+
+Public Function datGetShukkaBi(in_KeiyakuNo As Variant, in_TouNo As Variant, in_HeyaNo As Variant, in_intKubun As Integer) As Variant
+'   *************************************************************
+'   宊栺斣崋枅偺嵟彫弌壸擔庢摼
+'
+'   1.10.13 ADD
+'
+'   栠傝抣:Variant(Date)
+'          仺  弌壸擔乮庢摼偱偒側偐偭偨応崌偼Null乯
+'
+'    Input崁栚
+'       in_KeiyakuNo        宊栺斣崋
+'       in_TouNo            搹斣崋
+'       in_HeyaNo           晹壆斣崋
+'       in_intKubun         惢憿嬫暘
+
+'   *************************************************************
+
+    Dim objREMOTEDB As New cls_BRAND_MASTER
+    
+    Dim strSQL As String
+    Dim intKubun As Integer
+    Dim intNoukiKubun As Integer
+    
+    datGetShukkaBi = Null
+    
+    On Error GoTo Err_datGetShukkaBi
+    
+    If IsNull(in_KeiyakuNo) Or IsNull(in_TouNo) Or IsNull(in_HeyaNo) Or in_intKubun = 0 Then
+        Exit Function
+    End If
+        
+    Select Case in_intKubun
+        Case 1, 2, 3
+            intKubun = 1
+            intNoukiKubun = 1
+        Case 4
+            intKubun = 2
+            intNoukiKubun = 2
+        Case 5
+            intKubun = 2
+            intNoukiKubun = 5
+        Case 6, 7
+            intKubun = 3
+            intNoukiKubun = 3
+    End Select
+    
+    '弌壸擔偑婰嵹嵪傒偺応崌偼弌壸擔丄偦偆偱側偄応崌偼擺婜偐傜寁嶼偟偨弌壸擔傪憓擖
+    
+    strSQL = ""
+    strSQL = strSQL & "select "
+    strSQL = strSQL & "Format(Min(dbo.fncSeizoSyukkaDate(J.宊栺斣崋,J.搹斣崋,J.晹壆斣崋,J.崁," & intNoukiKubun & ")),'yyyy-MM-dd') AS 弌壸擔 "
+    strSQL = strSQL & ",Format(min(dbo.fnc弌壸擔庢摼(dbo.fncNohinAddress_DefaultGenba(J.宊栺斣崋,J.搹斣崋,J.晹壆斣崋,J.崁," & intNoukiKubun & ")"
+    strSQL = strSQL & ",(dbo.fncSeizoNohinDate(J.宊栺斣崋,J.搹斣崋,J.晹壆斣崋,J.崁," & intKubun & ")))),'yyyy-MM-dd') AS 寁嶼弌壸擔 "
+    strSQL = strSQL & "from T_庴拲柧嵶 J "
+    strSQL = strSQL & "left join T_惢憿巜帵 S "
+    strSQL = strSQL & "on J.宊栺斣崋 = S.宊栺斣崋 and J.搹斣崋 = S.搹斣崋 and J.晹壆斣崋 = S.晹壆斣崋 and J.崁 = S.崁 "
+    strSQL = strSQL & "where J.宊栺斣崋 = '" & in_KeiyakuNo & "' and J.搹斣崋 = '" & in_TouNo & "' and J.晹壆斣崋 = '" & in_HeyaNo & "' "
+    strSQL = strSQL & "and S.惢憿嬫暘 = " & in_intKubun & " "
+    strSQL = strSQL & "and (S.妋掕 = 0 or S.妋掕 is Null) "
+    strSQL = strSQL & "and J.庬椶 = '弌擖岥' "
+        
+    If intKubun = 1 Then
+        strSQL = strSQL & "and J.岺応CD = 1 "
+    End If
+    
+    
+    If objREMOTEDB.ExecSelect(strSQL) Then
+        If Not objREMOTEDB.GetRS.EOF Then
+            If Not IsNull(objREMOTEDB.GetRS("弌壸擔")) Then
+                datGetShukkaBi = CDate(objREMOTEDB.GetRS("弌壸擔"))
+            ElseIf Not IsNull(objREMOTEDB.GetRS("寁嶼弌壸擔")) Then
+                datGetShukkaBi = CDate(objREMOTEDB.GetRS("寁嶼弌壸擔"))
+            End If
+        End If
+    End If
+    
+    
+    GoTo Exit_datGetShukkaBi
+    
+Err_datGetShukkaBi:
+    datGetShukkaBi = Null
+    
+Exit_datGetShukkaBi:
+
+    Set objREMOTEDB = Nothing
     
 End Function

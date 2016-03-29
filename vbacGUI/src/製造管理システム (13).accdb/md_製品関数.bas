@@ -1119,9 +1119,17 @@ Public Function IsStealth_Seizo_TEMP(in_strHinban As Variant) As Boolean
 
 '1.10.9 K.Asayama
 '       →特注開閉様式DVはインセット下地
+'1.10.13 K.Asayama
+'       →エスパ下地品番はインセット下地
 '   *************************************************************
     '
     IsStealth_Seizo_TEMP = False
+    
+    '1.10.13
+    If in_strHinban Like "*PW*-####*" Then
+        IsStealth_Seizo_TEMP = False
+        Exit Function
+    End If
     
     If (in_strHinban Like "*SG*-####*" Or in_strHinban Like "*NG*-####*" Or in_strHinban Like "*AG*-####*" Or in_strHinban Like "*BG*-####*") _
         And Not in_strHinban Like "*ML-####*" And Not in_strHinban Like "*MK-####*" And Not in_strHinban Like "*MT-####*" And Not in_strHinban Like "*DU-####*" And Not in_strHinban Like "*DN-####*" And Not in_strHinban Like "*CTSG*MK-####*" And Not in_strHinban Like "*CTSG*ML-####*" And Not in_strHinban Like "*CTSG*MT-####*" And Not in_strHinban Like "*KU-####*" And Not in_strHinban Like "*KN-####*" And Not in_strHinban Like "*DV-####*" Then
@@ -1259,12 +1267,11 @@ Public Function fncvalDoorColor(inHinban As String) As Variant
 '   色確認
 '   品番から色を返す。返せない場合は空欄を返す（Nullではない）
 '   '1.10.7 ADD by Asayama 20160108
-'   戻り値:Boolean
-'       →True              REALART
-'       →False             REALART以外
+'   戻り値:Variant
+'       →色コード（色コードが無い場合は空欄、エラーの場合はNull）
 '
 '    Input項目
-'       in_strHinban        建具品番
+'       inHinban            建具品番
 
 '   *************************************************************
     Dim i As Integer
@@ -1308,9 +1315,8 @@ Public Function fncIntHalfGlassMirror_Maisu(in_strHinban As Variant, in_Maisu As
 '   複数枚で片側のみガラス・ミラーの品番確認し、ガラス枚数を返す
 '   サブフォームの条件付書式からの呼び出しで消去した際不要な呼び出しが発生するのでエラーロジックを追加
 '1.10.10 ADD by Asayama
-'   戻り値:Boolean
-'       →True              片側ミラー
-'       →False             ミラー無し又は両側ミラー
+'   戻り値:Integer
+'       →ガラス扉枚数
 '
 '    Input項目
 '       in_strHinban        建具品番
