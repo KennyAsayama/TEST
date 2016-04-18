@@ -23,6 +23,8 @@ Public Function SetOrderData(ByVal inDate As Date, ByVal inDateKbn As Byte, inSe
 '       →ヴェルチカ分割
 '1.10.10 K.Asayama Change 20160212
 '       →物入れ引き違い片側ミラーオプション追加
+'1.10.14 K.Asayama Change 20160418
+'       →バグ修正計算出荷日がNullで戻った場合の対応
 '--------------------------------------------------------------------------------------------------------------------
     Dim objREMOTEDB As New cls_BRAND_MASTER
     Dim objLOCALDB As New cls_LOCALDB
@@ -174,7 +176,10 @@ Public Function SetOrderData(ByVal inDate As Date, ByVal inDateKbn As Byte, inSe
                         If IsNull(.GetRS![出荷日]) Then
                             objLOCALDB.GetRS![出荷日登録] = False
                             If fncbolSyukkaBiFromAddress(.GetRS![納品住所], .GetRS![確定日], varCalcShukkaBi, intMinusDays) Then
-                                objLOCALDB.GetRS![出荷日] = CDate(varCalcShukkaBi)
+                                '1.10.14
+                                If Not IsNull(varCalcShukkaBi) Then
+                                    objLOCALDB.GetRS![出荷日] = CDate(varCalcShukkaBi)
+                                End If
                             Else
                                 objLOCALDB.GetRS![出荷日] = .GetRS![出荷日]
                             End If

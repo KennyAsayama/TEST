@@ -607,7 +607,12 @@ Public Function fncbolSyukkaBiFromAddress(in_varAddress As Variant, in_varNouhin
     If objREMOTEDB.ExecSelect(strSQL) Then
         If Not objREMOTEDB.GetRS.EOF Then
             out_MinusDay = objREMOTEDB.GetRS("出荷所要日数")
-            out_SyukkaBi = objREMOTEDB.GetRS("出荷日")
+            '1.10.14 ローカル日付型式に変換
+            If IsNull(objREMOTEDB.GetRS("出荷日")) Then
+                out_SyukkaBi = Null
+            Else
+                out_SyukkaBi = CDate(objREMOTEDB.GetRS("出荷日"))
+            End If
         Else
             out_MinusDay = 0
             out_SyukkaBi = Null

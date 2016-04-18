@@ -1,4 +1,3 @@
-Attribute VB_Name = "md_WinAPI"
 Option Compare Database
 Option Explicit
 'Ver1.01.1 20150910 K.Asayama ADD
@@ -82,3 +81,26 @@ Public Declare Function GetDeviceCaps Lib "gdi32" (ByVal hDC As Long, ByVal nInd
 Public Declare Function GetDC Lib "user32" (ByVal hwnd As Long) As Long
 Public Declare Function ReleaseDC Lib "user32" (ByVal hwnd As Long, ByVal hDC As Long) As Long
 
+'   *************************************************************
+'   スクリーンショット用キー受信API
+'
+'
+'1.10.14 K.Asayama ADD
+'   *************************************************************
+'64bit版
+#If VBA7 Then
+Public Declare PtrSafe Sub keybd_event Lib "user32" ( _
+    ByVal bVk As Byte, _
+    ByVal bScan As Byte, _
+    ByVal dwFlags As Long, _
+    ByVal dwExtraInfo As Long _
+        )
+#Else
+'32bit版
+Public Declare Sub keybd_event Lib "user32" ( _
+    ByVal bVk As Byte, _
+    ByVal bScan As Byte, _
+    ByVal dwFlags As Long, _
+    ByVal dwExtraInfo As Long _
+        )
+#End If

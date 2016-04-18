@@ -606,3 +606,30 @@ Err_subAllbutton_noPrintable:
 Exit_subAllbutton_noPrintable:
     Set ctl = Nothing
 End Sub
+
+Public Sub subScreenShot_AllArea()
+'--------------------------------------------------------------------------------------------------------------------
+'
+'   全スクリーンのスクリーンショット取得
+'
+'
+'1.10.14 K.Asayama ADD
+'--------------------------------------------------------------------------------------------------------------------
+    keybd_event vbKeySnapshot, 0&, &H1, 0&
+    keybd_event vbKeySnapshot, 0&, &H1 Or &H2, 0&
+    
+End Sub
+
+Public Sub subScreenShot_ActiveArea()
+'--------------------------------------------------------------------------------------------------------------------
+'
+'   アクティブスクリーンのスクリーンショット取得
+'
+'
+'1.10.14 K.Asayama ADD
+'--------------------------------------------------------------------------------------------------------------------
+    keybd_event &HA4, 0&, &H1, 0&
+    keybd_event vbKeySnapshot, 0&, &H1, 0&
+    keybd_event vbKeySnapshot, 0&, &H1 Or &H2, 0&
+    keybd_event &HA4, 0&, &H1 Or &H2, 0&
+End Sub

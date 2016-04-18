@@ -1,6 +1,6 @@
 Option Compare Database
 
-Sub exp_EXCEL(strSQL As String, Optional boolFilter As Boolean, Optional strMIDASHI As String)
+Public Sub exp_EXCEL(strSQL As String, Optional boolFilter As Boolean, Optional strMIDASHI As String)
 '--------------------------------------------------------------------------------------------------------------------
 'EXCELエクスポート
 '   →InputのSQLをエクセルの新規ブックに出力する
@@ -11,6 +11,7 @@ Sub exp_EXCEL(strSQL As String, Optional boolFilter As Boolean, Optional strMIDA
 '       strMIDASHI      Trueの場合は1行目に見出しを表示する
 
 '   1.10.9 K.Asayama Bug Fix
+'   1.10.14 K.Asayama スクリーンショット貼り付け用サブルーチン追加
 '--------------------------------------------------------------------------------------------------------------------
 '
 
@@ -136,7 +137,7 @@ Exit_exp_EXCEL:
 End Sub
 
 
-Sub exp_EXCEL_LOCAL(strSQL As String, Optional boolFilter As Boolean, Optional strMIDASHI As String)
+Public Sub exp_EXCEL_LOCAL(strSQL As String, Optional boolFilter As Boolean, Optional strMIDASHI As String)
 '--------------------------------------------------------------------------------------------------------------------
 'EXCELエクスポート
 '   →InputのSQLをエクセルの新規ブックに出力する（ローカルDB専用)
@@ -266,4 +267,37 @@ Exit_exp_EXCEL_LOCAL:
     Set rsADO = Nothing
     Set objApp = Nothing
     
+End Sub
+
+Public Sub sub_ClipBord_Paste_to_Excel()
+'--------------------------------------------------------------------------------------------------------------------
+'EXCELエクスポート（クリップボード）
+'   →Excelの新規Bookを開いてクリップボードをPaste
+'
+'1.10.14 ADD
+'--------------------------------------------------------------------------------------------------------------------
+    Dim objApp As Object 'Excel
+    
+    Set objApp = CreateObject("Excel.Application")
+    
+    On Error GoTo Err_sub_ClipBord_Paste_to_Excel
+    
+    objApp.Visible = False
+    objApp.workbooks.Add
+    
+    objApp.ActiveSheet.Paste
+    objApp.CutCopyMode = False
+    
+    objApp.Visible = True
+    
+    GoTo Exit_sub_ClipBord_Paste_to_Excel
+    
+Err_sub_ClipBord_Paste_to_Excel:
+    MsgBox Err.Number & " " & Err.Description
+    
+    On Error Resume Next
+    objApp.ActiveWorkBook.Close savechanges:=False
+    
+Exit_sub_ClipBord_Paste_to_Excel:
+    Set objApp = Nothing
 End Sub
