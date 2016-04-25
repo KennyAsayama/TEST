@@ -633,3 +633,58 @@ Public Sub subScreenShot_ActiveArea()
     keybd_event vbKeySnapshot, 0&, &H1 Or &H2, 0&
     keybd_event &HA4, 0&, &H1 Or &H2, 0&
 End Sub
+
+Public Function bolfncinputDate_FromTo(ByVal in_MidashiText As String, ByVal in_DateDetail As String, ByRef out_DateFrom As Variant, ByRef out_DateTo As Variant) As Boolean
+'--------------------------------------------------------------------------------------------------------------------
+'
+'   汎用日付入力フォーム(FromTo)表示
+'
+'   :引数
+'       in_MidashiText      :見出し名（8文字くらいが適当）
+'       in_DateDetail       :日付詳細（製造日、納品日等画面表示用）
+'       out_DateFrom        :入力日付(From)
+'       out_DateTo          :入力日付(To)
+'
+'   :戻り値
+'                           :日付入力済み（True）/キャンセル（False）
+'1.10.15 ADD
+'--------------------------------------------------------------------------------------------------------------------
+Dim objLOCALDB As New cls_LOCALDB
+Dim strErrMsg As String
+
+On Error GoTo Err_bolfncinputDate_FromTo
+
+out_DateFrom = Null
+out_DateTo = Null
+
+If Not objLOCALDB.ExecSQL("delete from WK_対象日付", strErrMsg) Then
+    Err.Raise 9999, , strErrMsg
+End If
+
+DoCmd.OpenForm "F_汎用日付入力_FromTo", acNormal, , , , acDialog, in_MidashiText & vbTab & in_DateDetail
+
+If Not objLOCALDB.ExecSelect("select date1,date2 from WK_対象日付") Then
+    Err.Raise 9999, , "日付読み込みエラー"
+Else
+    If Not objLOCALDB.GetRS.EOF Then
+        out_DateFrom = objLOCALDB.GetRS!Date1
+        out_DateTo = objLOCALDB.GetRS!Date2
+    End If
+End If
+
+If IsNull(out_DateFrom) Or IsNull(out_DateTo) Then
+    Err.Raise 9998, , "日付の入力がキャンセルされました"
+End If
+
+bolfncinputDate_FromTo = True
+
+GoTo Exit_bolfncinputDate_FromTo
+
+Err_bolfncinputDate_FromTo:
+    bolfncinputDate_FromTo = False
+    MsgBox Err.Description
+    
+Exit_bolfncinputDate_FromTo:
+    Set objLOCALDB = Nothing
+    
+End Function

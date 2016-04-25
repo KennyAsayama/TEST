@@ -1,4 +1,5 @@
 Option Compare Database
+Option Explicit '1.10.15 ADD
 
 Public Sub exp_EXCEL(strSQL As String, Optional boolFilter As Boolean, Optional strMIDASHI As String)
 '--------------------------------------------------------------------------------------------------------------------
@@ -18,6 +19,8 @@ Public Sub exp_EXCEL(strSQL As String, Optional boolFilter As Boolean, Optional 
     Dim objREMOTEDB As New cls_BRAND_MASTER
     
     Dim objApp As Object 'Excel
+    
+    Dim rsADO As New ADODB.Recordset '1.10.15
     
     Dim xlsBookName As String
     
@@ -87,7 +90,12 @@ Public Sub exp_EXCEL(strSQL As String, Optional boolFilter As Boolean, Optional 
                 .cells(j, i + 1).Borders(xlEdgeRight).LineStyle = xlContinuous
                 .cells(j, i + 1).Borders(xlEdgeLeft).LineStyle = xlContinuous
             Next i
-    
+            
+            '1.10.15 見出しマージ
+            If j = 2 Then
+                .Range(.cells(1, 1), .cells(1, i)).Merge
+            End If
+            
             .cells(j + 1, 1).CopyFromRecordset rsADO
             
             '1.10.9 K.Asayama Change Bug Fix
@@ -112,6 +120,10 @@ Public Sub exp_EXCEL(strSQL As String, Optional boolFilter As Boolean, Optional 
         End If
         
         objApp.cells.EntireColumn.AutoFit   'セル自動調整
+        
+    '1.10.15
+    Else
+        Err.Raise 9999, , "SQL実行エラー SQLを確認してください"
         
     End If
     
@@ -151,6 +163,8 @@ Public Sub exp_EXCEL_LOCAL(strSQL As String, Optional boolFilter As Boolean, Opt
 '
 
     Dim objLOCALDB As New cls_LOCALDB
+    
+    Dim rsADO As New ADODB.Recordset '1.10.15
     
     Dim objApp As Object 'Excel
     

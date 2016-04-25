@@ -856,7 +856,9 @@ Public Function datGetShukkaBi(in_KeiyakuNo As Variant, in_TouNo As Variant, in_
     strSQL = strSQL & "left join T_»‘¢w¦ S "
     strSQL = strSQL & "on J.Œ_–ñ”Ô† = S.Œ_–ñ”Ô† and J.“”Ô† = S.“”Ô† and J.•”‰®”Ô† = S.•”‰®”Ô† and J.€ = S.€ "
     strSQL = strSQL & "where J.Œ_–ñ”Ô† = '" & in_KeiyakuNo & "' and J.“”Ô† = '" & in_TouNo & "' and J.•”‰®”Ô† = '" & in_HeyaNo & "' "
-    strSQL = strSQL & "and S.»‘¢‹æ•ª = " & in_intKubun & " "
+    '1.10.15
+    'strSQL = strSQL & "and S.»‘¢‹æ•ª = " & in_intKubun & " "
+    strSQL = strSQL & "and (S.»‘¢‹æ•ª = " & in_intKubun & " or S.»‘¢‹æ•ª is null) "
     strSQL = strSQL & "and (S.Šm’è = 0 or S.Šm’è is Null) "
     strSQL = strSQL & "and J.í—Ş = 'o“üŒû' "
         
