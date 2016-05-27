@@ -814,6 +814,8 @@ Public Function datGetShukkaBi(in_KeiyakuNo As Variant, in_TouNo As Variant, in_
 '       in_HeyaNo           部屋番号
 '       in_intKubun         製造区分
 
+'1.10.16 K.Asayama ADD
+'   →集計方法変更(BugFix)
 '   *************************************************************
 
     Dim objREMOTEDB As New cls_BRAND_MASTER
@@ -853,17 +855,24 @@ Public Function datGetShukkaBi(in_KeiyakuNo As Variant, in_TouNo As Variant, in_
     strSQL = strSQL & ",Format(min(dbo.fnc出荷日取得(dbo.fncNohinAddress_DefaultGenba(J.契約番号,J.棟番号,J.部屋番号,J.項," & intNoukiKubun & ")"
     strSQL = strSQL & ",(dbo.fncSeizoNohinDate(J.契約番号,J.棟番号,J.部屋番号,J.項," & intKubun & ")))),'yyyy-MM-dd') AS 計算出荷日 "
     strSQL = strSQL & "from T_受注明細 J "
-    strSQL = strSQL & "left join T_製造指示 S "
+    '1.10.16 Change
+    'strSQL = strSQL & "left join T_製造指示 S "
+    strSQL = strSQL & "left join (select * from T_製造指示 where 製造区分 = " & in_intKubun & ") S "
     strSQL = strSQL & "on J.契約番号 = S.契約番号 and J.棟番号 = S.棟番号 and J.部屋番号 = S.部屋番号 and J.項 = S.項 "
     strSQL = strSQL & "where J.契約番号 = '" & in_KeiyakuNo & "' and J.棟番号 = '" & in_TouNo & "' and J.部屋番号 = '" & in_HeyaNo & "' "
     '1.10.15
     'strSQL = strSQL & "and S.製造区分 = " & in_intKubun & " "
-    strSQL = strSQL & "and (S.製造区分 = " & in_intKubun & " or S.製造区分 is null) "
+    '1.10.16 DEL
+    'strSQL = strSQL & "and (S.製造区分 = " & in_intKubun & " or S.製造区分 is null) "
     strSQL = strSQL & "and (S.確定 = 0 or S.確定 is Null) "
-    strSQL = strSQL & "and J.種類 = '出入口' "
-        
+    '1.10.16
+    'strSQL = strSQL & "and J.種類 = '出入口' "
+    strSQL = strSQL & "and (J.種類 = '出入口' or J.種類 = 'ｸﾛｾﾞｯﾄ') "
+    
     If intKubun = 1 Then
+        
         strSQL = strSQL & "and J.工場CD = 1 "
+
     End If
     
     

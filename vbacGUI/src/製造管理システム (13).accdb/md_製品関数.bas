@@ -93,12 +93,19 @@ Public Function IsStealth_Seizo(in_strHinban As Variant) As Boolean
 
 '   *************************************************************
     '20150820現在未使用
+    
     IsStealth_Seizo = False
     
+'    If in_strHinban Like "*PW*-####*" Then 'ウォールスルーはインセット
+'        IsStealth_Seizo = False
+'        Exit Function
+'    End If
+'
 '    If (in_strHinban Like "*SG*-####*" Or in_strHinban Like "*NG*-####*" Or in_strHinban Like "*AG*-####*" Or in_strHinban Like "*BG*-####*") _
-'        And Not in_strHinban Like "*ML-####*" And Not in_strHinban Like "*MK-####*"  And Not in_strHinban Like "*MT-####*" And Not in_strHinban Like "*DU-####*" And Not in_strHinban Like "*DN-####*" And Not in_strHinban Like "*CTSG*MK-####*" And Not in_strHinban Like "*CTSG*ML-####*"  And Not in_strHinban Like "*CTSG*MT-####*"  And Not in_strHinban Like "*KU-####*"  And Not in_strHinban Like "*KN-####*" Then
+'        And Not in_strHinban Like "*ML-####*" And Not in_strHinban Like "*MK-####*" And Not in_strHinban Like "*MT-####*" And Not in_strHinban Like "*DU-####*" And Not in_strHinban Like "*DN-####*" And Not in_strHinban Like "*CTSG*MK-####*" And Not in_strHinban Like "*CTSG*ML-####*" And Not in_strHinban Like "*CTSG*MT-####*" And Not in_strHinban Like "*KU-####*" And Not in_strHinban Like "*KN-####*" And Not in_strHinban Like "*DV-####*" Then
 '        IsStealth_Seizo = True
 '    End If
+    
     
 End Function
 Public Function intFncSeizokubun(in_strShurui As String, in_varHinban As Variant) As Integer
@@ -1340,4 +1347,100 @@ Public Function fncIntHalfGlassMirror_Maisu(in_strHinban As Variant, in_Maisu As
     
 Err_fncIntHalfGlassMirror_Maisu:
     fncIntHalfGlassMirror_Maisu = in_Maisu
+End Function
+
+Public Function IsGranArt(in_strHinban As Variant) As Boolean
+'   *************************************************************
+'   グランアート確認
+'   サブフォームの条件付書式からの呼び出しで消去した際不要な呼び出しが発生するのでエラーロジックを追加
+'   '1.10.16 ADD
+'
+'   戻り値:Boolean
+'       →True              グランアート
+'       →False             グランアート以外
+'
+'    Input項目
+'       in_strHinban        建具品番
+
+'   *************************************************************
+    On Error GoTo Err_IsGranArt
+    
+    IsGranArt = False
+    
+    If IsNull(in_strHinban) Then Exit Function
+    
+    If in_strHinban Like "G*-####*-*" Or in_strHinban Like "特 G*-####*-*" Then
+        IsGranArt = True
+    Else
+        IsGranArt = False
+    End If
+    
+    Exit Function
+    
+Err_IsGranArt:
+    IsGranArt = False
+    
+End Function
+Public Function IsInset(in_strWakuHinban As Variant) As Boolean
+'   *************************************************************
+'   インセット枠確認
+'   '1.10.16 ADD
+'
+'   戻り値:Boolean
+'       →True              インセット枠
+'       →False             インセット枠以外
+'
+'    Input項目
+'       in_strHinban        枠品番
+
+'   *************************************************************
+    On Error GoTo Err_IsInset
+    
+    IsInset = False
+
+    If in_strWakuHinban Like "K###*-####*" Or in_strWakuHinban Like "特 K###*-####*" Then
+        IsInset = True
+    End If
+    
+    Exit Function
+
+Err_IsInset:
+    IsInset = False
+End Function
+Public Function IsHirakido(in_strHinban As Variant) As Boolean
+'   *************************************************************
+'   開き戸確認（親子含む）
+'   '1.10.16 ADD
+'
+'   戻り値:Boolean
+'       →True              開き戸
+'       →False             開き戸以外
+'
+'    Input項目
+'       in_strHinban        建具（枠、下地）品番
+
+'   *************************************************************
+    
+    On Error GoTo Err_IsHirakido
+    
+    If in_strHinban Like "*CA-####*" Or in_strHinban Like "*CAS-####*" _
+        Or in_strHinban Like "*DA-####*" Or in_strHinban Like "*DAS-####*" _
+        Or in_strHinban Like "*PA-####*" Or in_strHinban Like "*PAS-####*" _
+        Or in_strHinban Like "*KA-####*" Or in_strHinban Like "*KAS-####*" _
+        Or in_strHinban Like "*DO-####*" Or in_strHinban Like "*DOS-####*" _
+        Or in_strHinban Like "*DK-####*" Or in_strHinban Like "*DKS-####*" _
+    Then
+        
+        IsHirakido = True
+        
+    Else
+    
+        IsHirakido = False
+        
+    End If
+    
+    Exit Function
+    
+Err_IsHirakido:
+    IsHirakido = False
 End Function

@@ -25,6 +25,8 @@ Public Function SetOrderData(ByVal inDate As Date, ByVal inDateKbn As Byte, inSe
 '       →物入れ引き違い片側ミラーオプション追加
 '1.10.14 K.Asayama Change 20160418
 '       →バグ修正計算出荷日がNullで戻った場合の対応
+'1.10.16 K.Asayama Change
+'       →下地、ステルス分割
 '--------------------------------------------------------------------------------------------------------------------
     Dim objREMOTEDB As New cls_BRAND_MASTER
     Dim objLOCALDB As New cls_LOCALDB
@@ -54,8 +56,13 @@ Public Function SetOrderData(ByVal inDate As Date, ByVal inDateKbn As Byte, inSe
             strKubun = "1,2,3"
         Case "枠"
             strKubun = "4,5"
+        '1.10.16 Change
+'        Case "下地"
+'            strKubun = "6,7"
         Case "下地"
-            strKubun = "6,7"
+            strKubun = "6"
+        Case "ステルス"
+            strKubun = "7"
         Case Else
             Err.Raise 9999, , "製造区分転送エラー"
     End Select
@@ -208,12 +215,16 @@ Public Function SetOrderData(ByVal inDate As Date, ByVal inDateKbn As Byte, inSe
                         objLOCALDB.GetRS![框数] = .GetRS![框数]
                         objLOCALDB.GetRS![枠数] = .GetRS![枠数]
                         objLOCALDB.GetRS![三方枠数] = .GetRS![三方枠数]
-                        'objLOCALDB.GetRS![下地枠数] = .GetRS![下地枠数]
-                        'objLOCALDB.GetRS![ステルス枠数] = .GetRS![ステルス枠数]
-                        
+                                                
                         If IsStealth_Seizo_TEMP(Nz(.GetRS![登録時品番], "nz")) Then
                             objLOCALDB.GetRS![下地枠数] = 0
-                            objLOCALDB.GetRS![ステルス枠数] = .GetRS![下地枠数]
+                            '1.10.16 change
+                            'objLOCALDB.GetRS![ステルス枠数] = .GetRS![下地枠数]
+                            If .GetRS![製造区分] = 7 Then
+                                objLOCALDB.GetRS![ステルス枠数] = .GetRS![ステルス枠数]
+                            Else
+                                objLOCALDB.GetRS![ステルス枠数] = .GetRS![下地枠数]
+                            End If
                         Else
                             objLOCALDB.GetRS![ステルス枠数] = 0
                             objLOCALDB.GetRS![下地枠数] = .GetRS![下地枠数]
@@ -401,8 +412,13 @@ Public Function SetOrderCount(ByVal inDateKbn As Byte, ByRef Captionctl() As cls
             strKubun = "1,2,3"
         Case 2 'Waku
             strKubun = "4,5"
+        '1.10.16 Change
+'        Case 3 'Shitaji
+'            strKubun = "6,7"
         Case 3 'Shitaji
-            strKubun = "6,7"
+            strKubun = "6"
+        Case 4 'Stealth
+            strKubun = "7"
         Case Else
             strKubun = CStr(in_HinbanKubun)
     End Select
@@ -486,8 +502,10 @@ Public Function SetOrderCount(ByVal inDateKbn As Byte, ByRef Captionctl() As cls
                                 Else
                                     intShitajiM = intShitajiM + .GetRS("枚数")
                                 End If
+                                'intShitajiM = intShitajiM + .GetRS("枚数")
+                            Case 7
+                                intStealthM = intStealthM + .GetRS("枚数")
                                 
-                                    
                         End Select
                     '1.10.7 ADD
                     End If
@@ -579,6 +597,9 @@ Public Function fncbolSetComboKubun(inKubun As String, inCombobox As Access.Comb
 '   :戻り値
 '       True            :成功
 '       False           :失敗
+
+'1.10.16 K.Asayama ADD
+'   →ステルス区分追加
 '--------------------------------------------------------------------------------------------------------------------
     On Error GoTo Err_fncbolSetComboKubun
     
@@ -588,6 +609,8 @@ Public Function fncbolSetComboKubun(inKubun As String, inCombobox As Access.Comb
         inCombobox.AddItem "建具,1", 0
         inCombobox.AddItem "枠,2", 1
         inCombobox.AddItem "下地,3", 2
+        '1.10.16 ADD
+        inCombobox.AddItem "ステルス,4", 3
         inCombobox.value = inCombobox.ItemData(0)
     End If
     
@@ -709,17 +732,19 @@ Public Function varNullChk(in_Data As Variant, in_DBType As Integer) As Variant
 '
 '1.10.7 K.Asayama ADD 20160108
 '
+'1.10.16 Change
+'       →  文字列と日付の精査順入れ替え
+'           文字列でも日付変換可能なものは日付で変換する（SQLServerからダイレクトに列を受け取った場合型を文字列と認識してしまうため）
+'           空欄の文字列はNullとする
 '--------------------------------------------------------------------------------------------------------------------
 
     If IsNull(in_Data) Then
     
         varNullChk = "Null"
-        
-    ElseIf VarType(in_Data) = vbString Then
     
-        varNullChk = "'" & in_Data & "'"
-        
-    ElseIf VarType(in_Data) = vbDate Then
+    '1.10.16
+    'ElseIf VarType(in_Data) = vbDate Then
+    ElseIf VarType(in_Data) = vbDate Or (VarType(in_Data) = vbString And IsDate(in_Data)) Then
         Select Case in_DBType
             Case 1
                 varNullChk = "#" & Format(in_Data, "yyyy/mm/dd") & "#"
@@ -727,6 +752,14 @@ Public Function varNullChk(in_Data As Variant, in_DBType As Integer) As Variant
                 varNullChk = "'" & Format(in_Data, "yyyy/mm/dd") & "'"
         End Select
         
+    ElseIf VarType(in_Data) = vbString Then
+        '1.10.16
+        'varNullChk = "'" & in_Data & "'"
+        If in_Data = "" Then
+            varNullChk = "Null"
+        Else
+            varNullChk = "'" & in_Data & "'"
+        End If
     Else
         varNullChk = in_Data
     End If
