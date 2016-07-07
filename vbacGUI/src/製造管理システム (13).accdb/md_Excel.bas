@@ -236,7 +236,12 @@ Public Sub exp_EXCEL_LOCAL(strSQL As String, Optional boolFilter As Boolean, Opt
                 .cells(j, i + 1).Borders(xlEdgeRight).LineStyle = xlContinuous
                 .cells(j, i + 1).Borders(xlEdgeLeft).LineStyle = xlContinuous
             Next i
-    
+            
+            '1.10.18 見出しマージ
+            If j = 2 Then
+                .Range(.cells(1, 1), .cells(1, i)).Merge
+            End If
+            
             .cells(j + 1, 1).CopyFromRecordset rsADO
             
             .Range(.cells(j + 1, 1), .cells(.cells(j + 1, 1).End(xlDown).Row, i)).Borders(xlEdgeLeft).LineStyle = xlContinuous
@@ -315,3 +320,59 @@ Err_sub_ClipBord_Paste_to_Excel:
 Exit_sub_ClipBord_Paste_to_Excel:
     Set objApp = Nothing
 End Sub
+
+Public Function fncbolFileToExcel(strFileFullpath As String, byteConnectionDB As Byte, Optional boolFilter As Boolean, Optional strMIDASHI As String) As Boolean
+'--------------------------------------------------------------------------------------------------------------------
+'汎用EXCELエクスポート
+'   →ファイル（フルパス）を読み込んでSQLを実行し結果をExcelに転送
+'
+'   :引数
+'       strFileFullpath     ファイル名（フルパス）
+'       byteConnectionDB    0:リモート(SQLSERVER) 1:ローカル:(ACCESS)
+'       boolFilter          Trueの場合は開始行にオートフィルタを掛ける
+'       strMIDASHI          Trueの場合は1行目に見出しを表示する
+'
+'1.10.18 ADD
+'--------------------------------------------------------------------------------------------------------------------
+    
+    Dim strSQL As String
+    
+    On Error GoTo Err_fncbolFileToExcel
+    
+
+    strSQL = ""
+    
+    If Dir(strFileFullpath) <> "" Then
+        With CreateObject("Scripting.FileSystemObject")
+            With .GetFile(strFileFullpath).OpenAsTextStream
+                strSQL = .ReadAll
+                .Close
+            End With
+        End With
+        
+        '改行削除
+        strSQL = Replace(Replace(strSQL, vbCrLf, " "), vbLf, " ")
+
+        Screen.MousePointer = 11
+        
+        If byteConnectionDB = 0 Then
+            exp_EXCEL strSQL, boolFilter, strMIDASHI
+        Else
+            exp_EXCEL_LOCAL strSQL, boolFilter, strMIDASHI
+        End If
+
+    Else
+        Err.Raise 9999, , "SQLファイルが存在しません。管理者に連絡してください"
+    End If
+    
+    fncbolFileToExcel = True
+    
+    GoTo Exit_fncbolFileToExcel
+
+Err_fncbolFileToExcel:
+    Close
+    MsgBox Err.Description
+Exit_fncbolFileToExcel:
+    Screen.MousePointer = 0
+    
+End Function
