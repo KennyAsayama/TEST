@@ -96,7 +96,7 @@ Public Function IsStealth_Seizo(in_strHinban As Variant) As Boolean
     
     IsStealth_Seizo = False
     
-'    If in_strHinban Like "*PW*-####*" Then 'ウォールスルーはインセット
+'    If in_strHinban Like "*PW*-####*" Then 'エスパスライドウォールはインセット
 '        IsStealth_Seizo = False
 '        Exit Function
 '    End If
@@ -322,15 +322,19 @@ Public Function IsFkamachi(in_strHinban As Variant) As Boolean
 
 '   1.10.11 20160302 K.Asayama ADD
 '           →エスパスライドウォール追加
-'   1.10.12 20170322 K.Asayama Change
+'   1.10.12 20160322 K.Asayama Change
 '           →AF1～AF3（カロ）追加
+'   1.10.19 K.Asayama Change
+'           →1608以降のミラーはFlush（スルーガラス）
 '   *************************************************************
     
     IsFkamachi = False
     
     If IsNull(in_strHinban) Then Exit Function
        
-    If in_strHinban Like "*-####G*-*" Or in_strHinban Like "*-####MF*-*" Or in_strHinban Like "*O*-####P*-*" Then
+    '1.10.19
+    'If in_strHinban Like "*-####G*-*" Or in_strHinban Like "*-####MF*-*" Or in_strHinban Like "*O*-####P*-*" Then
+    If in_strHinban Like "*-####G*-*" Or in_strHinban Like "F?B*-####MF*-*" Or in_strHinban Like "特 F?B*-####MF*-*" Or in_strHinban Like "*O*-####P*-*" Then
         IsFkamachi = True
        
     'Caro
@@ -399,8 +403,10 @@ Public Function IsThruGlass(in_strHinban As Variant) As Boolean
 '    Input項目
 '       in_strHinban        建具品番
 '
-'   1.10.12 20170322 K.Asayama Change
+'   1.10.12 20160322 K.Asayama Change
 '           →AF1～AF3を除外（F框へ)
+'   1.10.19 K.Asayama Change
+'           →1608より7型はFlush（ガラス）扱い
 '   *************************************************************
     On Error GoTo Err_IsThruGlass
     
@@ -410,7 +416,7 @@ Public Function IsThruGlass(in_strHinban As Variant) As Boolean
      
     If in_strHinban Like "*-####S*-*" Or in_strHinban Like "*-####C*-*" Or in_strHinban Like "*-####D*-*" _
         Or in_strHinban Like "F?C??*-####A*-*" Or in_strHinban Like "F?C??*-####B*-*" Or in_strHinban Like "F?C??*-####O*-*" _
-        Or in_strHinban Like "*ME-####M*-*" Or in_strHinban Like "*SA-####M*-*" Or IsVertica(in_strHinban) Then
+        Or in_strHinban Like "*ME-####M*-*" Or in_strHinban Like "*SA-####M*-*" Or IsVertica(in_strHinban) Or in_strHinban Like "F?C??*-####MF*-*" Then
         
         IsThruGlass = True
     Else
@@ -763,14 +769,16 @@ Public Function isCaro(in_varHinban As Variant) As Boolean
 '       in_strHinban        建具品番
 
 '   1.10.6 K.Asayama 1610仕様（AF1～AF3）追加
+'   1.10.19 K.Asayama Change
+'           →ワイルドカード誤り訂正(_→?)
 '   *************************************************************
 
     isCaro = False
     
-    If in_varHinban Like "F_C*-####A*-*" Or in_varHinban Like "F_C*-####B*-*" Or in_varHinban Like "F_C*-####O*-*" _
-        Or in_varHinban Like "特 F_C*-####A*-*" Or in_varHinban Like "特 F_C*-####B*-*" Or in_varHinban Like "特 F_C*-####O*-*" _
-            Or in_varHinban Like "F_B*-####A*-*" Or in_varHinban Like "F_B*-####B*-*" Or in_varHinban Like "F_B*-####O*-*" _
-                Or in_varHinban Like "特 F_B*-####A*-*" Or in_varHinban Like "特 F_B*-####B*-*" Or in_varHinban Like "特 F_B*-####O*-*" _
+    If in_varHinban Like "F?C*-####A*-*" Or in_varHinban Like "F?C*-####B*-*" Or in_varHinban Like "F?C*-####O*-*" _
+        Or in_varHinban Like "特 F?C*-####A*-*" Or in_varHinban Like "特 F?C*-####B*-*" Or in_varHinban Like "特 F?C*-####O*-*" _
+            Or in_varHinban Like "F?B*-####A*-*" Or in_varHinban Like "F?B*-####B*-*" Or in_varHinban Like "F?B*-####O*-*" _
+                Or in_varHinban Like "特 F?B*-####A*-*" Or in_varHinban Like "特 F?B*-####B*-*" Or in_varHinban Like "特 F?B*-####O*-*" _
                                                                                                                                         Then
         
         isCaro = True
@@ -1418,7 +1426,8 @@ Public Function IsHirakido(in_strHinban As Variant) As Boolean
 '
 '    Input項目
 '       in_strHinban        建具（枠、下地）品番
-
+'   1.10.19 K.Asayama Change
+'           →隠し丁番親子追加
 '   *************************************************************
     
     On Error GoTo Err_IsHirakido
@@ -1429,6 +1438,8 @@ Public Function IsHirakido(in_strHinban As Variant) As Boolean
         Or in_strHinban Like "*KA-####*" Or in_strHinban Like "*KAS-####*" _
         Or in_strHinban Like "*DO-####*" Or in_strHinban Like "*DOS-####*" _
         Or in_strHinban Like "*DK-####*" Or in_strHinban Like "*DKS-####*" _
+        Or in_strHinban Like "*KO-####*" Or in_strHinban Like "*KOS-####*" _
+        Or in_strHinban Like "*KK-####*" Or in_strHinban Like "*KKS-####*" _
     Then
         
         IsHirakido = True
