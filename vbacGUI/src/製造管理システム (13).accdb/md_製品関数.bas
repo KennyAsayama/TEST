@@ -326,6 +326,8 @@ Public Function IsFkamachi(in_strHinban As Variant) As Boolean
 '           →AF1～AF3（カロ）追加
 '   1.10.19 K.Asayama Change
 '           →1608以降のミラーはFlush（スルーガラス）
+'   1.11.0
+'           →テラスドア追加
 '   *************************************************************
     
     IsFkamachi = False
@@ -341,6 +343,10 @@ Public Function IsFkamachi(in_strHinban As Variant) As Boolean
     ElseIf in_strHinban Like "F?B??*-####A*-*" Or in_strHinban Like "F?B??*-####B*-*" Or in_strHinban Like "F?B??*-####O*-*" Then
          IsFkamachi = True
     
+    'Terrace(YG6型,YG5型)
+    ElseIf in_strHinban Like "Y?B??*-####W*-*" Then
+         IsFkamachi = True
+         
     End If
     
     '1.10.11 ADD エスパスライドウォール
@@ -407,6 +413,8 @@ Public Function IsThruGlass(in_strHinban As Variant) As Boolean
 '           →AF1～AF3を除外（F框へ)
 '   1.10.19 K.Asayama Change
 '           →1608より7型はFlush（ガラス）扱い
+'   1.11.0
+'           →テラスドア(YG6型)
 '   *************************************************************
     On Error GoTo Err_IsThruGlass
     
@@ -419,6 +427,10 @@ Public Function IsThruGlass(in_strHinban As Variant) As Boolean
         Or in_strHinban Like "*ME-####M*-*" Or in_strHinban Like "*SA-####M*-*" Or IsVertica(in_strHinban) Or in_strHinban Like "F?C??*-####MF*-*" Then
         
         IsThruGlass = True
+    'YG6型
+    ElseIf in_strHinban Like "Y*-####T*-*" Then
+        IsThruGlass = True
+        
     Else
         IsThruGlass = False
     End If
@@ -503,7 +515,7 @@ Public Function IsSxL(in_strHinban As Variant, out_strKamiyahinban As Variant) A
 '   *************************************************************
     
     Dim objLOCALDB As New cls_LOCALDB
-    Dim strHinban As String
+    Dim strhinban As String
     Dim bolMentori As Boolean
     
     IsSxL = False
@@ -522,14 +534,14 @@ Public Function IsSxL(in_strHinban As Variant, out_strKamiyahinban As Variant) A
     
     '下地で面取り記号がある場合は外す
     If in_strHinban Like "*①?②?③?④*" Then
-        strHinban = left(in_strHinban, Len(in_strHinban) - 10)
+        strhinban = left(in_strHinban, Len(in_strHinban) - 10)
         bolMentori = True
     Else
-        strHinban = in_strHinban
+        strhinban = in_strHinban
         bolMentori = False
     End If
     '1.10.3 K.Asayama 20151119 SxL品番読替表ローカルテーブル名変更
-    If objLOCALDB.ExecSelect("select ブランド品番 from WK_SxL品番読替表 where S×L品番 = '" & Trim(strHinban) & "'") Then
+    If objLOCALDB.ExecSelect("select ブランド品番 from WK_SxL品番読替表 where S×L品番 = '" & Trim(strhinban) & "'") Then
         If Not objLOCALDB.GetRS.EOF Then
             out_strKamiyahinban = objLOCALDB.GetRS![ブランド品番]
             If bolMentori Then
@@ -864,6 +876,10 @@ Public Function strfncSyobunrui_Kamui(in_strDaibunrui_Kamui As String, in_varHin
 '    Input項目
 '       in_strDaibunrui_Kamui           カムイの大分類
 '       in_varHinban                    品番
+
+'1.11.0
+'       →分類変更に対応(一部関数化）
+
 '   *************************************************************
 
     Dim strHinbanKigou As String
@@ -890,15 +906,22 @@ Public Function strfncSyobunrui_Kamui(in_strDaibunrui_Kamui As String, in_varHin
         Case "11" '出入口
             strHinbanKigou = left(in_varHinban, 1)
             
-            If in_varHinban Like "F_V*-####*" Then 'Vertica
+            '関数化
+'            If in_varHinban Like "F_V*-####*" Then 'Vertica
+'                strfncSyobunrui_Kamui = "V"
+'
+'            ElseIf in_varHinban Like "F_C*-####*" Then 'Caro
+'                strfncSyobunrui_Kamui = "A"
+
+            If IsVertica(in_varHinban) Like "F_V*-####*" Then 'Vertica
                 strfncSyobunrui_Kamui = "V"
-                
-            ElseIf in_varHinban Like "F_C*-####*" Then 'Caro
+
+            ElseIf isCaro(in_varHinban) Then 'Caro
                 strfncSyobunrui_Kamui = "A"
-            
+                
             Else
                 Select Case strHinbanKigou
-                    Case "F" '標準品はCUBEのコードを送る
+                    Case "F" '標準品はCUBEのコードを送る（分割されたら分ける必要あり）
                         strfncSyobunrui_Kamui = "C"
                     Case "S" 'F/S
                         strfncSyobunrui_Kamui = "K"
@@ -1454,4 +1477,97 @@ Public Function IsHirakido(in_strHinban As Variant) As Boolean
     
 Err_IsHirakido:
     IsHirakido = False
+End Function
+
+Public Function IsWallThru(in_strHinban As Variant) As Boolean
+'   *************************************************************
+'   ウォールスルー確認
+'   1.11.0 ADD
+'
+'   戻り値:Boolean
+'       →True              WallThrough
+'       →False             WallThrough以外
+'
+'    Input項目
+'       in_strHinban        下地品番
+
+'   *************************************************************
+    '
+    IsWallThru = False
+
+    If in_strHinban Like "*WS*-####*" Then
+        IsWallThru = True
+        Exit Function
+    End If
+
+    
+End Function
+
+Public Function IsTerrace(in_varHinban As Variant) As Boolean
+'   *************************************************************
+'   テラスドア確認
+'
+'   戻り値:Boolean
+'       →True              Terrace
+'       →False             Terrace以外
+'
+'    Input項目
+'       in_strHinban        建具品番
+
+'   1.11.0 ADD
+'   *************************************************************
+
+    IsTerrace = False
+    
+    On Error GoTo Err_IsTerrace
+        
+    If IsNull(in_varHinban) Then
+        Exit Function
+    End If
+    
+    If in_varHinban Like "Y*-####*-*" Then
+        
+        IsTerrace = True
+        
+    End If
+    
+    Exit Function
+    
+Err_IsTerrace:
+    IsTerrace = False
+    
+End Function
+
+Public Function IsMirror(in_varHinban As Variant) As Boolean
+'   *************************************************************
+'   ミラー扉確認
+'
+'   戻り値:Boolean
+'       →True              ミラー
+'       →False             ミラー以外
+'
+'    Input項目
+'       in_strHinban        建具品番
+
+'   1.11.0 ADD
+'   *************************************************************
+
+    IsMirror = False
+    
+    On Error GoTo Err_IsMirror
+        
+    If IsNull(in_varHinban) Then
+        Exit Function
+    End If
+    
+    If in_varHinban Like "*-####M*-*" Then
+        
+        IsMirror = True
+        
+    End If
+    
+    Exit Function
+    
+Err_IsMirror:
+    IsMirror = False
 End Function

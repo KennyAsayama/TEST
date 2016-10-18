@@ -897,3 +897,105 @@ Exit_datGetShukkaBi:
     Set objREMOTEDB = Nothing
     
 End Function
+
+Public Function bolfncDateCheck(ByVal inputMode As Byte, ByVal in_txtDate As String, ByRef out_txtDate As String) As Boolean
+'   *************************************************************
+'   日付入力チェック
+'
+'   1.11.0 ADD
+'
+'   戻り値:Boolean
+'           →  True        日付チェックOK
+'           →  False       日付チェックNG
+'
+'    Input項目
+'       inputMode           入力モード 0→チェックのみ（out_txtDateを書きださない） 1→置換え(out_txtDateを書きだす)
+'       in_txtDate          日付 型式自由 ※ただし"/"（スラッシュ）区切り
+'       out_txtDate         日付 yyyy/MM/dd
+
+'   *************************************************************
+    Dim i As Integer
+    Dim j As Integer
+    
+    Dim strTxt As String
+    
+    Dim strYY As String
+    Dim strMM As String
+    Dim strDD As String
+    
+    Dim datNow As Date
+    
+    On Error GoTo Err_bolfncDateCheck
+    
+    i = 1
+    j = 0
+    
+    'inputが空欄の場合は無視
+    If in_txtDate = "" Then
+        bolfncDateCheck = True
+        Exit Function
+    End If
+    
+    strTxt = in_txtDate
+    
+    Do Until InStr(strTxt, "/") = 0
+        i = InStr(strTxt, "/")
+        strTxt = Mid(strTxt, i + 1)
+        If i <> 0 Then j = j + 1
+    Loop
+
+    Select Case j
+        Case 1 '月と日
+            i = InStr(in_txtDate, "/")
+            strMM = left(in_txtDate, i - 1)
+            strDD = Mid(in_txtDate, i + 1)
+            
+            '年を自動付加
+            '当月より前の月の場合は翌年
+            If CInt(strMM) < CInt(Month(Now())) Then
+                strYY = CStr(CInt(Year(Now())) + 1)
+                
+                '補完した結果が当月より5ヵ月以上先の場合は警告表示
+                If inputMode = 1 And DateDiff("M", CDate(Year(Now()) & "/" & Month(Now()) & "/01"), CDate(strYY & "/" & strMM & "/01")) > 4 Then
+                    MsgBox "年が入力されていないので翌年(" & CStr(CInt(Year(Now()) + 1)) & ")を補完します" & vbCrLf & _
+                            "本年の場合は年を書き換えてください" & vbCrLf & vbCrLf & _
+                            "※本メッセージは年を補間した日付が当月より5ヵ月以上先になった場合に表示されます", vbExclamation, "注意!"
+                End If
+            Else
+                strYY = CStr(CInt(Year(Now())))
+            End If
+
+
+        Case 2 '年月日
+            i = InStr(in_txtDate, "/")
+            strYY = left(in_txtDate, i - 1)
+            j = InStr(i + 1, in_txtDate, "/")
+            strMM = Mid(in_txtDate, i + 1, (j - 1) - i)
+            strDD = Mid(in_txtDate, j + 1)
+
+    End Select
+
+'    MsgBox strYY & "/" & strMM & "/" & strDD
+    
+    If IsDate(strYY & "/" & strMM & "/" & strDD) Then
+        out_txtDate = Format(strYY & "/" & strMM & "/" & strDD, "yyyy/MM/dd")
+        If IsHoliday(out_txtDate) Then
+            Err.Raise 9999, , "その日は休日です"
+        End If
+        bolfncDateCheck = True
+    Else
+        Err.Raise 9999, , "日付入力誤り"
+        
+    End If
+    
+    Exit Function
+    
+Err_bolfncDateCheck:
+    out_txtDate = ""
+    bolfncDateCheck = False
+    
+    If inputMode = 0 Then 'BeforeUpdateの時のみメッセージ出力
+        MsgBox Err.Description, vbCritical
+    End If
+    
+End Function

@@ -688,3 +688,51 @@ Exit_bolfncinputDate_FromTo:
     Set objLOCALDB = Nothing
     
 End Function
+
+Public Function bolfncReport(in_ReportName As String, in_Preview As Boolean, Optional in_Message As Boolean) As Boolean
+'--------------------------------------------------------------------------------------------------------------------
+'
+'   レポート出力
+'
+'   :引数
+'       in_ReportName       :レポート名
+'       in_Preview          :True→プレビュー False→プリンタ出力
+'       in_Message(Option)  :True→データ0件の際メッセージを出力する   False→しない
+'
+'   :戻り値
+'       True            :成功
+'       False           :失敗
+'
+'   1.11.0 ADD
+'--------------------------------------------------------------------------------------------------------------------
+    Dim bytPrintmode As Byte
+
+    On Error GoTo Err_bolfncReport
+
+    If in_Preview Then
+        bytPrintmode = 2
+    Else
+        bytPrintmode = 0
+    End If
+    
+    DoCmd.OpenReport in_ReportName, bytPrintmode
+    
+    bolfncReport = True
+    
+    Exit Function
+
+Err_bolfncReport:
+    
+    If Err.Number = 2501 Then
+        If in_Message Then
+            MsgBox in_ReportName & vbCrLf & "データがありません"
+        End If
+        Resume Next
+    Else
+        MsgBox Err.Description
+    End If
+    
+    bolfncReport = False
+    
+
+End Function

@@ -1,8 +1,3 @@
-VERSION 1.0 CLASS
-BEGIN
-  MultiUse = -1  'True
-END
-Attribute VB_Name = "cls_BRAND_MASTER"
 Attribute VB_GlobalNameSpace = False
 Attribute VB_Creatable = False
 Attribute VB_PredeclaredId = False
@@ -168,3 +163,9 @@ Public Property Get GetRS() As ADODB.Recordset
     Set GetRS = rsADO
 
 End Property
+
+Public Sub TimeoutValue(intVal As Integer)
+'1.11.0 ADD
+    cnADO.CommandTimeout = intVal
+    
+End Sub

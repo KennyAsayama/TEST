@@ -376,3 +376,122 @@ Exit_fncbolFileToExcel:
     Screen.MousePointer = 0
     
 End Function
+
+Public Function bolfncexp_EXCELOBJECT(in_objRS As ADODB.Recordset, in_ExcelObj As Object, Optional boolFilter As Boolean, Optional strMIDASHI As String) As Boolean
+'--------------------------------------------------------------------------------------------------------------------
+'EXCELエクスポート
+'   →Inputのレコードセットを引数で受け取ったExcelワークシートに出力
+'       （貼り付け後に受け渡し側でExcelを操作したい場合に使用）
+
+'       ※貼り付けるワークシートをアクティヴにしてから渡すこと
+'
+'   :引数
+'       in_objRS        レコードセット
+'       in_ExcelObj     レコードセット
+'       boolFilter      Trueの場合は開始行にオートフィルタを掛ける
+'       strMIDASHI      Trueの場合は1行目に見出しを表示する
+
+'   1.11.0 K.Asayama ADD
+'--------------------------------------------------------------------------------------------------------------------
+    
+    Dim xlsBookName As String
+    
+    Dim i, j As Integer
+    
+    Dim intCount As Integer
+    '---------------------------------------
+    ' LineStyle
+    '---------------------------------------
+    Const xlContinuous   As Integer = 1
+    Const xlDashDot      As Integer = 4
+    Const xlDashDotDot   As Integer = 5
+    Const xlSlantDashDot As Integer = 13
+    Const xlDash         As Integer = -4115
+    Const xlDot          As Integer = -4118
+    Const xlDouble       As Integer = -4119
+    Const xlLineStyleNone As Integer = -4142
+    '---------------------------------------
+
+    '---------------------------------------
+    ' Borders
+    '---------------------------------------
+    Const xlDiagonalDown  As Integer = 5
+    Const xlDiagonalUp    As Integer = 6
+    Const xlEdgeLeft      As Integer = 7
+    Const xlEdgeTop       As Integer = 8
+    Const xlEdgeBottom    As Integer = 9
+    Const xlEdgeRight     As Integer = 10
+    Const xlInsideVertical   As Integer = 11
+    Const xlInsideHorizontal As Integer = 12
+    '---------------------------------------
+    
+    '---------------------------------------
+    ' Others
+    '---------------------------------------
+    Const xlDown  As Integer = -4121
+    
+    
+    bolfncexp_EXCELOBJECT = False
+    
+    On Error GoTo Err_bolfncexp_EXCELOBJECT
+   
+    xlsBookName = in_ExcelObj.ActiveWorkBook.Name
+    
+    If strMIDASHI = "" Then
+        j = 1
+    Else
+        j = 2
+        in_ExcelObj.ActiveSheet.cells(1, 1).value = strMIDASHI
+    End If
+    
+    
+    With in_ExcelObj.ActiveSheet
+        For i = 0 To in_objRS.Fields.Count - 1
+            .cells(j, i + 1).value = in_objRS.Fields(i).Name
+            .cells(j, i + 1).Interior.ColorIndex = 15 'Gray
+            .cells(j, i + 1).Borders(xlEdgeTop).LineStyle = xlContinuous
+            .cells(j, i + 1).Borders(xlEdgeBottom).LineStyle = xlContinuous
+            .cells(j, i + 1).Borders(xlEdgeRight).LineStyle = xlContinuous
+            .cells(j, i + 1).Borders(xlEdgeLeft).LineStyle = xlContinuous
+        Next i
+        
+        If j = 2 Then
+            .Range(.cells(1, 1), .cells(1, i)).Merge
+        End If
+        
+        .cells(j + 1, 1).CopyFromRecordset in_objRS
+        
+        .Range(.cells(j, 1), .cells(.cells(j, 1).End(xlDown).Row, i)).Borders(xlEdgeLeft).LineStyle = xlContinuous
+        .Range(.cells(j, 1), .cells(.cells(j, 1).End(xlDown).Row, i)).Borders(xlEdgeTop).LineStyle = xlContinuous
+        .Range(.cells(j, 1), .cells(.cells(j, 1).End(xlDown).Row, i)).Borders(xlEdgeBottom).LineStyle = xlContinuous
+        .Range(.cells(j, 1), .cells(.cells(j, 1).End(xlDown).Row, i)).Borders(xlEdgeRight).LineStyle = xlContinuous
+        .Range(.cells(j, 1), .cells(.cells(j, 1).End(xlDown).Row, i)).Borders(xlInsideVertical).LineStyle = xlContinuous
+        .Range(.cells(j, 1), .cells(.cells(j, 1).End(xlDown).Row, i)).Borders(xlInsideHorizontal).LineStyle = xlContinuous
+        
+        .PageSetup.CenterFooter = "&P / &N ページ"
+        .PageSetup.PrintTitleRows = "$" & j & ":$" & j
+
+    End With
+        
+        
+    If boolFilter Then
+        in_ExcelObj.Rows(j & ":" & j).AutoFilter       '1列目にオートフィルター
+    End If
+        
+    in_ExcelObj.cells.EntireColumn.AutoFit   'セル自動調整
+
+    
+    Beep
+    'MsgBox "EXCELデータを作成しました"
+    
+    bolfncexp_EXCELOBJECT = True
+    
+    GoTo Exit_bolfncexp_EXCELOBJECT
+    
+Err_bolfncexp_EXCELOBJECT:
+    bolfncexp_EXCELOBJECT = False
+    MsgBox Err.Number & " " & Err.Description
+    
+Exit_bolfncexp_EXCELOBJECT:
+
+End Function
