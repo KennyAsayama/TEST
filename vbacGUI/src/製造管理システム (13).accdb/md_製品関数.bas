@@ -1424,12 +1424,13 @@ Public Function IsInset(in_strWakuHinban As Variant) As Boolean
 '    Input€–Ú
 '       in_strHinban        ˜g•i”Ô
 
+'1.11.1 Change K70•i”Ô‚ªFalse‚É‚È‚Á‚Ä‚µ‚Ü‚¤Œ‘Î‰
 '   *************************************************************
     On Error GoTo Err_IsInset
     
     IsInset = False
 
-    If in_strWakuHinban Like "K###*-####*" Or in_strWakuHinban Like "“Á K###*-####*" Then
+    If in_strWakuHinban Like "K##*-####*" Or in_strWakuHinban Like "“Á K##*-####*" Then
         IsInset = True
     End If
     

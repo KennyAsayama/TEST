@@ -169,3 +169,46 @@ Public Sub TimeoutValue(intVal As Integer)
     cnADO.CommandTimeout = intVal
     
 End Sub
+
+Public Function AsyncState() As Integer
+'1.11.1 ADD 非同期処理
+
+    On Error GoTo Err_AsyncState
+    
+    AsyncState = cnADO.State
+    
+    Exit Function
+    
+Err_AsyncState:
+    AsyncState = 999
+End Function
+
+Public Function ExecSQL_Async(SQL As String, Optional ByRef strErrMsg As Variant) As Boolean
+'1.11.1 ADD 非同期実行
+    ExecSQL_Async = False
+
+    On Error Resume Next
+
+    Call cnADO.Execute(SQL, , adAsyncConnect)
+
+    'SQLを実行時の結果を判定、実行エラーならFalse
+    If cnADO.Errors.Count = 0 Then
+       ExecSQL_Async = True
+    Else
+        If Not IsMissing(strErrMsg) Then
+            strErrMsg = cnADO.Errors.Item(0).Description
+        End If
+    End If
+'    Debug.Print strErrMSG
+    
+    On Error GoTo 0
+
+End Function
+
+Public Sub RecordSetClose()
+'1.11.1 ADD レコードセットを閉じる
+    On Error Resume Next
+
+    rsADO.Close
+    
+End Sub

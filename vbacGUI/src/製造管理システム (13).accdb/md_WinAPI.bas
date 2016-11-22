@@ -104,3 +104,7 @@ Public Declare Sub keybd_event Lib "user32" ( _
     ByVal dwExtraInfo As Long _
         )
 #End If
+
+'1.11.1 ADD
+'Sleepä÷êî
+Declare Sub Sleep Lib "kernel32" (ByVal dwMilliseconds As Long)

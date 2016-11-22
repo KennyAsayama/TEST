@@ -20,6 +20,7 @@ Public bolAdministrator As Boolean
 Public bolSxLCopy As Boolean
 Public bolCalendarCopy As Boolean
 
+
 Public Sub UserINIT()
 '--------------------------------------------------------------------------------------------------------------------
 'ユーザー関連関数初期化
@@ -736,3 +737,78 @@ Err_bolfncReport:
     
 
 End Function
+
+Public Function strfncTextFileToString(strFileFullpath As String) As String
+'--------------------------------------------------------------------------------------------------------------------
+'TextからStringへフルコピー
+'   →ファイル（フルパス）を読み込んでそのままString変数にインポート
+'
+'   :引数
+'       strFileFullpath     ファイル名（フルパス）
+
+'1.11.1 ADD
+'--------------------------------------------------------------------------------------------------------------------
+    Dim strTxt As String
+    
+    strfncTextFileToString = ""
+    strTxt = ""
+    
+    On Error GoTo Err_strfncTextFileToString
+    
+    If Dir(strFileFullpath) <> "" Then
+        With CreateObject("Scripting.FileSystemObject")
+            With .GetFile(strFileFullpath).OpenAsTextStream
+                strTxt = .ReadAll
+                .Close
+            End With
+        End With
+        
+    Else
+        Err.Raise 9999, , "変換用ファイルが存在しません。管理者に連絡してください"
+    End If
+    
+    strfncTextFileToString = strTxt
+    
+    Exit Function
+    
+Err_strfncTextFileToString:
+    Close
+    MsgBox Err.Description
+    
+End Function
+
+Public Sub subAllOption_Enabled(ByVal in_FormName As String, ByVal in_bolTF As Boolean)
+'--------------------------------------------------------------------------------------------------------------------
+'
+'   フォームのOptionコントロールの使用可能、不能一括変更
+'
+'   :引数
+'       in_FormName         :フォーム名
+'       in_bolTF            :使用可能（True）/不能（False）
+'
+'1.11.1 ADD
+'--------------------------------------------------------------------------------------------------------------------
+    Dim ctl As Access.Control
+    Dim i As Byte
+    i = 0
+    
+    On Error GoTo Err_subAllOption_Enabled_Enabled
+    
+    'このフォーム内のすべてのコントロールを検索
+    For Each ctl In Forms(in_FormName).Controls
+        With ctl
+            If .ControlType = acOptionGroup Then
+                   
+                ctl.Enabled = in_bolTF
+
+            End If
+        End With
+    Next ctl
+        
+    GoTo Exit_subAllOption_Enabled_Enabled
+    
+Err_subAllOption_Enabled_Enabled:
+
+Exit_subAllOption_Enabled_Enabled:
+    Set ctl = Nothing
+End Sub
