@@ -225,14 +225,14 @@ Public Function strfncGetVersion() As String
 '   →バージョンを取得し文字列で戻す
 '   →取得できない場合は空文字で返す
 '--------------------------------------------------------------------------------------------------------------------
-    Dim objLOCALDB As New cls_LOCALDB
+    Dim objLocalDB As New cls_LOCALDB
 
     On Error GoTo Err_strfncGetVersion
     
-    If objLOCALDB.ExecSelect("select Version from T_Version管理 order by 更新日時 desc ") Then
+    If objLocalDB.ExecSelect("select Version from T_Version管理 order by 更新日時 desc ") Then
         
-        If Not objLOCALDB.GetRS.EOF Then
-            strfncGetVersion = objLOCALDB.GetRS![Version]
+        If Not objLocalDB.GetRS.EOF Then
+            strfncGetVersion = objLocalDB.GetRS![Version]
         Else
             Err.Raise 9999, , "バージョン取得エラー。メニューを開くことができません"
         End If
@@ -251,7 +251,7 @@ Err_strfncGetVersion:
     
 Exit_strfncGetVersion:
 'クラスのインスタンスを破棄
-    Set objLOCALDB = Nothing
+    Set objLocalDB = Nothing
     
 End Function
 
@@ -535,24 +535,24 @@ Public Function bolfncinputDate(ByVal in_MidashiText As String, ByRef out_Date A
 '   :戻り値
 '                           :日付入力済み（True）/キャンセル（False）
 '--------------------------------------------------------------------------------------------------------------------
-Dim objLOCALDB As New cls_LOCALDB
+Dim objLocalDB As New cls_LOCALDB
 Dim strErrMsg As String
 
 On Error GoTo Err_bolfncinputDate
 
 out_Date = Null
 
-If Not objLOCALDB.ExecSQL("delete from WK_対象日付", strErrMsg) Then
+If Not objLocalDB.ExecSQL("delete from WK_対象日付", strErrMsg) Then
     Err.Raise 9999, , strErrMsg
 End If
 
 DoCmd.OpenForm "F_汎用日付入力", acNormal, , , , acDialog, in_MidashiText
 
-If Not objLOCALDB.ExecSelect("select date1 from WK_対象日付") Then
+If Not objLocalDB.ExecSelect("select date1 from WK_対象日付") Then
     Err.Raise 9999, , "日付読み込みエラー"
 Else
-    If Not objLOCALDB.GetRS.EOF Then
-        out_Date = objLOCALDB.GetRS!Date1
+    If Not objLocalDB.GetRS.EOF Then
+        out_Date = objLocalDB.GetRS!Date1
     End If
 End If
 
@@ -569,7 +569,7 @@ Err_bolfncinputDate:
     MsgBox Err.Description
     
 Exit_bolfncinputDate:
-    Set objLOCALDB = Nothing
+    Set objLocalDB = Nothing
     
 End Function
 
@@ -650,7 +650,7 @@ Public Function bolfncinputDate_FromTo(ByVal in_MidashiText As String, ByVal in_
 '                           :日付入力済み（True）/キャンセル（False）
 '1.10.15 ADD
 '--------------------------------------------------------------------------------------------------------------------
-Dim objLOCALDB As New cls_LOCALDB
+Dim objLocalDB As New cls_LOCALDB
 Dim strErrMsg As String
 
 On Error GoTo Err_bolfncinputDate_FromTo
@@ -658,18 +658,18 @@ On Error GoTo Err_bolfncinputDate_FromTo
 out_DateFrom = Null
 out_DateTo = Null
 
-If Not objLOCALDB.ExecSQL("delete from WK_対象日付", strErrMsg) Then
+If Not objLocalDB.ExecSQL("delete from WK_対象日付", strErrMsg) Then
     Err.Raise 9999, , strErrMsg
 End If
 
 DoCmd.OpenForm "F_汎用日付入力_FromTo", acNormal, , , , acDialog, in_MidashiText & vbTab & in_DateDetail
 
-If Not objLOCALDB.ExecSelect("select date1,date2 from WK_対象日付") Then
+If Not objLocalDB.ExecSelect("select date1,date2 from WK_対象日付") Then
     Err.Raise 9999, , "日付読み込みエラー"
 Else
-    If Not objLOCALDB.GetRS.EOF Then
-        out_DateFrom = objLOCALDB.GetRS!Date1
-        out_DateTo = objLOCALDB.GetRS!Date2
+    If Not objLocalDB.GetRS.EOF Then
+        out_DateFrom = objLocalDB.GetRS!Date1
+        out_DateTo = objLocalDB.GetRS!Date2
     End If
 End If
 
@@ -686,7 +686,7 @@ Err_bolfncinputDate_FromTo:
     MsgBox Err.Description
     
 Exit_bolfncinputDate_FromTo:
-    Set objLOCALDB = Nothing
+    Set objLocalDB = Nothing
     
 End Function
 
@@ -812,3 +812,95 @@ Err_subAllOption_Enabled_Enabled:
 Exit_subAllOption_Enabled_Enabled:
     Set ctl = Nothing
 End Sub
+
+Public Function Report_IsLoaded(ByVal in_ReportName As String) As Boolean
+'--------------------------------------------------------------------------------------------------------------------
+'レポートが開いているか確認する
+'   Ver 1.11.2 ADD
+'--------------------------------------------------------------------------------------------------------------------
+    
+    On Error GoTo Err_Report_IsLoaded
+    
+    If CurrentProject.AllReports(in_ReportName).IsLoaded Then
+    
+        Report_IsLoaded = True
+    
+    Else
+    
+        Report_IsLoaded = False
+            
+    End If
+    
+    Exit Function
+    
+Err_Report_IsLoaded:
+'    If Err.Number = 2467 Then
+'        Resume Next
+'    End If
+    Report_IsLoaded = False
+    
+End Function
+
+Public Function bolfncinFlieGet(ByVal in_KeyName As String, ByRef out_iniData As String) As Boolean
+'--------------------------------------------------------------------------------------------------------------------
+'iniファイルからを指定のキーを抽出
+
+'   :引数
+'       in_KeyName             :iniファイルキー名
+'       out_iniData            :変数名
+'
+'   :戻り値
+'       True            :成功
+'       False           :失敗
+
+'   Ver 1.11.2 ADD
+'--------------------------------------------------------------------------------------------------------------------
+       
+    Const strIniPath As String = "\\db\Prog\製造管理システム\製造管理システム.ini"
+    
+    Dim strBuf As String
+    Dim varText As Variant
+    Dim varPath As Variant
+    
+    Dim i As Integer
+    
+    bolfncinFlieGet = False
+    
+    On Error GoTo Err_bolfncinFlieGet
+    
+    varPath = Null
+    
+    'iniファイルをバッファに読み込み
+    With CreateObject("Scripting.FileSystemObject")
+        With .GetFile(strIniPath).OpenAsTextStream
+            strBuf = .ReadAll
+            .Close
+        End With
+    End With
+    
+    varText = Split(strBuf, vbCrLf)
+    
+    If VarType(varText) > vbArray Then
+        For i = LBound(varText) To UBound(varText)
+            If varText(i) Like in_KeyName & vbTab & "*" Then
+                varPath = Split(varText(i), vbTab)
+                Exit For
+            End If
+        Next
+    Else
+        'Debug.Print varText
+    End If
+        
+    If VarType(varPath) > vbArray Then
+       out_iniData = varPath(1)
+       bolfncinFlieGet = True
+    End If
+    
+    GoTo Exit_bolfncinFlieGet
+    
+Err_bolfncinFlieGet:
+    MsgBox Err.Description
+    Close
+Exit_bolfncinFlieGet:
+
+End Function
