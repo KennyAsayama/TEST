@@ -854,13 +854,18 @@ Public Function bolfncinFlieGet(ByVal in_KeyName As String, ByRef out_iniData As
 '       False           :失敗
 
 '   Ver 1.11.2 ADD
+'   1.11.3  Change テスト環境識別追加（ローカル(C:\kamiya_Brandにiniファイルがある場合はそちらを優先する
 '--------------------------------------------------------------------------------------------------------------------
        
     Const strIniPath As String = "\\db\Prog\製造管理システム\製造管理システム.ini"
     
+    Const strTestPath As String = "C:\Kamiya_Brand\製造管理システム.ini"
+    
     Dim strBuf As String
     Dim varText As Variant
     Dim varPath As Variant
+    
+    Dim strInputPath As String
     
     Dim i As Integer
     
@@ -870,9 +875,16 @@ Public Function bolfncinFlieGet(ByVal in_KeyName As String, ByRef out_iniData As
     
     varPath = Null
     
+    'iniファイルがローカルにある場合はそちらを優先
+    If Dir(strTestPath) <> "" Then
+        strInputPath = strTestPath
+    Else
+        strInputPath = strIniPath
+    End If
+    
     'iniファイルをバッファに読み込み
     With CreateObject("Scripting.FileSystemObject")
-        With .GetFile(strIniPath).OpenAsTextStream
+        With .GetFile(strInputPath).OpenAsTextStream
             strBuf = .ReadAll
             .Close
         End With

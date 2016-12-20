@@ -328,6 +328,8 @@ Public Function IsFkamachi(in_strHinban As Variant) As Boolean
 '           →1608以降のミラーはFlush（スルーガラス）
 '   1.11.0
 '           →テラスドア追加
+'   1.11.3
+'           →モンスター品番変更対応（関数）
 '   *************************************************************
     
     IsFkamachi = False
@@ -336,7 +338,7 @@ Public Function IsFkamachi(in_strHinban As Variant) As Boolean
        
     '1.10.19
     'If in_strHinban Like "*-####G*-*" Or in_strHinban Like "*-####MF*-*" Or in_strHinban Like "*O*-####P*-*" Then
-    If in_strHinban Like "*-####G*-*" Or in_strHinban Like "F?B*-####MF*-*" Or in_strHinban Like "特 F?B*-####MF*-*" Or in_strHinban Like "*O*-####P*-*" Then
+    If in_strHinban Like "*-####G*-*" Or in_strHinban Like "F?B*-####MF*-*" Or in_strHinban Like "特 F?B*-####MF*-*" Or IsMonster(in_strHinban) Then
         IsFkamachi = True
        
     'Caro
@@ -514,7 +516,7 @@ Public Function IsSxL(in_strHinban As Variant, out_strKamiyahinban As Variant) A
 '   1.10.6 K.Asayama SxLコピー初回のみ実行に変更したため本処理に追加
 '   *************************************************************
     
-    Dim objLOCALDB As New cls_LOCALDB
+    Dim objLocalDB As New cls_LOCALDB
     Dim strhinban As String
     Dim bolMentori As Boolean
     
@@ -541,9 +543,9 @@ Public Function IsSxL(in_strHinban As Variant, out_strKamiyahinban As Variant) A
         bolMentori = False
     End If
     '1.10.3 K.Asayama 20151119 SxL品番読替表ローカルテーブル名変更
-    If objLOCALDB.ExecSelect("select ブランド品番 from WK_SxL品番読替表 where S×L品番 = '" & Trim(strhinban) & "'") Then
-        If Not objLOCALDB.GetRS.EOF Then
-            out_strKamiyahinban = objLOCALDB.GetRS![ブランド品番]
+    If objLocalDB.ExecSelect("select ブランド品番 from WK_SxL品番読替表 where S×L品番 = '" & Trim(strhinban) & "'") Then
+        If Not objLocalDB.GetRS.EOF Then
+            out_strKamiyahinban = objLocalDB.GetRS![ブランド品番]
             If bolMentori Then
                 out_strKamiyahinban = out_strKamiyahinban & right(in_strHinban, 10)
             End If
@@ -558,10 +560,10 @@ Err_IsSxL:
     
 Exit_IsSxL:
 'クラスのインスタンスを破棄
-    Set objLOCALDB = Nothing
+    Set objLocalDB = Nothing
 End Function
 
-Public Function valfncHinmei(in_objRemoteDB As cls_BRAND_MASTER, in_Rs As ADODB.Recordset, in_strHinban As Variant, in_intSeihinkubun As Integer, in_strSpec As Variant) As Variant
+Public Function valfncHinmei(in_objRemoteDB As cls_BRAND_MASTER, in_RS As ADODB.Recordset, in_strHinban As Variant, in_intSeihinkubun As Integer, in_strSpec As Variant) As Variant
 '   *************************************************************
 '   品名抽出
 '   20151116 1.10.2 個別SpecをVariantに変更（Nullの可能性があるため）
@@ -623,9 +625,9 @@ Public Function valfncHinmei(in_objRemoteDB As cls_BRAND_MASTER, in_Rs As ADODB.
     End If
     
     
-    If in_objRemoteDB.ExecSelect_ExternalRS(in_Rs, strSQL) Then
-        If Not in_Rs.EOF Then
-            valfncHinmei = in_Rs![品名]
+    If in_objRemoteDB.ExecSelect_ExternalRS(in_RS, strSQL) Then
+        If Not in_RS.EOF Then
+            valfncHinmei = in_RS![品名]
         End If
     End If
     
@@ -879,7 +881,8 @@ Public Function strfncSyobunrui_Kamui(in_strDaibunrui_Kamui As String, in_varHin
 
 '1.11.0
 '       →分類変更に対応(一部関数化）
-
+'1.11.3
+'       →分類変更に対応
 '   *************************************************************
 
     Dim strHinbanKigou As String
@@ -913,7 +916,7 @@ Public Function strfncSyobunrui_Kamui(in_strDaibunrui_Kamui As String, in_varHin
 '            ElseIf in_varHinban Like "F_C*-####*" Then 'Caro
 '                strfncSyobunrui_Kamui = "A"
 
-            If IsVertica(in_varHinban) Like "F_V*-####*" Then 'Vertica
+            If IsVertica(in_varHinban) Then  'Vertica
                 strfncSyobunrui_Kamui = "V"
 
             ElseIf isCaro(in_varHinban) Then 'Caro
@@ -1198,7 +1201,7 @@ Public Function fncbolSxL_Replace() As Boolean
     End If
     
     Dim objREMOTEDB As New cls_BRAND_MASTER
-    Dim objLOCALDB As New cls_LOCALDB
+    Dim objLocalDB As New cls_LOCALDB
     
     On Error GoTo Err_fncbolSxL_Replace
     
@@ -1207,11 +1210,11 @@ Public Function fncbolSxL_Replace() As Boolean
     strSQL_Insert = "Insert into WK_SxL品番読替表(S×L品番,ブランド品番,DH,DW,CH) values ("
     
     '工場用コピー（T_Calendar_工場)
-    If objLOCALDB.ExecSQL("delete from WK_SxL品番読替表") Then
+    If objLocalDB.ExecSQL("delete from WK_SxL品番読替表") Then
         strSQL = "select distinct [S×L品番],ブランド品番,DW,DH,CH from SxL品番読替表 "
         If objREMOTEDB.ExecSelect(strSQL) Then
             Do While Not objREMOTEDB.GetRS.EOF
-                If Not objLOCALDB.ExecSQL(strSQL_Insert & "'" & objREMOTEDB.GetRS![S×L品番] & "','" & objREMOTEDB.GetRS![ブランド品番] & "'," & objREMOTEDB.GetRS![DW] & "," & objREMOTEDB.GetRS![DH] & "," & objREMOTEDB.GetRS![CH] & ")") Then
+                If Not objLocalDB.ExecSQL(strSQL_Insert & "'" & objREMOTEDB.GetRS![S×L品番] & "','" & objREMOTEDB.GetRS![ブランド品番] & "'," & objREMOTEDB.GetRS![DW] & "," & objREMOTEDB.GetRS![DH] & "," & objREMOTEDB.GetRS![CH] & ")") Then
                     Err.Raise 9999, , "SxL品番読替表 ローカルコピーエラー"
                 End If
                 objREMOTEDB.GetRS.MoveNext
@@ -1232,7 +1235,7 @@ Err_fncbolSxL_Replace:
 Exit_fncbolSxL_Replace:
 
     Set objREMOTEDB = Nothing
-    Set objLOCALDB = Nothing
+    Set objLocalDB = Nothing
     
 End Function
 
