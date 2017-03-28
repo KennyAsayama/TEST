@@ -517,7 +517,7 @@ Public Function IsSxL(in_strHinban As Variant, out_strKamiyahinban As Variant) A
 '   *************************************************************
     
     Dim objLocalDB As New cls_LOCALDB
-    Dim strhinban As String
+    Dim strHinban As String
     Dim bolMentori As Boolean
     
     IsSxL = False
@@ -536,14 +536,14 @@ Public Function IsSxL(in_strHinban As Variant, out_strKamiyahinban As Variant) A
     
     '下地で面取り記号がある場合は外す
     If in_strHinban Like "*①?②?③?④*" Then
-        strhinban = left(in_strHinban, Len(in_strHinban) - 10)
+        strHinban = left(in_strHinban, Len(in_strHinban) - 10)
         bolMentori = True
     Else
-        strhinban = in_strHinban
+        strHinban = in_strHinban
         bolMentori = False
     End If
     '1.10.3 K.Asayama 20151119 SxL品番読替表ローカルテーブル名変更
-    If objLocalDB.ExecSelect("select ブランド品番 from WK_SxL品番読替表 where S×L品番 = '" & Trim(strhinban) & "'") Then
+    If objLocalDB.ExecSelect("select ブランド品番 from WK_SxL品番読替表 where S×L品番 = '" & Trim(strHinban) & "'") Then
         If Not objLocalDB.GetRS.EOF Then
             out_strKamiyahinban = objLocalDB.GetRS![ブランド品番]
             If bolMentori Then
@@ -1576,4 +1576,155 @@ Public Function IsMirror(in_varHinban As Variant) As Boolean
     
 Err_IsMirror:
     IsMirror = False
+End Function
+
+Public Function IsCloset_Hiraki(in_varHinban As Variant) As Boolean
+'   *************************************************************
+'   クロゼット品番確認（開き戸）
+
+'   ※両／片開き（下地枠兼用） スライド収納は対象としない
+
+'   戻り値:Boolean
+'       →True              クロゼット開き
+'       →False             クロゼット開き以外
+'
+'    Input項目
+'       in_varHinban        建具品番／下地品番
+
+'   1.12.0 ADD
+'   *************************************************************
+    On Error GoTo Err_IsCloset_Hiraki
+    
+    IsCloset_Hiraki = False
+    
+    If IsNull(in_varHinban) Then Exit Function
+    
+    If in_varHinban Like "*MA-####*" Or in_varHinban Like "*MB-####*" Or in_varHinban Like "*MAS-####*" Or in_varHinban Like "*MBS-####*" Then
+        IsCloset_Hiraki = True
+    End If
+    
+    Exit Function
+
+Err_IsCloset_Hiraki:
+    IsCloset_Hiraki = False
+End Function
+
+Public Function IsCloset_Oredo(in_varHinban As Variant) As Boolean
+'   *************************************************************
+'   クロゼット品番確認（折れ戸）
+
+
+'   戻り値:Boolean
+'       →True              クロゼット折れ戸
+'       →False             クロゼット折れ戸以外
+'
+'    Input項目
+'       in_varHinban        建具品番／下地品番
+
+'   1.12.0 ADD
+'   *************************************************************
+    On Error GoTo Err_IsCloset_Oredo
+    
+    IsCloset_Oredo = False
+    
+    If IsNull(in_varHinban) Then Exit Function
+    
+    If in_varHinban Like "*ML-####*" Or in_varHinban Like "*MK-####*" Or in_varHinban Like "*MT-####*" Then
+        IsCloset_Oredo = True
+    End If
+    
+    Exit Function
+
+Err_IsCloset_Oredo:
+    IsCloset_Oredo = False
+End Function
+
+Public Function IsSoftMotion(ByVal in_varHinban As Variant) As Boolean
+'   *************************************************************
+'   ソフトモーション確認
+
+'   戻り値:Boolean
+'       →True              ソフトモーション無し
+'       →False             ソフトモーション以外
+'
+'    Input項目
+'       in_varHinban        建具品番／下地品番
+
+'   1.12.0 ADD
+'   *************************************************************
+    IsSoftMotion = False
+    
+    If in_varHinban Like "*CA-####*" Or in_varHinban Like "*CO-####*" Or in_varHinban Like "*CAS-####*" Or in_varHinban Like "*COS-####*" Then
+    
+        IsSoftMotion = True
+    
+    End If
+    
+
+End Function
+
+Public Function IsCloset_Slide(in_varHinban As Variant) As Boolean
+'   *************************************************************
+'   スライド収納確認
+
+'   戻り値:Boolean
+'       →True              スライド収納
+'       →False             スライド収納以外
+'
+'    Input項目
+'       in_strHinban        建具品番,又は下地品番
+
+
+'   1.12.0 ADD
+'   *************************************************************
+    
+    Dim strHinban As String
+    
+    On Error GoTo Err_IsCloset_Slide
+    
+    IsCloset_Slide = False
+    
+    If IsNull(in_varHinban) Then Exit Function
+
+    If in_varHinban Like "*SA-####*" Then
+        IsCloset_Slide = True
+    End If
+    
+    Exit Function
+
+Err_IsCloset_Slide:
+    IsCloset_Slide = False
+    
+End Function
+
+Public Function IsYukazukeRail(in_varHinban As Variant) As Boolean
+'   *************************************************************
+'   床付けレール品番確認
+
+'   ※上吊り連動は含まない
+
+'   戻り値:Boolean
+'       →True              床付けレール
+'       →False             床付けレール以外
+'
+'    Input項目
+'       in_varHinban        品番
+
+'   1.12.0 ADD
+'   *************************************************************
+    On Error GoTo Err_IsYukazukeRail
+    
+    IsYukazukeRail = False
+    
+    If in_varHinban Like "*DM-####*" Or in_varHinban Like "*DL-####*" Or in_varHinban Like "*DN-####*" Then
+        IsYukazukeRail = True
+    'Vレール
+    ElseIf in_varHinban Like "*VM-####*" Or in_varHinban Like "*VL-####*" Or in_varHinban Like "*VN-####*" Then
+        IsYukazukeRail = True
+    End If
+    
+    Exit Function
+
+Err_IsYukazukeRail:
+    IsYukazukeRail = False
 End Function

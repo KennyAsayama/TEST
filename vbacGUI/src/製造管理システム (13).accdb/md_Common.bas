@@ -787,6 +787,8 @@ Public Sub subAllOption_Enabled(ByVal in_FormName As String, ByVal in_bolTF As B
 '       in_bolTF            :使用可能（True）/不能（False）
 '
 '1.11.1 ADD
+'1.12.0
+'   →  コンボボックスとチェックボックス追加
 '--------------------------------------------------------------------------------------------------------------------
     Dim ctl As Access.Control
     Dim i As Byte
@@ -797,7 +799,7 @@ Public Sub subAllOption_Enabled(ByVal in_FormName As String, ByVal in_bolTF As B
     'このフォーム内のすべてのコントロールを検索
     For Each ctl In Forms(in_FormName).Controls
         With ctl
-            If .ControlType = acOptionGroup Then
+            If .ControlType = acOptionGroup Or .ControlType = acComboBox Or .ControlType = acCheckBox Then
                    
                 ctl.Enabled = in_bolTF
 
@@ -916,3 +918,15 @@ Err_bolfncinFlieGet:
 Exit_bolfncinFlieGet:
 
 End Function
+
+Public Sub OpenExplorer(in_Path As String)
+'--------------------------------------------------------------------------------------------------------------------
+'指定したファイル位置をエクスプローラで開く
+
+'   :引数
+'       in_Path             :フルパス名
+
+'1.12.0 ADD
+'--------------------------------------------------------------------------------------------------------------------
+    Call Shell("explorer.exe /select," & in_Path, vbNormalFocus)
+End Sub
