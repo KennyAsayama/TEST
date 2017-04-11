@@ -10,7 +10,7 @@ Public Function bolfncUwawakuShitaji_GroupADD() As Boolean
 
 '   1.12.1
 '       →バグ修正(SQL文の like条件に *[アスタリスク]を使用していたため %[パーセント]に変更
-
+'       →図面ありの時に上枠下地がある品番か確認する
 '   *************************************************************
     
     Dim cnADO As ADODB.Connection
@@ -127,47 +127,49 @@ Public Function bolfncUwawakuShitaji_GroupADD() As Boolean
                 Err.Raise "以降の帳票の出力を中止します"
             End If
         Else '図面あり
-            strSQL = ""
-            strSQL = strSQL & "insert into WK_上枠下地グループ集計(  "
-            strSQL = strSQL & "契約番号,棟番号,部屋番号,邸名,項,下地材品番,開き戸,クローゼット,ステルス"
-            strSQL = strSQL & ",商品名 "
-            strSQL = strSQL & ",上枠下地W,分割後上枠下地W,上枠下地W長さグループ,上総巾,上固定値巾,上変動値巾,厚さ,数量,カット後数量,備考,入力順 "
-            strSQL = strSQL & ") values ( "
-            strSQL = strSQL & varNullChk(rsADO![契約番号], 1)
-            strSQL = strSQL & "," & varNullChk(rsADO![棟番号], 1) & " "
-            strSQL = strSQL & "," & varNullChk(rsADO![部屋番号], 1) & " "
-            strSQL = strSQL & "," & varNullChk(rsADO![物件名], 1) & " "
-            strSQL = strSQL & "," & varNullChk(rsADO![項], 1) & " "
-            If bolToku Then
-                strSQL = strSQL & "," & varNullChk(rsADO![特注下地材品番], 1) & " "
-            Else
-            
-                strSQL = strSQL & "," & varNullChk(rsADO![下地材品番], 1) & " "
-            End If
-            If IsHirakido(varHinban) _
-                Or IsOyatobira(varHinban) _
-                    Or IsCloset_Hiraki(varHinban) Then
-                strSQL = strSQL & "," & True & " "
-            Else
-                strSQL = strSQL & "," & False & " "
-            End If
-            
-            If IsCloset_Hiraki(varHinban) _
-                Or IsCloset_Oredo(varHinban) Then
+            If fncstrUwawakuShitajiT(varHinban, rsADO![下がり壁]) <> "" Then
+                strSQL = ""
+                strSQL = strSQL & "insert into WK_上枠下地グループ集計(  "
+                strSQL = strSQL & "契約番号,棟番号,部屋番号,邸名,項,下地材品番,開き戸,クローゼット,ステルス"
+                strSQL = strSQL & ",商品名 "
+                strSQL = strSQL & ",上枠下地W,分割後上枠下地W,上枠下地W長さグループ,上総巾,上固定値巾,上変動値巾,厚さ,数量,カット後数量,備考,入力順 "
+                strSQL = strSQL & ") values ( "
+                strSQL = strSQL & varNullChk(rsADO![契約番号], 1)
+                strSQL = strSQL & "," & varNullChk(rsADO![棟番号], 1) & " "
+                strSQL = strSQL & "," & varNullChk(rsADO![部屋番号], 1) & " "
+                strSQL = strSQL & "," & varNullChk(rsADO![物件名], 1) & " "
+                strSQL = strSQL & "," & varNullChk(rsADO![項], 1) & " "
+                If bolToku Then
+                    strSQL = strSQL & "," & varNullChk(rsADO![特注下地材品番], 1) & " "
+                Else
+                
+                    strSQL = strSQL & "," & varNullChk(rsADO![下地材品番], 1) & " "
+                End If
+                If IsHirakido(varHinban) _
+                    Or IsOyatobira(varHinban) _
+                        Or IsCloset_Hiraki(varHinban) Then
                     strSQL = strSQL & "," & True & " "
-            Else
+                Else
                     strSQL = strSQL & "," & False & " "
+                End If
+                
+                If IsCloset_Hiraki(varHinban) _
+                    Or IsCloset_Oredo(varHinban) Then
+                        strSQL = strSQL & "," & True & " "
+                Else
+                        strSQL = strSQL & "," & False & " "
+                End If
+                strSQL = strSQL & "," & bolStealth & " "
+                strSQL = strSQL & "," & varNullChk(rsADO![商品名], 1) & " "
+                strSQL = strSQL & "," & "0,0,Null,0,0,0,Null "
+                strSQL = strSQL & "," & varNullChk(rsADO![加工数], 1) & " "
+                strSQL = strSQL & "," & varNullChk(rsADO![加工数], 1) & " "
+                strSQL = strSQL & ",'" & rsADO![物件名] & "　" & rsADO![項] & "　" & rsADO![下地枠設計備考] & "' "
+                strSQL = strSQL & "," & varNullChk(rsADO![入力順], 1) & " "
+                strSQL = strSQL & ") "
+                
+                cnADO.Execute strSQL
             End If
-            strSQL = strSQL & "," & bolStealth & " "
-            strSQL = strSQL & "," & varNullChk(rsADO![商品名], 1) & " "
-            strSQL = strSQL & "," & "0,0,Null,0,0,0,Null "
-            strSQL = strSQL & "," & varNullChk(rsADO![加工数], 1) & " "
-            strSQL = strSQL & "," & varNullChk(rsADO![加工数], 1) & " "
-            strSQL = strSQL & ",'" & rsADO![物件名] & "　" & rsADO![項] & "　" & rsADO![下地枠設計備考] & "' "
-            strSQL = strSQL & "," & varNullChk(rsADO![入力順], 1) & " "
-            strSQL = strSQL & ") "
-            
-            cnADO.Execute strSQL
             
         End If
         
