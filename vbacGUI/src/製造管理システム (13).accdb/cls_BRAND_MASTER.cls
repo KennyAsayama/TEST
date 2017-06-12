@@ -212,3 +212,60 @@ Public Sub RecordSetClose()
     rsADO.Close
     
 End Sub
+
+Public Property Get GetClerkName(ByVal ClerkID As Variant) As String
+'社員コードから社員名取得
+'1.12.2 ADD
+    Dim RsClerk As New ADODB.Recordset
+    Dim strSQL As String
+    
+    GetClerkName = ""
+    On Error GoTo Err_GetClerkName
+    
+    If IsNull(ClerkID) Then Exit Property
+    
+    strSQL = "select 担当者氏名 from T_社員ﾏｽﾀ_工程管理 where 担当者ID = '" & ClerkID & "' "
+    
+    Set RsClerk = cnADO.Execute(strSQL)
+    
+    If Not RsClerk.EOF Then
+        GetClerkName = RsClerk![担当者氏名]
+    End If
+    
+    RsClerk.Close
+    
+    GoTo Exit_GetClerkName
+
+Err_GetClerkName:
+    GetClerkName = ""
+Exit_GetClerkName:
+    Set RsClerk = Nothing
+    
+End Property
+
+Public Property Get GetSystemDate() As Date
+'サーバの日付取得
+'1.12.2 ADD
+    Dim RsDate As New ADODB.Recordset
+    Dim strSQL As String
+    
+    GetSystemDate = Now()
+    On Error GoTo Err_GetSystemDate
+
+    strSQL = "select getdate() システム日付 "
+    
+    Set RsDate = cnADO.Execute(strSQL)
+    
+    If Not RsDate.EOF Then
+        GetSystemDate = RsDate![システム日付]
+    End If
+    
+    RsDate.Close
+    
+    GoTo Exit_GetSystemDate
+
+Err_GetSystemDate:
+    GetSystemDate = Now()
+Exit_GetSystemDate:
+    Set RsDate = Nothing
+End Property

@@ -33,7 +33,7 @@ Public Function SetOrderData(ByVal inDate As Date, ByVal inDateKbn As Byte, inSe
     
     Dim strSQL As String
     Dim bolTran As Boolean
-    Dim strKeiyakuno As String
+    Dim strKeiyakuNo As String
     Dim varCalcShukkaBi As Variant
     Dim intMinusDays As Integer
     Dim dblWindowTop As Double, dblWindowLeft As Double, dblWindowHight As Double, dblWindowWidth As Double
@@ -49,7 +49,7 @@ Public Function SetOrderData(ByVal inDate As Date, ByVal inDateKbn As Byte, inSe
     
     SetOrderData = False
     bolTran = False
-    strKeiyakuno = ""
+    strKeiyakuNo = ""
     
     Select Case inSeizoKbn
         Case "建具"
@@ -856,4 +856,118 @@ Exit_bolfncTableCopyToLocal:
     Set objLocalDB = Nothing
     Set DAORs = Nothing
     Set DAODB = Nothing
+End Function
+
+Public Function bolfncMiseizoToExcel() As Boolean
+'--------------------------------------------------------------------------------------------------------------------
+'未製造データExcelへエクスポート
+'1.12.2 ADD
+
+'   :引数
+
+'   :戻り値
+'       True            :成功
+'       False           :失敗
+'--------------------------------------------------------------------------------------------------------------------
+
+    Dim objApp As New cls_Excel
+    Dim objREMOTEDB As New cls_BRAND_MASTER
+    
+    Dim xlsBookName As String
+    Dim i As Integer
+    Dim intSheetDel As Integer
+    Dim strSQL As String
+    Dim strSQLJ As String
+    Dim strKBName(2) As String
+    Dim strMidashiVal As String
+    
+    On Error GoTo Err_bolfncMiseizoToExcel
+    intSheetDel = 0
+    
+    Screen.MousePointer = 11
+    
+    With objApp.getExcel
+
+        .Workbooks.Add
+        
+        strKBName(0) = "建具"
+        strKBName(1) = "下地"
+        strKBName(2) = "枠"
+        
+        strSQL = ""
+        strSQL = strfncTextFileToString("\\db\prog\製造管理システム\SQL\subMISEIZO.sql")
+        If strSQL <> "" Then
+            strSQL = Replace(strSQL, vbCrLf, " ")
+        Else
+            Err.Raise 9999, , "未製造出力異常終了"
+        End If
+        
+        strMidashiVal = "建具未生産残 " & Format(Now, "yyyy-MM-dd")
+        
+        If Not objREMOTEDB.ExecSelect(strSQL) Then
+            Err.Raise 9999, , "台帳集計データ異常終了"
+        End If
+        
+        objApp.WorkSheetADD strKBName(i)
+                
+        If Not bolfncexp_EXCELOBJECT(objREMOTEDB.GetRS, objApp.getExcel, True, strMidashiVal) Then
+            Err.Raise 9999, , "Excelエクスポート異常終了"
+        End If
+        
+        strSQL = ""
+        strSQL = strfncTextFileToString("\\db\prog\製造管理システム\SQL\subMISEIZOWaku.sql")
+        
+        If strSQL <> "" Then
+            strSQL = Replace(strSQL, vbCrLf, " ")
+        Else
+            Err.Raise 9999, , "未製造出力異常終了"
+        End If
+        
+        For i = 1 To 2
+            strMidashiVal = "枠未生産残 (" & strKBName(i) & ") "
+            
+            strSQLJ = Replace(strSQL, "@WakuKubun", "'" & strKBName(i) & "'")
+
+            strMidashiVal = strMidashiVal & " " & Format(Now, "yyyy-MM-dd")
+            
+            objApp.WorkSheetADD strKBName(i)
+            If Not objREMOTEDB.ExecSelect(strSQLJ) Then
+                Err.Raise 9999, , "台帳集計データ異常終了"
+            End If
+            
+            If Not bolfncexp_EXCELOBJECT(objREMOTEDB.GetRS, objApp.getExcel, True, strMidashiVal) Then
+                Err.Raise 9999, , "Excelエクスポート異常終了"
+            End If
+
+        Next
+        
+        '不要なワークシートの削除
+        For i = 1 To .Worksheets.Count
+            If .Worksheets(i - intSheetDel).Name Like "Sheet*" Then
+                .Worksheets(i - intSheetDel).Delete
+                intSheetDel = intSheetDel + 1
+            End If
+        Next
+        
+        .Worksheets(1).Activate
+        
+        objApp.ContinueOpen = True
+        
+    End With
+    
+    bolfncMiseizoToExcel = True
+    
+    GoTo Exit_bolfncMiseizoToExcel
+
+Err_bolfncMiseizoToExcel:
+    Screen.MousePointer = 0
+    MsgBox Err.Description
+    bolfncMiseizoToExcel = False
+    
+    
+Exit_bolfncMiseizoToExcel:
+    Screen.MousePointer = 0
+    Set objApp = Nothing
+    Set objREMOTEDB = Nothing
+    
 End Function

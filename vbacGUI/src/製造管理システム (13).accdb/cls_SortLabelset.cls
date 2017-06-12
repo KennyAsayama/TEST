@@ -1,8 +1,3 @@
-VERSION 1.0 CLASS
-BEGIN
-  MultiUse = -1  'True
-END
-Attribute VB_Name = "cls_SortLabelset"
 Attribute VB_GlobalNameSpace = False
 Attribute VB_Creatable = False
 Attribute VB_PredeclaredId = False
@@ -35,13 +30,16 @@ End Sub
 Private Sub mctl_DblClick(Cancel As Integer)
     Dim strSortName As String
     Dim bolASC As Boolean
-    
+
+'1.12.2
+'   →F_製造先行受付を追加
+
 '--------------------------------------------------------------------------------------------------------------------
 'フォーム別処理をここにセット
 '--------------------------------------------------------------------------------------------------------------------
 
     'フォーム（F_邸別_数量）用
-    If mctl.Parent.Name Like "F_邸別_数量*" Then
+    If mctl.Parent.Name Like "F_邸別_数量*" Or mctl.Parent.Name Like "F_製造先行受付*" Then
         If Forms(mctl.Parent.Name).OrderByOn = True Then
         
             If mctl.ForeColor = vbGreen Then

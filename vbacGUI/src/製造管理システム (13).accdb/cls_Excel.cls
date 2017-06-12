@@ -57,7 +57,7 @@ Private Sub Class_Initialize()
 '--------------------------------------------------------------------------------------------------------------------
     Set objExcel = CreateObject("Excel.Application")
     bolQuit = True
-    
+    UserAddin
 End Sub
 
 Private Sub Class_Terminate()
@@ -113,7 +113,7 @@ Public Function WorkSheetADD(Optional byName As String = "") As Boolean
     With objExcel
         .Worksheets.Add After:=.Worksheets(.Worksheets.Count)
         If Not IsMissing(byName) Then
-            .ActiveSheet.Name = byName
+            .Activesheet.Name = byName
         End If
         
     End With
@@ -195,3 +195,45 @@ Public Property Get getExcel() As Object
 '--------------------------------------------------------------------------------------------------------------------
     Set getExcel = objExcel
 End Property
+
+Private Function UserAddin()
+'--------------------------------------------------------------------------------------------------------------------
+'ユーザのAddInとスタートアップマクロ起動
+'1.12.2 ADD
+'--------------------------------------------------------------------------------------------------------------------
+    Dim strAddinPath As String
+    Dim strxlsSTARTPath As String
+    Dim strFName As String
+    Dim i As Integer
+    
+    strAddinPath = objExcel.Application.UserLibraryPath
+    strxlsSTARTPath = objExcel.Application.StartupPath
+    
+        i = 0
+    'ファイル探索
+    
+    strFName = Dir(strAddinPath & "\*.xlam", vbNormal)
+    
+    Do While strFName <> ""
+        
+        i = i + 1
+        
+        'Debug.Print strFName
+        objExcel.Workbooks.Open strAddinPath & "\" & strFName
+        strFName = Dir()
+        
+    Loop
+    
+    strFName = ""
+    strFName = Dir(strxlsSTARTPath & "\*.xlsm", vbNormal)
+    
+    Do While strFName <> ""
+        
+        i = i + 1
+        
+        'Debug.Print strFName
+        objExcel.Workbooks.Open strAddinPath & "\" & strFName
+        strFName = Dir()
+        
+    Loop
+End Function

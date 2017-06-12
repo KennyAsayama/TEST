@@ -11,6 +11,8 @@ Public Function bolfncUwawakuShitaji_GroupADD() As Boolean
 '   1.12.1
 '       →バグ修正(SQL文の like条件に *[アスタリスク]を使用していたため %[パーセント]に変更
 '       →図面ありの時に上枠下地がある品番か確認する
+'   1.12.2
+'        →Err.Raise時に引数の数が間違っているところを修正
 '   *************************************************************
     
     Dim cnADO As ADODB.Connection
@@ -124,7 +126,7 @@ Public Function bolfncUwawakuShitaji_GroupADD() As Boolean
                     End If
                 Next
             Else
-                Err.Raise "以降の帳票の出力を中止します"
+                Err.Raise 9999, , "以降の帳票の出力を中止します" '1.12.2
             End If
         Else '図面あり
             If fncstrUwawakuShitajiT(varHinban, rsADO![下がり壁]) <> "" Then
@@ -299,6 +301,8 @@ Public Function fncstrUwawakuShitajiT(ByVal in_varHinban As Variant, ByVal in_va
 '       in_varHinban        下地材品番
 '       in_varSagari        下がり壁
 
+'   1.12.2
+'       →ウォールスルー除外追加
 '   *************************************************************
     Dim varHinban As String
     Dim strSagari As String
@@ -306,6 +310,8 @@ Public Function fncstrUwawakuShitajiT(ByVal in_varHinban As Variant, ByVal in_va
     fncstrUwawakuShitajiT = ""
     
     On Error GoTo Err_fncstrUwawakuShitajiT
+    
+    If IsWallThru(in_varHinban) Then Exit Function
     
     If Not IsNull(in_varHinban) Then
         varHinban = Replace(in_varHinban, "特 ", "")
