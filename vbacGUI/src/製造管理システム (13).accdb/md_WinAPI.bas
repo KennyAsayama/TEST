@@ -40,7 +40,7 @@ Declare Function ShowWindow Lib "user32" _
 Public Declare PtrSafe Function MoveWindow _
            Lib "user32" _
         (ByVal hwnd As Long _
-       , ByVal X As Long _
+       , ByVal x As Long _
        , ByVal Y As Long _
        , ByVal nWidth As Long _
        , ByVal nHeight As Long _
@@ -55,7 +55,7 @@ Public Declare PtrSafe Function GetWindowRect _
 Public Declare Function MoveWindow _
            Lib "user32" _
           (ByVal hwnd As Long _
-       , ByVal X As Long _
+       , ByVal x As Long _
        , ByVal Y As Long _
        , ByVal nWidth As Long _
        , ByVal nHeight As Long _

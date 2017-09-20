@@ -819,6 +819,41 @@ Exit_subAllOption_Enabled_Enabled:
     Set ctl = Nothing
 End Sub
 
+Public Sub subAllTextBox_Enabled(ByVal in_FormName As String, ByVal in_bolTF As Boolean)
+'--------------------------------------------------------------------------------------------------------------------
+'
+'   フォームのTextBoxの使用可能、不能一括変更
+'
+'   :引数
+'       in_FormName         :フォーム名
+'       in_bolTF            :使用可能（True）/不能（False）
+'
+'2.0.0 ADD
+'--------------------------------------------------------------------------------------------------------------------
+    Dim ctl As Access.Control
+    Dim i As Byte
+    i = 0
+    
+    On Error GoTo Err_subAllOption_Enabled_Enabled
+    
+    'このフォーム内のすべてのコントロールを検索
+    For Each ctl In Forms(in_FormName).Controls
+        With ctl
+            If .ControlType = acTextBox Then
+                   
+                ctl.Enabled = in_bolTF
+
+            End If
+        End With
+    Next ctl
+        
+    GoTo Exit_subAllOption_Enabled_Enabled
+    
+Err_subAllOption_Enabled_Enabled:
+
+Exit_subAllOption_Enabled_Enabled:
+    Set ctl = Nothing
+End Sub
 Public Function Report_IsLoaded(ByVal in_ReportName As String) As Boolean
 '--------------------------------------------------------------------------------------------------------------------
 'レポートが開いているか確認する

@@ -635,7 +635,7 @@ Exit_fncbolSyukkaBiFromAddress:
     Set objREMOTEDB = Nothing
 End Function
 
-Public Function IsHoliday(ByVal in_Date As String) As Boolean
+Public Function IsHoliday(ByVal in_date As String) As Boolean
 '--------------------------------------------------------------------------------------------------------------------
 '   »‘¢•”–å‹x“úŠm”Fˆ—
 '   »‘¢•”–å‚ª‹x“ú‚©‚Ç‚¤‚©Šm”F
@@ -658,11 +658,11 @@ Public Function IsHoliday(ByVal in_Date As String) As Boolean
     
     On Error GoTo Err_IsHoliday
     
-    If Not IsDate(in_Date) Then GoTo Err_IsHoliday
+    If Not IsDate(in_date) Then GoTo Err_IsHoliday
     
     strSQL = ""
     strSQL = strSQL & "select ‹x“ú from WK_Calendar_Hê "
-    strSQL = strSQL & "where ‹x“ú = #" & in_Date & "# "
+    strSQL = strSQL & "where ‹x“ú = #" & in_date & "# "
     
     
     If objLOCALDB.ExecSelect(strSQL) Then
@@ -816,6 +816,8 @@ Public Function datGetShukkaBi(in_KeiyakuNo As Variant, in_TouNo As Variant, in_
 
 '1.10.16 K.Asayama ADD
 '   ¨WŒv•û–@•ÏX(BugFix)
+'2.0.0
+'   ¨HêCD 10 ’Ç‰Á
 '   *************************************************************
 
     Dim objREMOTEDB As New cls_BRAND_MASTER
@@ -871,7 +873,7 @@ Public Function datGetShukkaBi(in_KeiyakuNo As Variant, in_TouNo As Variant, in_
     
     If intKubun = 1 Then
         
-        strSQL = strSQL & "and J.HêCD = 1 "
+        strSQL = strSQL & "and J.HêCD in (1,10) "
 
     End If
     

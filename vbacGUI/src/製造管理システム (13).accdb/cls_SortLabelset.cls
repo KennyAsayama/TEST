@@ -33,13 +33,14 @@ Private Sub mctl_DblClick(Cancel As Integer)
 
 '1.12.2
 '   →F_製造先行受付を追加
-
+'2.0.0
+'   →F_フルハイトライン_数量を追加
 '--------------------------------------------------------------------------------------------------------------------
 'フォーム別処理をここにセット
 '--------------------------------------------------------------------------------------------------------------------
 
     'フォーム（F_邸別_数量）用
-    If mctl.Parent.Name Like "F_邸別_数量*" Or mctl.Parent.Name Like "F_製造先行受付*" Then
+    If mctl.Parent.Name Like "F_邸別_数量*" Or mctl.Parent.Name Like "F_製造先行受付*" Or mctl.Parent.Name Like "F_フルハイトライン_数量*" Then
         If Forms(mctl.Parent.Name).OrderByOn = True Then
         
             If mctl.ForeColor = vbGreen Then

@@ -1,8 +1,3 @@
-VERSION 1.0 CLASS
-BEGIN
-  MultiUse = -1  'True
-END
-Attribute VB_Name = "cls_Labelset"
 Attribute VB_GlobalNameSpace = False
 Attribute VB_Creatable = False
 Attribute VB_PredeclaredId = False
@@ -78,3 +73,17 @@ End Function
 Public Sub SetWidth(in_Width As Double)
     mctl.Width = in_Width
 End Sub
+
+Public Property Get getCaption() As String
+'2.0.0 ADD
+    If IsNull(mctl.Caption) Then
+        getCaption = ""
+    Else
+        getCaption = mctl.Caption
+    End If
+End Property
+
+Public Property Get getBackColor() As Long
+'2.0.0 ADD
+    getBackColor = mctl.BackColor
+End Property

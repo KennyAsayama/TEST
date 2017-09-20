@@ -10,10 +10,12 @@ Option Explicit
 '   インスタンス破棄時bolQuit変数を[False]にしておくとExcelは起動したまま残る
 
 '1.12.0 ADD
+'2.0.0
+'   →不要シート削除メソッド化
 '--------------------------------------------------------------------------------------------------------------------
 
     'Private objExcel As Excel.Application  'Excel
-    Private objExcel As Object
+    Private objEXCEL As Object
     Private bolQuit As Boolean
     Private BookName As String
     
@@ -55,7 +57,7 @@ Private Sub Class_Initialize()
 '--------------------------------------------------------------------------------------------------------------------
 'コンストラクタ
 '--------------------------------------------------------------------------------------------------------------------
-    Set objExcel = CreateObject("Excel.Application")
+    Set objEXCEL = CreateObject("Excel.Application")
     bolQuit = True
     UserAddin
 End Sub
@@ -69,12 +71,12 @@ Private Sub Class_Terminate()
     'bolQuit=Trueの時Excelを閉じる
     If bolQuit Then
         AllClose
-        objExcel.Quit
+        objEXCEL.Quit
     Else
-        objExcel.Visible = True
+        objEXCEL.Visible = True
     End If
     
-    Set objExcel = Nothing
+    Set objEXCEL = Nothing
 End Sub
 
 Private Function AllClose() As Boolean
@@ -87,7 +89,7 @@ Private Function AllClose() As Boolean
     
     On Error GoTo Err_AllClose
     
-    For Each wb In objExcel.Workbooks            '開いている全てのブックに対して
+    For Each wb In objEXCEL.Workbooks            '開いている全てのブックに対して
         If wb.Saved = False Then
             wb.Close Savechanges:=False
         End If
@@ -110,7 +112,7 @@ Public Function WorkSheetADD(Optional byName As String = "") As Boolean
 '--------------------------------------------------------------------------------------------------------------------
     On Error GoTo Err_WorkSheetADD
         
-    With objExcel
+    With objEXCEL
         .Worksheets.Add After:=.Worksheets(.Worksheets.Count)
         If Not IsMissing(byName) Then
             .Activesheet.Name = byName
@@ -129,11 +131,11 @@ Public Function WorkSheetDelete(WorkSheetName As String) As Boolean
     
     On Error GoTo Err_WorkSheetDelete
     
-    objExcel.Application.DisplayAlerts = False
+    objEXCEL.Application.DisplayAlerts = False
     
-    For Each ws In objExcel.Worksheets
+    For Each ws In objEXCEL.Worksheets
         If ws.Name = WorkSheetName Then
-            objExcel.Worksheets(WorkSheetName).Delete
+            objEXCEL.Worksheets(WorkSheetName).Delete
         End If
     Next ws
     
@@ -145,7 +147,7 @@ Err_WorkSheetDelete:
     WorkSheetDelete = False
     
 Exit_WorkSheetDelete:
-    objExcel.Application.DisplayAlerts = True
+    objEXCEL.Application.DisplayAlerts = True
     Set ws = Nothing
 End Function
 
@@ -159,7 +161,7 @@ Public Function WorkSheetExists(WorkSheetName As String) As Boolean
     
     WorkSheetExists = False
     
-    For Each ws In objExcel.Worksheets
+    For Each ws In objEXCEL.Worksheets
         If ws.Name = WorkSheetName Then
             WorkSheetExists = True
             Exit For
@@ -193,7 +195,7 @@ Public Property Get getExcel() As Object
 '--------------------------------------------------------------------------------------------------------------------
 'Excelオブジェクト取得
 '--------------------------------------------------------------------------------------------------------------------
-    Set getExcel = objExcel
+    Set getExcel = objEXCEL
 End Property
 
 Private Function UserAddin()
@@ -206,8 +208,8 @@ Private Function UserAddin()
     Dim strFName As String
     Dim i As Integer
     
-    strAddinPath = objExcel.Application.UserLibraryPath
-    strxlsSTARTPath = objExcel.Application.StartupPath
+    strAddinPath = objEXCEL.Application.UserLibraryPath
+    strxlsSTARTPath = objEXCEL.Application.StartupPath
     
         i = 0
     'ファイル探索
@@ -219,7 +221,7 @@ Private Function UserAddin()
         i = i + 1
         
         'Debug.Print strFName
-        objExcel.Workbooks.Open strAddinPath & "\" & strFName
+        objEXCEL.Workbooks.Open strAddinPath & "\" & strFName
         strFName = Dir()
         
     Loop
@@ -232,8 +234,64 @@ Private Function UserAddin()
         i = i + 1
         
         'Debug.Print strFName
-        objExcel.Workbooks.Open strAddinPath & "\" & strFName
+        objEXCEL.Workbooks.Open strAddinPath & "\" & strFName
         strFName = Dir()
         
     Loop
+End Function
+
+Public Function UnnecessarySheetDel(Optional inSheetName As String = "Sheet*") As Boolean
+'--------------------------------------------------------------------------------------------------------------------
+'不要シート削除
+'2.0.0 ADD
+'   Excelの不要ワークシートを削除
+'       引数:   inSheetNameを受け取った場合は該当シート名を削除、
+'               文字列にアスタリスク(*)が含まれている場合はあいまい検索指定
+'--------------------------------------------------------------------------------------------------------------------
+
+    Dim intSheetDel As Integer
+    Dim i As Integer
+    Dim bolAmbiguous As Boolean
+    
+    On Error GoTo Err_UnnecessarySheetDel
+    
+    intSheetDel = 0
+    i = 0
+    
+    '曖昧検索指定
+    If InStr(1, inSheetName, "*") > 0 Then
+        bolAmbiguous = True
+    Else
+        bolAmbiguous = False
+    End If
+    
+    With Me.getExcel
+        
+        If bolAmbiguous Then
+            For i = 1 To .Worksheets.Count
+                If .Worksheets(i - intSheetDel).Name Like inSheetName Then
+                    .Worksheets(i - intSheetDel).Delete
+                    intSheetDel = intSheetDel + 1
+                End If
+            Next
+        Else
+            For i = 1 To .Worksheets.Count
+                If .Worksheets(i - intSheetDel).Name = inSheetName Then
+                    .Worksheets(i - intSheetDel).Delete
+                    intSheetDel = intSheetDel + 1
+                End If
+            Next
+        End If
+            
+        .Worksheets(1).Activate
+    
+    End With
+    
+    UnnecessarySheetDel = True
+    
+    Exit Function
+    
+Err_UnnecessarySheetDel:
+    MsgBox Err.Description
+
 End Function

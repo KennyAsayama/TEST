@@ -65,7 +65,7 @@ Public Sub exp_EXCEL(strSQL As String, Optional boolFilter As Boolean, Optional 
     Set objApp = CreateObject("Excel.Application")
     
     objApp.Visible = False
-    objApp.workbooks.Add
+    objApp.Workbooks.Add
     
     xlsBookName = objApp.ActiveWorkBook.Name
     
@@ -73,7 +73,7 @@ Public Sub exp_EXCEL(strSQL As String, Optional boolFilter As Boolean, Optional 
         j = 1
     Else
         j = 2
-        objApp.ActiveSheet.cells(1, 1).value = strMIDASHI
+        objApp.Activesheet.cells(1, 1).value = strMIDASHI
     End If
     
     
@@ -81,7 +81,7 @@ Public Sub exp_EXCEL(strSQL As String, Optional boolFilter As Boolean, Optional 
         Set rsADO = objREMOTEDB.GetRS
         
         
-        With objApp.ActiveSheet
+        With objApp.Activesheet
             For i = 0 To rsADO.Fields.Count - 1
                 .cells(j, i + 1).value = rsADO.Fields(i).Name
                 .cells(j, i + 1).Interior.ColorIndex = 15 'Gray
@@ -138,7 +138,7 @@ Err_exp_EXCEL:
     MsgBox Err.Number & " " & Err.Description
     
     On Error Resume Next
-    objApp.ActiveWorkBook.Close savechanges:=False
+    objApp.ActiveWorkBook.Close Savechanges:=False
     
 Exit_exp_EXCEL:
     
@@ -211,7 +211,7 @@ Public Sub exp_EXCEL_LOCAL(strSQL As String, Optional boolFilter As Boolean, Opt
     Set objApp = CreateObject("Excel.Application")
     
     objApp.Visible = False
-    objApp.workbooks.Add
+    objApp.Workbooks.Add
     
     xlsBookName = objApp.ActiveWorkBook.Name
     
@@ -219,7 +219,7 @@ Public Sub exp_EXCEL_LOCAL(strSQL As String, Optional boolFilter As Boolean, Opt
         j = 1
     Else
         j = 2
-        objApp.ActiveSheet.cells(1, 1).value = strMIDASHI
+        objApp.Activesheet.cells(1, 1).value = strMIDASHI
     End If
     
     
@@ -227,7 +227,7 @@ Public Sub exp_EXCEL_LOCAL(strSQL As String, Optional boolFilter As Boolean, Opt
         Set rsADO = objLOCALDB.GetRS
         
         
-        With objApp.ActiveSheet
+        With objApp.Activesheet
             For i = 0 To rsADO.Fields.Count - 1
                 .cells(j, i + 1).value = rsADO.Fields(i).Name
                 .cells(j, i + 1).Interior.ColorIndex = 15 'Gray
@@ -278,7 +278,7 @@ Err_exp_EXCEL_LOCAL:
     MsgBox Err.Number & " " & Err.Description
     
     On Error Resume Next
-    objApp.ActiveWorkBook.Close savechanges:=False
+    objApp.ActiveWorkBook.Close Savechanges:=False
     
 Exit_exp_EXCEL_LOCAL:
     
@@ -302,9 +302,9 @@ Public Sub sub_ClipBord_Paste_to_Excel()
     On Error GoTo Err_sub_ClipBord_Paste_to_Excel
     
     objApp.Visible = False
-    objApp.workbooks.Add
+    objApp.Workbooks.Add
     
-    objApp.ActiveSheet.Paste
+    objApp.Activesheet.Paste
     objApp.CutCopyMode = False
     
     objApp.Visible = True
@@ -315,7 +315,7 @@ Err_sub_ClipBord_Paste_to_Excel:
     MsgBox Err.Number & " " & Err.Description
     
     On Error Resume Next
-    objApp.ActiveWorkBook.Close savechanges:=False
+    objApp.ActiveWorkBook.Close Savechanges:=False
     
 Exit_sub_ClipBord_Paste_to_Excel:
     Set objApp = Nothing
@@ -441,11 +441,11 @@ Public Function bolfncexp_EXCELOBJECT(in_objRS As ADODB.Recordset, in_ExcelObj A
         j = 1
     Else
         j = 2
-        in_ExcelObj.ActiveSheet.cells(1, 1).value = strMIDASHI
+        in_ExcelObj.Activesheet.cells(1, 1).value = strMIDASHI
     End If
     
     
-    With in_ExcelObj.ActiveSheet
+    With in_ExcelObj.Activesheet
         For i = 0 To in_objRS.Fields.Count - 1
             .cells(j, i + 1).value = in_objRS.Fields(i).Name
             .cells(j, i + 1).Interior.ColorIndex = 15 'Gray

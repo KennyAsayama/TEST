@@ -1,4 +1,3 @@
-Attribute VB_Name = "Holiday"
 Option Compare Database
 Option Explicit
 
