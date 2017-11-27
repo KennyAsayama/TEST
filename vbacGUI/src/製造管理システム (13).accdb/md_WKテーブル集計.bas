@@ -29,7 +29,7 @@ Public Function SetOrderData(ByVal inDate As Date, ByVal inDateKbn As Byte, inSe
 '       →下地、ステルス分割
 '--------------------------------------------------------------------------------------------------------------------
     Dim objREMOTEDB As New cls_BRAND_MASTER
-    Dim objLOCALDB As New cls_LOCALDB
+    Dim objLocalDB As New cls_LOCALDB
     
     Dim strSQL As String
     Dim boltran As Boolean
@@ -157,46 +157,46 @@ Public Function SetOrderData(ByVal inDate As Date, ByVal inDateKbn As Byte, inSe
     End If
     
     
-    If Not objLOCALDB.ExecSQL("delete from WK_札データ") Then
+    If Not objLocalDB.ExecSQL("delete from WK_札データ") Then
         Err.Raise 9999, , "製造指示データワーク（ローカル）初期化エラー"
     End If
     
     With objREMOTEDB
         If .ExecSelect(strSQL) Then
-            If objLOCALDB.ExecSelect_Writable("select * from WK_札データ") Then
+            If objLocalDB.ExecSelect_Writable("select * from WK_札データ") Then
             
-                objLOCALDB.BeginTrans
+                objLocalDB.BeginTrans
                 boltran = True
                 
                 Do While Not .GetRS.EOF
-                        objLOCALDB.GetRS.AddNew
+                        objLocalDB.GetRS.AddNew
 
-                        objLOCALDB.GetRS![契約番号] = .GetRS![契約番号]
-                        objLOCALDB.GetRS![棟番号] = .GetRS![棟番号]
-                        objLOCALDB.GetRS![部屋番号] = .GetRS![部屋番号]
-                        objLOCALDB.GetRS![物件名] = .GetRS![物件名]
-                        objLOCALDB.GetRS![施工店] = .GetRS![施工店]
-                        objLOCALDB.GetRS![契約No] = .GetRS![契約No]
-                        objLOCALDB.GetRS![項] = .GetRS![項]
-                        objLOCALDB.GetRS![製造区分] = .GetRS![製造区分]
-                        objLOCALDB.GetRS![確定日] = .GetRS![確定日]
+                        objLocalDB.GetRS![契約番号] = .GetRS![契約番号]
+                        objLocalDB.GetRS![棟番号] = .GetRS![棟番号]
+                        objLocalDB.GetRS![部屋番号] = .GetRS![部屋番号]
+                        objLocalDB.GetRS![物件名] = .GetRS![物件名]
+                        objLocalDB.GetRS![施工店] = .GetRS![施工店]
+                        objLocalDB.GetRS![契約No] = .GetRS![契約No]
+                        objLocalDB.GetRS![項] = .GetRS![項]
+                        objLocalDB.GetRS![製造区分] = .GetRS![製造区分]
+                        objLocalDB.GetRS![確定日] = .GetRS![確定日]
                         If IsNull(.GetRS![出荷日]) Then
-                            objLOCALDB.GetRS![出荷日登録] = False
+                            objLocalDB.GetRS![出荷日登録] = False
                             If fncbolSyukkaBiFromAddress(.GetRS![納品住所], .GetRS![確定日], varCalcShukkaBi, intMinusDays) Then
                                 '1.10.14
                                 If Not IsNull(varCalcShukkaBi) Then
-                                    objLOCALDB.GetRS![出荷日] = CDate(varCalcShukkaBi)
+                                    objLocalDB.GetRS![出荷日] = CDate(varCalcShukkaBi)
                                 End If
                             Else
-                                objLOCALDB.GetRS![出荷日] = .GetRS![出荷日]
+                                objLocalDB.GetRS![出荷日] = .GetRS![出荷日]
                             End If
                         Else
-                            objLOCALDB.GetRS![出荷日登録] = True
-                            objLOCALDB.GetRS![出荷日] = .GetRS![出荷日]
+                            objLocalDB.GetRS![出荷日登録] = True
+                            objLocalDB.GetRS![出荷日] = .GetRS![出荷日]
                         End If
                         
-                        objLOCALDB.GetRS![製造日] = .GetRS![製造日]
-                        objLOCALDB.GetRS![納品住所] = .GetRS![納品住所]
+                        objLocalDB.GetRS![製造日] = .GetRS![製造日]
+                        objLocalDB.GetRS![納品住所] = .GetRS![納品住所]
                         
                         'If IsNull(.GetRS![確定]) Or .GetRS![確定] = 0 Then
                         '    objLocalDB.GetRS![確定] = 0
@@ -204,87 +204,87 @@ Public Function SetOrderData(ByVal inDate As Date, ByVal inDateKbn As Byte, inSe
                         '    objLocalDB.GetRS![確定] = -1
                         'End If
                         
-                        objLOCALDB.GetRS![確定] = .GetRS![確定]
+                        objLocalDB.GetRS![確定] = .GetRS![確定]
                         
                         '1.10.7 ADD
-                        objLOCALDB.GetRS![出荷方法] = .GetRS![出荷方法]
+                        objLocalDB.GetRS![出荷方法] = .GetRS![出荷方法]
                         '1.10.7 ADD End
                         
-                        objLOCALDB.GetRS![Flush数] = .GetRS![Flush数] + .GetRS![F框数]
-                        objLOCALDB.GetRS![F框数] = .GetRS![F框数]
-                        objLOCALDB.GetRS![框数] = .GetRS![框数]
-                        objLOCALDB.GetRS![枠数] = .GetRS![枠数]
-                        objLOCALDB.GetRS![三方枠数] = .GetRS![三方枠数]
+                        objLocalDB.GetRS![Flush数] = .GetRS![Flush数] + .GetRS![F框数]
+                        objLocalDB.GetRS![F框数] = .GetRS![F框数]
+                        objLocalDB.GetRS![框数] = .GetRS![框数]
+                        objLocalDB.GetRS![枠数] = .GetRS![枠数]
+                        objLocalDB.GetRS![三方枠数] = .GetRS![三方枠数]
                                                 
                         If IsStealth_Seizo_TEMP(Nz(.GetRS![登録時品番], "nz")) Then
-                            objLOCALDB.GetRS![下地枠数] = 0
+                            objLocalDB.GetRS![下地枠数] = 0
                             '1.10.16 change
                             'objLOCALDB.GetRS![ステルス枠数] = .GetRS![下地枠数]
                             If .GetRS![製造区分] = 7 Then
-                                objLOCALDB.GetRS![ステルス枠数] = .GetRS![ステルス枠数]
+                                objLocalDB.GetRS![ステルス枠数] = .GetRS![ステルス枠数]
                             Else
-                                objLOCALDB.GetRS![ステルス枠数] = .GetRS![下地枠数]
+                                objLocalDB.GetRS![ステルス枠数] = .GetRS![下地枠数]
                             End If
                         Else
-                            objLOCALDB.GetRS![ステルス枠数] = 0
-                            objLOCALDB.GetRS![下地枠数] = .GetRS![下地枠数]
+                            objLocalDB.GetRS![ステルス枠数] = 0
+                            objLocalDB.GetRS![下地枠数] = .GetRS![下地枠数]
                         End If
                         
                         If .GetRS![製造区分] >= 1 And .GetRS![製造区分] <= 3 Then
                             If IsThruGlass(.GetRS![登録時品番]) Then
                                 '1.10.10 K.Asayama Change
                                 'objLOCALDB.GetRS![スルーガラス数] = .GetRS![Flush数]
-                                objLOCALDB.GetRS![スルーガラス数] = fncIntHalfGlassMirror_Maisu(.GetRS![登録時品番], .GetRS![Flush数])
+                                objLocalDB.GetRS![スルーガラス数] = fncIntHalfGlassMirror_Maisu(.GetRS![登録時品番], .GetRS![Flush数])
                                 '1.10.10 K.Asayama Change End
                             Else
-                                objLOCALDB.GetRS![スルーガラス数] = 0
+                                objLocalDB.GetRS![スルーガラス数] = 0
                             End If
                             
                             If IsAir(.GetRS![登録時品番]) Then
-                                objLOCALDB.GetRS![ルーバー扉数] = .GetRS![Flush数]
+                                objLocalDB.GetRS![ルーバー扉数] = .GetRS![Flush数]
                             Else
-                                objLOCALDB.GetRS![ルーバー扉数] = 0
+                                objLocalDB.GetRS![ルーバー扉数] = 0
                             End If
                             
                             If IsPainted(.GetRS![登録時品番]) Then
-                                objLOCALDB.GetRS![塗装扉数] = .GetRS![Flush数]
+                                objLocalDB.GetRS![塗装扉数] = .GetRS![Flush数]
                                 '1.10.7 ADD
-                                objLOCALDB.GetRS![色] = fncvalDoorColor(.GetRS![登録時品番])
+                                objLocalDB.GetRS![色] = fncvalDoorColor(.GetRS![登録時品番])
                                 '1.10.7 ADD End
                             Else
-                                objLOCALDB.GetRS![塗装扉数] = 0
+                                objLocalDB.GetRS![塗装扉数] = 0
                             End If
                             
                             If IsMonster(.GetRS![登録時品番]) Then
-                                objLOCALDB.GetRS![モンスター数] = .GetRS![F框数]
+                                objLocalDB.GetRS![モンスター数] = .GetRS![F框数]
                             Else
-                                objLOCALDB.GetRS![モンスター数] = 0
+                                objLocalDB.GetRS![モンスター数] = 0
                             End If
                             '1.10.8 ADD
                             If IsVertica(.GetRS![登録時品番]) Then
-                                objLOCALDB.GetRS![ヴェルチカ数] = .GetRS![Flush数]
+                                objLocalDB.GetRS![ヴェルチカ数] = .GetRS![Flush数]
                             Else
-                                objLOCALDB.GetRS![ヴェルチカ数] = 0
+                                objLocalDB.GetRS![ヴェルチカ数] = 0
                             End If
                             '1.10.8 ADD End
                         Else
-                            objLOCALDB.GetRS![スルーガラス数] = 0
-                            objLOCALDB.GetRS![ルーバー扉数] = 0
-                            objLOCALDB.GetRS![塗装扉数] = 0
-                            objLOCALDB.GetRS![モンスター数] = 0
+                            objLocalDB.GetRS![スルーガラス数] = 0
+                            objLocalDB.GetRS![ルーバー扉数] = 0
+                            objLocalDB.GetRS![塗装扉数] = 0
+                            objLocalDB.GetRS![モンスター数] = 0
                             '1.10.8 ADD
-                            objLOCALDB.GetRS![ヴェルチカ数] = 0
+                            objLocalDB.GetRS![ヴェルチカ数] = 0
                             '1.10.8 ADD End
                         End If
                         
-                        objLOCALDB.GetRS![備考] = .GetRS![備考]
+                        objLocalDB.GetRS![備考] = .GetRS![備考]
                         
-                    objLOCALDB.GetRS.Update
+                    objLocalDB.GetRS.Update
                     
                     .GetRS.MoveNext
                 Loop
                 
-                If boltran Then objLOCALDB.Commit
+                If boltran Then objLocalDB.Commit
                 boltran = False
             Else
                 Err.Raise 9999, , "チェックリストワーク（ローカル）オープンエラー"
@@ -326,13 +326,13 @@ Public Function SetOrderData(ByVal inDate As Date, ByVal inDateKbn As Byte, inSe
     GoTo Exit_SetOrderData
     
 Err_SetOrderData:
-    If boltran Then objLOCALDB.Rollback
+    If boltran Then objLocalDB.Rollback
     boltran = False
     MsgBox Err.Description
 
 Exit_SetOrderData:
     Set objREMOTEDB = Nothing
-    Set objLOCALDB = Nothing
+    Set objLocalDB = Nothing
 
     Application.Echo True
     'Me.Painting = True
@@ -642,10 +642,10 @@ Public Function SetBikouData() As Boolean
 '1.10.8 K.Asayama Change 20160114
 '       →バグ修正 Firstだとうまくデータが出ないのでMaxに変更
 '--------------------------------------------------------------------------------------------------------------------
-    Dim objLOCALDB As New cls_LOCALDB
+    Dim objLocalDB As New cls_LOCALDB
     
     Dim strSQL As String
-    Dim strErrmsg As String
+    Dim strErrMsg As String
     
     SetBikouData = False
      
@@ -674,11 +674,11 @@ Public Function SetBikouData() As Boolean
     strSQL = strSQL & "where 備考 is not null "
     strSQL = strSQL & "group by 契約番号,棟番号,部屋番号 "
     
-    If Not objLOCALDB.ExecSQL("delete from WK_札データ_備考") Then
+    If Not objLocalDB.ExecSQL("delete from WK_札データ_備考") Then
         Err.Raise 9999, , "備考データワーク（ローカル）初期化エラー"
     End If
     
-    With objLOCALDB
+    With objLocalDB
         If .ExecSelect(strSQL) Then
             
             Do While Not .GetRS.EOF
@@ -697,8 +697,8 @@ Public Function SetBikouData() As Boolean
                 
                 Debug.Print strSQL
                 
-                If Not .ExecSQL(strSQL, strErrmsg) Then
-                    Err.Raise 9999, , strErrmsg
+                If Not .ExecSQL(strSQL, strErrMsg) Then
+                    Err.Raise 9999, , strErrMsg
                 End If
                 
                 .GetRS.MoveNext
@@ -717,7 +717,7 @@ Err_SetBikouData:
     MsgBox Err.Description
     
 Exit_SetBikouData:
-     Set objLOCALDB = Nothing
+     Set objLocalDB = Nothing
      
 End Function
 
@@ -740,21 +740,46 @@ Public Function varNullChk(in_Data As Variant, in_DBType As Integer) As Variant
 '           空欄の文字列はNullとする
 '2.0.0
 '       →  データ内に「'（アポストロフィ）」があった場合「''」複数に置換え
-'--------------------------------------------------------------------------------------------------------------------
 
+'2.1.0
+'       →　アポストロフィは全角に置き換える
+'       →  String値の日付が誤って判断される場合があるので修正
+'--------------------------------------------------------------------------------------------------------------------
+    Dim datDate As Date
+    
     If IsNull(in_Data) Then
     
         varNullChk = "Null"
     
-    '1.10.16
-    'ElseIf VarType(in_Data) = vbDate Then
-    ElseIf VarType(in_Data) = vbDate Or (VarType(in_Data) = vbString And IsDate(in_Data)) Then
-        Select Case in_DBType
-            Case 1
-                varNullChk = "#" & Format(in_Data, "yyyy/mm/dd") & "#"
-            Case Else
-                varNullChk = "'" & Format(in_Data, "yyyy/mm/dd") & "'"
-        End Select
+'    ElseIf VarType(in_Data) = vbDate Or (VarType(in_Data) = vbString And IsDate(in_Data)) Then
+    ElseIf VarType(in_Data) = vbDate Or (VarType(in_Data) = vbString And (CStr(in_Data) Like "#*/#*/#*" Or CStr(in_Data) Like "#*-#*-#*")) Then
+    
+        If VarType(in_Data) = vbDate Then
+            datDate = in_Data
+            
+            Select Case in_DBType
+                Case 1
+                    varNullChk = "#" & Format(datDate, "yyyy/mm/dd") & "#"
+                Case Else
+                    varNullChk = "'" & Format(datDate, "yyyy/mm/dd") & "'"
+            End Select
+            
+        ElseIf IsDate(in_Data) Then
+            datDate = CDate(in_Data)
+            
+            Select Case in_DBType
+                Case 1
+                    varNullChk = "#" & Format(datDate, "yyyy/mm/dd") & "#"
+                Case Else
+                    varNullChk = "'" & Format(datDate, "yyyy/mm/dd") & "'"
+            End Select
+            
+        Else
+            in_Data = Replace(in_Data, "'", "’")
+            varNullChk = "'" & in_Data & "'"
+        End If
+        
+        
         
     ElseIf VarType(in_Data) = vbString Then
         '1.10.16
@@ -763,7 +788,7 @@ Public Function varNullChk(in_Data As Variant, in_DBType As Integer) As Variant
             varNullChk = "Null"
         Else
             '↓2.0.0 ADD
-            varNullChk = Replace(in_Data, "'", "''")
+            in_Data = Replace(in_Data, "'", "’")
             varNullChk = "'" & in_Data & "'"
         End If
     Else
@@ -788,9 +813,9 @@ Public Function bolfncTableCopyToLocal(in_RS As ADODB.Recordset, out_LocalTableN
 '1.11.2 ADD
 '--------------------------------------------------------------------------------------------------------------------
 
-    Dim objLOCALDB As New cls_LOCALDB
+    Dim objLocalDB As New cls_LOCALDB
     Dim i As Integer
-    Dim strErrmsg As String
+    Dim strErrMsg As String
     Dim varAutoNumber As Variant
     
     Dim DAODB As DAO.Database
@@ -819,11 +844,11 @@ Public Function bolfncTableCopyToLocal(in_RS As ADODB.Recordset, out_LocalTableN
     DAORs.Close
     DAODB.Close
     
-    With objLOCALDB
+    With objLocalDB
     
         If Not in_ADDMode Then
-            If Not .ExecSQL("delete * from " & out_LocalTableName & " ", strErrmsg) Then
-                Err.Raise 9999, , strErrmsg
+            If Not .ExecSQL("delete * from " & out_LocalTableName & " ", strErrMsg) Then
+                Err.Raise 9999, , strErrMsg
             Else
                 'オートナンバー初期化
                 If Not IsNull(varAutoNumber) Then
@@ -859,7 +884,7 @@ Err_bolfncTableCopyToLocal:
     MsgBox Err.Description
     
 Exit_bolfncTableCopyToLocal:
-    Set objLOCALDB = Nothing
+    Set objLocalDB = Nothing
     Set DAORs = Nothing
     Set DAODB = Nothing
 End Function

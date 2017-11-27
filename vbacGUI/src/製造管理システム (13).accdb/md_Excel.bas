@@ -162,7 +162,7 @@ Public Sub exp_EXCEL_LOCAL(strSQL As String, Optional boolFilter As Boolean, Opt
 '--------------------------------------------------------------------------------------------------------------------
 '
 
-    Dim objLOCALDB As New cls_LOCALDB
+    Dim objLocalDB As New cls_LOCALDB
     
     Dim rsADO As New ADODB.Recordset '1.10.15
     
@@ -223,8 +223,8 @@ Public Sub exp_EXCEL_LOCAL(strSQL As String, Optional boolFilter As Boolean, Opt
     End If
     
     
-    If objLOCALDB.ExecSelect(strSQL) Then
-        Set rsADO = objLOCALDB.GetRS
+    If objLocalDB.ExecSelect(strSQL) Then
+        Set rsADO = objLocalDB.GetRS
         
         
         With objApp.Activesheet
@@ -282,7 +282,7 @@ Err_exp_EXCEL_LOCAL:
     
 Exit_exp_EXCEL_LOCAL:
     
-    Set objLOCALDB = Nothing
+    Set objLocalDB = Nothing
     Set rsADO = Nothing
     Set objApp = Nothing
     

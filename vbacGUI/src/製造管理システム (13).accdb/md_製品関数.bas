@@ -516,7 +516,7 @@ Public Function IsSxL(in_strHinban As Variant, out_strKamiyahinban As Variant) A
 '   1.10.6 K.Asayama SxLコピー初回のみ実行に変更したため本処理に追加
 '   *************************************************************
     
-    Dim objLOCALDB As New cls_LOCALDB
+    Dim objLocalDB As New cls_LOCALDB
     Dim strHinban As String
     Dim bolMentori As Boolean
     
@@ -543,9 +543,9 @@ Public Function IsSxL(in_strHinban As Variant, out_strKamiyahinban As Variant) A
         bolMentori = False
     End If
     '1.10.3 K.Asayama 20151119 SxL品番読替表ローカルテーブル名変更
-    If objLOCALDB.ExecSelect("select ブランド品番 from WK_SxL品番読替表 where S×L品番 = '" & Trim(strHinban) & "'") Then
-        If Not objLOCALDB.GetRS.EOF Then
-            out_strKamiyahinban = objLOCALDB.GetRS![ブランド品番]
+    If objLocalDB.ExecSelect("select ブランド品番 from WK_SxL品番読替表 where S×L品番 = '" & Trim(strHinban) & "'") Then
+        If Not objLocalDB.GetRS.EOF Then
+            out_strKamiyahinban = objLocalDB.GetRS![ブランド品番]
             If bolMentori Then
                 out_strKamiyahinban = out_strKamiyahinban & right(in_strHinban, 10)
             End If
@@ -560,7 +560,7 @@ Err_IsSxL:
     
 Exit_IsSxL:
 'クラスのインスタンスを破棄
-    Set objLOCALDB = Nothing
+    Set objLocalDB = Nothing
 End Function
 
 Public Function valfncHinmei(in_objRemoteDB As cls_BRAND_MASTER, in_RS As ADODB.Recordset, in_strHinban As Variant, in_intSeihinkubun As Integer, in_strSpec As Variant) As Variant
@@ -1210,7 +1210,7 @@ Public Function fncbolSxL_Replace() As Boolean
     End If
     
     Dim objREMOTEDB As New cls_BRAND_MASTER
-    Dim objLOCALDB As New cls_LOCALDB
+    Dim objLocalDB As New cls_LOCALDB
     
     On Error GoTo Err_fncbolSxL_Replace
     
@@ -1219,11 +1219,11 @@ Public Function fncbolSxL_Replace() As Boolean
     strSQL_Insert = "Insert into WK_SxL品番読替表(S×L品番,ブランド品番,DH,DW,CH) values ("
     
     '工場用コピー（T_Calendar_工場)
-    If objLOCALDB.ExecSQL("delete from WK_SxL品番読替表") Then
+    If objLocalDB.ExecSQL("delete from WK_SxL品番読替表") Then
         strSQL = "select distinct [S×L品番],ブランド品番,DW,DH,CH from SxL品番読替表 "
         If objREMOTEDB.ExecSelect(strSQL) Then
             Do While Not objREMOTEDB.GetRS.EOF
-                If Not objLOCALDB.ExecSQL(strSQL_Insert & "'" & objREMOTEDB.GetRS![S×L品番] & "','" & objREMOTEDB.GetRS![ブランド品番] & "'," & objREMOTEDB.GetRS![DW] & "," & objREMOTEDB.GetRS![DH] & "," & objREMOTEDB.GetRS![CH] & ")") Then
+                If Not objLocalDB.ExecSQL(strSQL_Insert & "'" & objREMOTEDB.GetRS![S×L品番] & "','" & objREMOTEDB.GetRS![ブランド品番] & "'," & objREMOTEDB.GetRS![DW] & "," & objREMOTEDB.GetRS![DH] & "," & objREMOTEDB.GetRS![CH] & ")") Then
                     Err.Raise 9999, , "SxL品番読替表 ローカルコピーエラー"
                 End If
                 objREMOTEDB.GetRS.MoveNext
@@ -1244,7 +1244,7 @@ Err_fncbolSxL_Replace:
 Exit_fncbolSxL_Replace:
 
     Set objREMOTEDB = Nothing
-    Set objLOCALDB = Nothing
+    Set objLocalDB = Nothing
     
 End Function
 
@@ -1691,6 +1691,7 @@ Public Function IsCloset_Slide(in_varHinban As Variant) As Boolean
     
     IsCloset_Slide = False
     
+    
     If IsNull(in_varHinban) Then Exit Function
 
     If in_varHinban Like "*SA-####*" Then
@@ -1734,4 +1735,808 @@ Public Function IsYukazukeRail(in_varHinban As Variant) As Boolean
 
 Err_IsYukazukeRail:
     IsYukazukeRail = False
+End Function
+
+Public Function IsLUCENTE(in_varHinban As Variant) As Boolean
+'   *************************************************************
+'   ルチェンテ確認
+
+'   戻り値:Boolean
+'       →True              ルチェンテ
+'       →False             ルチェンテ以外
+'
+'    Input項目
+'       in_varHinban        建具品番
+
+'   2.1.0 ADD
+'   *************************************************************
+
+    Dim strHinban As String
+    
+    IsLUCENTE = False
+    
+    If IsNull(in_varHinban) Then Exit Function
+    
+    strHinban = Replace(in_varHinban, "特 ", "")
+    
+    If strHinban Like "P*-####*-*" Then
+        If strHinban Like "*(XW)" Or strHinban Like "*(XB)" Then
+            IsLUCENTE = True
+        End If
+    End If
+    
+End Function
+
+Public Function IsSINA(in_varHinban As Variant) As Boolean
+'   *************************************************************
+'   シナ確認
+'   'ADD by Asayama 20150903
+'   戻り値:Boolean
+'       →True              シナ品番
+'       →False             シナ品番以外
+'
+'    Input項目
+'       in_varHinban        建具品番
+
+'   2.1.0 ADD
+'   *************************************************************
+
+    Dim strHinban As String
+    
+    IsSINA = False
+    
+    If IsNull(in_varHinban) Then Exit Function
+    
+    strHinban = Replace(in_varHinban, "特 ", "")
+    
+    If strHinban Like "T*-####*-*" Then
+        If IsSINAColor(strHinban) Then
+            IsSINA = True
+        End If
+    End If
+    
+End Function
+
+Public Function IsSINAColor(in_varHinban As Variant) As Boolean
+'   *************************************************************
+'   シナ色確認
+'
+'   戻り値:Boolean
+'       →True              色がシナ色
+'       →False             シナ色以外
+'
+'    Input項目
+'       in_strHinban        建具品番
+
+'   2.1.0 ADD
+'   *************************************************************
+
+    IsSINAColor = False
+    
+    If IsNull(in_varHinban) Then Exit Function
+
+    If in_varHinban Like "*-*-*(ZZ)" Or in_varHinban Like "*-*-*(AA)" Or in_varHinban Like "*-*-*(BB)" Or in_varHinban Like "*-*-*(CC)" Or in_varHinban Like "*-*-*(DD)" Then
+        IsSINAColor = True
+    Else
+        IsSINAColor = False
+    End If
+    
+End Function
+
+Public Function IsFs(in_varHinban As Variant) As Boolean
+'   *************************************************************
+'   F/S確認
+
+'   戻り値:Boolean
+'       →True              F/S
+'       →False             F/S以外
+'
+'    Input項目
+'       in_varHinban        建具品番
+
+'   2.1.0 ADD
+'   *************************************************************
+
+    Dim strHinban As String
+    
+    IsFs = False
+    
+    If IsNull(in_varHinban) Then Exit Function
+    
+    strHinban = Replace(in_varHinban, "特 ", "")
+    
+    If strHinban Like "S*-####*-*" Then
+        IsFs = True
+    End If
+    
+End Function
+
+Public Function IsCloset_Hikichigai(in_varHinban As Variant) As Boolean
+'   *************************************************************
+'   物入れ引き違い確認
+
+'   戻り値:Boolean
+'       →True              物入れ引き違い
+'       →False             物入れ引き違い以外
+'
+'    Input項目
+'       in_varHinban        建具品番
+
+'   2.1.0 ADD
+'   *************************************************************
+    
+    IsCloset_Hikichigai = False
+    
+    If IsNull(in_varHinban) Then Exit Function
+    
+    If in_varHinban Like "*ME-####*-*" Then
+        IsCloset_Hikichigai = True
+    End If
+    
+End Function
+
+Public Function IsSideThru(in_varHinban As Variant) As Boolean
+'   *************************************************************
+'   サイドスルー確認
+
+'   戻り値:Boolean
+'       →True              サイドスルー
+'       →False             サイドスルー以外
+'
+'    Input項目
+'       in_varHinban        建具品番
+
+'   2.1.0 ADD
+'   *************************************************************
+    
+    IsSideThru = False
+    
+    If IsNull(in_varHinban) Then Exit Function
+
+    If in_varHinban Like "*-####ST*-*" Or in_varHinban Like "*-####SS*-*" Or in_varHinban Like "*-####SG*-*" Then
+        IsSideThru = True
+    End If
+    
+End Function
+
+Public Function IsCenterThru(in_varHinban As Variant) As Boolean
+'   *************************************************************
+'   センタースルー確認
+
+'   戻り値:Boolean
+'       →True              センタースルー
+'       →False             センタースルー以外
+'
+'    Input項目
+'       in_varHinban        建具品番
+
+'   2.1.0 ADD
+'   *************************************************************
+    
+    IsCenterThru = False
+    
+    If IsNull(in_varHinban) Then Exit Function
+    
+    If in_varHinban Like "*-####C*-*" Then
+        IsCenterThru = True
+    End If
+    
+End Function
+
+Public Function IsWideThru(in_varHinban As Variant) As Boolean
+'   *************************************************************
+'   幅広スルーガラス確認
+
+'   戻り値:Boolean
+'       →True              幅広センタースルー
+'       →False             幅広センタースルー以外
+'
+'    Input項目
+'       in_varHinban        建具品番
+
+'   2.1.0 ADD
+'   *************************************************************
+    
+    IsWideThru = False
+    
+    If IsNull(in_varHinban) Then Exit Function
+    
+    If in_varHinban Like "*-####D*-*" Then
+        IsWideThru = True
+    End If
+    
+End Function
+
+Public Function IsG7_Flush(in_varHinban As Variant) As Boolean
+'   *************************************************************
+'   G7型(1608仕様以降)確認
+
+'   戻り値:Boolean
+'       →True              G7型
+'       →False             G7型以外
+'
+'    Input項目
+'       in_varHinban        建具品番
+
+'   2.1.0 ADD
+'   *************************************************************
+
+    Dim strHinban As String
+    
+    IsG7_Flush = False
+    
+    If IsNull(in_varHinban) Then Exit Function
+    
+    strHinban = Replace(in_varHinban, "特 ", "")
+    
+    If strHinban Like "??C*-####MF*" Then
+        IsG7_Flush = True
+    End If
+
+End Function
+
+Public Function IsHikido(ByVal in_varHinban As Variant) As Boolean
+'   *************************************************************
+'   引戸確認
+
+'   戻り値:Boolean
+'       →True              引戸
+'       →False             引戸以外
+'
+'    Input項目
+'       in_varHinban        建具品番
+
+'   2.1.0 ADD
+'   *************************************************************
+
+    IsHikido = False
+    
+    If IsNull(in_varHinban) Then Exit Function
+    
+    If in_varHinban Like "*DC-####*" Or in_varHinban Like "*DT-####*" Or _
+        in_varHinban Like "*KC-####*" Or in_varHinban Like "*KT-####*" Or _
+        in_varHinban Like "*DM-####*" Or in_varHinban Like "*DL-####*" Or _
+        in_varHinban Like "*DP-####*" Or in_varHinban Like "*DH-####*" Or _
+        in_varHinban Like "*DE-####*" Or in_varHinban Like "*DJ-####*" Or _
+        in_varHinban Like "*DF-####*" Or in_varHinban Like "*DQ-####*" Or _
+        in_varHinban Like "*DU-####*" Or in_varHinban Like "*DN-####*" Or in_varHinban Like "*KU-####*" Or _
+        in_varHinban Like "*DI-####*" Or in_varHinban Like "*DG-####*" Or _
+        in_varHinban Like "*DD-####*" Or in_varHinban Like "*DV-####*" Or _
+        in_varHinban Like "*VM-####*" Or in_varHinban Like "*VL-####*" Or in_varHinban Like "*VN-####*" Or _
+        in_varHinban Like "*VF-####*" Or in_varHinban Like "*VQ-####*" Or _
+        in_varHinban Like "*VI-####*" Or in_varHinban Like "*VG-####*" _
+    Then
+
+        IsHikido = True
+        
+    End If
+    
+
+End Function
+
+Public Function IsKabetsukeGuide(in_varHinban As Variant) As Boolean
+'   *************************************************************
+'   壁付ガイド引戸確認
+
+'   戻り値:Boolean
+'       →True              壁付ガイド引戸
+'       →False             壁付ガイド引戸以外
+'
+'    Input項目
+'       in_varHinban        建具品番
+
+'   2.1.0 ADD
+'   *************************************************************
+    
+    IsKabetsukeGuide = False
+    
+    If IsNull(in_varHinban) Then Exit Function
+    
+    If in_varHinban Like "*KC-####*-*" Or in_varHinban Like "KT-####*-*" Or in_varHinban Like "KU-####*-*" Then
+        IsKabetsukeGuide = True
+    End If
+    
+End Function
+
+Public Function IsEndWakunashi(in_varHinban As Variant) As Boolean
+'   *************************************************************
+'   エンド枠無し確認
+
+'   戻り値:Boolean
+'       →True              エンド枠無し
+'       →False             エンド枠無し以外
+'
+'    Input項目
+'       in_varHinban        建具品番
+
+'   2.1.0 ADD
+'   *************************************************************
+    
+    IsEndWakunashi = False
+    
+    If IsNull(in_varHinban) Then Exit Function
+    
+    If in_varHinban Like "*DU-####*" Or in_varHinban Like "*DN-####*" Or in_varHinban Like "*KU-####*" Or in_varHinban Like "*VN-####*" Then
+        IsEndWakunashi = True
+    End If
+    
+End Function
+
+Public Function IsCaro_Panel(in_varHinban As Variant) As Boolean
+'   *************************************************************
+'   カロ（AF-1～3型　パネル戸）確認
+
+'   戻り値:Boolean
+'       →True              Caro（パネル）
+'       →False             Caro（パネル）以外
+'
+'    Input項目
+'       in_varHinban        建具品番
+
+'   2.1.0 ADD
+'   *************************************************************
+    
+    Dim strHinban As String
+
+    IsCaro_Panel = False
+    
+    If IsNull(in_varHinban) Then Exit Function
+
+    strHinban = Replace(in_varHinban, "特 ", "")
+    
+    If strHinban Like "??B*-####A*-*" Or strHinban Like "??B*-####B*-*" Or strHinban Like "??B*-####O*-*" Then
+        IsCaro_Panel = True
+    End If
+    
+End Function
+
+Public Function IsTerraceGlass(in_varHinban As Variant) As Boolean
+'   *************************************************************
+'   テラスガラスドア確認
+
+'   戻り値:Boolean
+'       →True              テラスガラスドア型
+'       →False             テラスガラスドア型以外
+'
+'    Input項目
+'       in_varHinban        建具品番
+
+'   2.1.0 ADD
+'   *************************************************************
+
+    Dim strHinban As String
+
+    IsTerraceGlass = False
+    
+    If IsNull(in_varHinban) Then Exit Function
+
+    strHinban = Replace(in_varHinban, "特 ", "")
+    
+    If strHinban Like "Y*-####?A*" Or strHinban Like "Y*-####?C*" Or strHinban Like "Y*-####?D*" Or strHinban Like "Y*-####?P*" Or strHinban Like "Y*-####?V*" Then
+        IsTerraceGlass = True
+    End If
+
+End Function
+
+Public Function IsHidden_Hinge(in_varHinban As Variant) As Boolean
+'   *************************************************************
+'   「隠し丁番」確認
+
+'   戻り値:Boolean
+'       →True              隠し丁番
+'       →False             隠し丁番でない
+'
+'    Input項目
+'       in_varHinban        建具品番
+
+'   2.1.0 ADD
+'   *************************************************************
+
+    IsHidden_Hinge = False
+      
+     If IsNull(in_varHinban) Then Exit Function
+     
+    If in_varHinban Like "*KA-####*" Or in_varHinban Like "*KAS-####*" Or in_varHinban Like "*KO-####*" Or in_varHinban Like "*KOS-####*" Or in_varHinban Like "*KK-####*" Or in_varHinban Like "*KKS-####*" Then
+        IsHidden_Hinge = True
+    End If
+    
+End Function
+
+Public Function IsPALIOBlack(in_varHinban As Variant) As Boolean
+'   *************************************************************
+'   パリオブラック（ビアンコ）確認
+'   とりあえず中止になったのでFalseのみを返す
+
+'   戻り値:Boolean
+'       →True              パリオブラック
+'       →False             パリオブラック以外
+'
+'    Input項目
+'       in_varHinban        建具品番
+
+'   2.1.0 ADD
+'   *************************************************************
+'    If in_varHinban Like "*-*-*(NN)" Then
+'        IsPALIOBlack = True
+'    Else
+        IsPALIOBlack = False
+'    End If
+    
+End Function
+
+Public Function IsTateguInset(in_varHinban As Variant) As Boolean
+'   *************************************************************
+'   建具品番の枠仕様がインセットか確認
+
+
+'   戻り値:boolen
+'       →True 枠仕様がインセット
+'
+'    Input項目
+'       in_varHinban        品番
+
+'   2.1.0 ADD
+'   *************************************************************
+    Dim strHinban As String
+    
+    IsTateguInset = False
+    
+    If IsNull(in_varHinban) Then Exit Function
+    
+    strHinban = Replace(in_varHinban, "特 ", "")
+    
+    If strHinban Like "?Z*-####*" Or strHinban Like "?Y*-####*" Or strHinban Like "?T*-####*" Then
+        IsTateguInset = True
+    End If
+    
+End Function
+
+Public Function IsGuidePiece_ShitaanaKakou(in_varHinban As Variant, in_varTobiraIchi As Variant, in_varSpec As Variant, Optional in_SekkeiBikou As Variant) As Boolean
+'   *************************************************************
+'   ガイドピース下穴加工確認
+
+'   戻り値:Boolean
+'       →True              下穴加工あり
+'       →False             下穴加工なし
+'
+'    Input項目
+'       in_varHinban        建具品番
+'       in_varTobiraIchi    扉位置（右、中、左）、それ以外は無条件にFalseを返す
+'       in_varSpec          個別Spec 20160923時点では使用しない
+'       in_SekkeiBikou      建具設計備考
+       
+'   2.1.0 ADD
+'   *************************************************************
+    
+    Dim strTsurimoto As String
+    
+    On Error GoTo Err_IsGuidePiece_ShitaanaKakou
+    
+    If in_varTobiraIchi <> "右" And in_varTobiraIchi <> "左" And in_varTobiraIchi <> "中" Then
+        Err.Raise 9999, , "ErrEnd"
+    End If
+    
+    If IsNull(in_varHinban) Then
+        Err.Raise 9999, , "ErrEnd"
+    End If
+    
+    'エスパスライドウォールは除外
+    If IsSlideWall_Espacio(in_varHinban) Then
+        IsGuidePiece_ShitaanaKakou = False
+        Exit Function
+    End If
+    
+    '設計備考に以下コメントがある場合は除外
+    If Not IsMissing(in_SekkeiBikou) Then
+        If in_SekkeiBikou Like "*図面あり*戸首･戸車*" Then
+            IsGuidePiece_ShitaanaKakou = False
+            Exit Function
+        End If
+    End If
+    
+    If in_varHinban Like "*DF-####*-*" Or in_varHinban Like "*VF-####*-*" Then
+
+    
+        If in_varTobiraIchi = "中" Then
+            IsGuidePiece_ShitaanaKakou = True
+        End If
+    ElseIf in_varHinban Like "*DH-####*-*" Then
+        strTsurimoto = Mid(in_varHinban, InStr(1, in_varHinban, "(") - 1, 1)
+        If strTsurimoto = "L" And in_varTobiraIchi = "右" Then
+            IsGuidePiece_ShitaanaKakou = True
+        ElseIf strTsurimoto = "R" And in_varTobiraIchi = "左" Then
+            IsGuidePiece_ShitaanaKakou = True
+        End If
+    ElseIf in_varHinban Like "*DJ-####*-*" Then
+        If in_varTobiraIchi = "中" Then
+            IsGuidePiece_ShitaanaKakou = True
+        Else
+            strTsurimoto = Mid(in_varHinban, InStr(1, in_varHinban, "(") - 1, 1)
+            If strTsurimoto = "L" And in_varTobiraIchi = "右" Then
+                IsGuidePiece_ShitaanaKakou = True
+            ElseIf strTsurimoto = "R" And in_varTobiraIchi = "左" Then
+                IsGuidePiece_ShitaanaKakou = True
+            End If
+        End If
+    End If
+    
+    Exit Function
+    
+Err_IsGuidePiece_ShitaanaKakou:
+    IsGuidePiece_ShitaanaKakou = False
+    
+End Function
+
+Public Function IsSlideWall_Espacio(in_varHinban As Variant) As Boolean
+'   *************************************************************
+'   スライドウォール（エスパ）確認
+
+'   戻り値:Boolean
+'       →True              スライドウォール
+'       →False             スライドウォール以外
+'
+'    Input項目
+'       in_varHinban        建具品番
+
+'   2.1.0 ADD
+'   *************************************************************
+
+    On Error GoTo Err_IsSlideWall_Espacio
+    
+    Dim strHinban As String
+    
+    If IsNull(in_varHinban) Then Exit Function
+    
+    strHinban = Replace(in_varHinban, "特 ", "")
+    
+    If strHinban Like "PSW*-####FV-*" Or strHinban Like "ESW*-####FV-*" Then
+        IsSlideWall_Espacio = True
+    Else
+        IsSlideWall_Espacio = False
+    End If
+    
+    Exit Function
+
+Err_IsSlideWall_Espacio:
+    IsSlideWall_Espacio = False
+    
+End Function
+
+Public Function dblfncGuidePiece_ShitaanaSunpo(in_varHinban As Variant, in_varSpec As Variant) As Double
+'   *************************************************************
+'   ガイドピース下穴加工寸法
+
+'   戻り値:Double
+'       →下穴加工寸法（該当しない場合は0を返す）
+'
+'    Input項目
+'       in_varHinban        建具品番
+'       in_varSpec          個別Spec 20160923時点では使用しない
+
+'   2.1.0 ADD
+'   *************************************************************
+
+    On Error GoTo Err_dblfncGuidePiece_ShitaanaSunpo
+    
+    If IsNull(in_varHinban) Then Exit Function
+    
+    If in_varHinban Like "*DF-####*-*" Or in_varHinban Like "*VF-####*-*" Then
+    
+        dblfncGuidePiece_ShitaanaSunpo = 60
+    ElseIf in_varHinban Like "*DH-####*-*" Then
+        dblfncGuidePiece_ShitaanaSunpo = 52.5
+    ElseIf in_varHinban Like "*DJ-####*-*" Then
+        dblfncGuidePiece_ShitaanaSunpo = 52.5
+    Else
+        dblfncGuidePiece_ShitaanaSunpo = 0
+    End If
+    
+    Exit Function
+    
+Err_dblfncGuidePiece_ShitaanaSunpo:
+    dblfncGuidePiece_ShitaanaSunpo = 0
+End Function
+
+Public Function intfncGuidePiece_ShitaanaSu(in_varHinban As Variant, in_varSpec As Variant) As Integer
+'   *************************************************************
+'   ガイドピース下穴加工数
+
+'   戻り値:Integer
+'       →下穴加工数（該当しない場合は0を返す）
+'
+'    Input項目
+'       in_varHinban        建具品番
+'       in_varSpec          個別Spec 20160923時点では使用しない
+        
+'   2.1.0 ADD
+'   *************************************************************
+    
+    On Error GoTo Err_intfncGuidePiece_ShitaanaSu
+    
+    If IsNull(in_varHinban) Then Exit Function
+    
+    If in_varHinban Like "*DF-####*-*" Or in_varHinban Like "*VF-####*-*" Then
+    
+        intfncGuidePiece_ShitaanaSu = 2
+    ElseIf in_varHinban Like "*DH-####*-*" Then
+        intfncGuidePiece_ShitaanaSu = 1
+    ElseIf in_varHinban Like "*DJ-####*-*" Then
+        intfncGuidePiece_ShitaanaSu = 1
+    Else
+        intfncGuidePiece_ShitaanaSu = 0
+    End If
+    
+    Exit Function
+    
+Err_intfncGuidePiece_ShitaanaSu:
+    intfncGuidePiece_ShitaanaSu = 0
+
+End Function
+
+Public Function IsMirrorUsed(in_varHinban As Variant, Optional in_Tobiraichi As Variant = Null) As Boolean
+'   *************************************************************
+'   鏡使用扉確認
+
+'   ※鏡を使用する品番を確認
+
+'   戻り値:Boolean
+'       →True              鏡使用
+'       →False             鏡未使用
+'
+'    Input項目
+'       in_varHinban        建具品番
+'       in_Tobiraichi       扉位置(L or R or C or LC or RC) --オプション（引数がない場合は品番のみで判断）--201708時点では使用しない
+
+'   *************************************************************
+    Dim strHinban As String
+    
+    On Error GoTo Err_IsMirrorUsed
+    
+    IsMirrorUsed = False
+    
+    If IsNull(in_varHinban) Then Exit Function
+    
+    strHinban = Replace(in_varHinban, "特 ", "")
+            
+    '扉位置に関係なくTrueの品番
+    If strHinban Like "*-####MF*" Or strHinban Like "*-####MM*" Then
+        
+        IsMirrorUsed = True
+        
+    '扉位置によって扉がある場合
+    ElseIf strHinban Like "*-####ML*" Or strHinban Like "*-####MR*" Then
+        
+        '扉位置の指示がない場合はTrue
+        If Nz(in_Tobiraichi, "") = "" Then
+            IsMirrorUsed = True
+        Else
+            Select Case in_Tobiraichi
+                Case "L"
+                    If strHinban Like "*-####ML*" Then IsMirrorUsed = True
+                        
+                Case "R"
+                    If strHinban Like "*-####MR*" Then IsMirrorUsed = True
+            End Select
+        End If
+    End If
+    
+    'SxL建具
+    '1701仕様時点ではなし
+
+    Exit Function
+
+Err_IsMirrorUsed:
+    IsMirrorUsed = False
+End Function
+
+Public Function valfncHinmei_Local(in_strHinban As Variant, in_intSeihinkubun As Integer, in_strSpec As Variant) As Variant
+'   *************************************************************
+'   品名抽出（品名を返すのみ版）
+
+'   戻り値:Variant → 品名（見つからない場合はNULL）
+'
+'    Input項目
+'       in_strHinban        建具品番
+'       in_intSeihinkubun   品番区分
+'       in_strSpec          個別Spec
+'   *************************************************************
+    Dim objREMOTEDB As cls_BRAND_MASTER
+    
+    Dim strSQL As String
+    Dim strHinban As String
+    
+    strSQL = ""
+    valfncHinmei_Local = Null
+    
+    On Error GoTo Err_valfncHinmei_Local
+    
+    If IsNull(in_strHinban) Then GoTo Exit_valfncHinmei_Local
+    
+    strHinban = Replace(in_strHinban, "特 ", "")
+    
+    Select Case in_intSeihinkubun
+        Case 1, 5 '建具,ｸﾛｾﾞｯﾄ
+            strSQL = "select top 1 品名 from T_建具品番ﾏｽﾀ where "
+                If IsKotobira(strHinban) Then
+                    strSQL = strSQL & " 子扉品番 = '" & strHinban & "'"
+                Else
+                    strSQL = strSQL & " 建具品番 = '" & strHinban & "'"
+                End If
+        Case 2, 4 '枠,三方枠
+            strSQL = "select top 1 品名 from T_枠品番ﾏｽﾀ where 枠品番 = '" & strHinban & "'"
+            
+        Case 3 '下地枠
+            strSQL = "select top 1 品名 from T_下地材品番ﾏｽﾀ where 下地材品番 = '" & strHinban & "'"
+          
+        Case 6 '造作材
+            strSQL = "select top 1 品名 from T_造作材品番ﾏｽﾀ where 造作材品番 = '" & strHinban & "'"
+            
+        Case 7 '玄関収納
+            strSQL = "select top 1 品名 from T_玄関収納ﾏｽﾀ where 品番 = '" & strHinban & "'"
+            
+        Case 8 '金物
+            strSQL = "select top 1 品名 from T_金物品番ﾏｽﾀ where 金物品番 = '" & strHinban & "'"
+        
+    End Select
+    
+    If strSQL = "" Then
+        GoTo Exit_valfncHinmei_Local
+    Else
+
+        If Not IsNull(in_strSpec) And in_strSpec <> "" Then
+            strSQL = strSQL & " and 仕様 = '" & left(in_strSpec, 3) & "' and '" & right(in_strSpec, 4) & "' between 開始 and 終了 "
+        End If
+
+    End If
+    
+    With objREMOTEDB
+        If .ExecSelect(strSQL) Then
+            If Not .GetRS.EOF Then
+                valfncHinmei_Local = .GetRS![品名]
+            End If
+        End If
+    End With
+    
+    GoTo Exit_valfncHinmei_Local
+    
+Err_valfncHinmei_Local:
+    'MsgBox Err.Description
+Exit_valfncHinmei_Local:
+    Set objREMOTEDB = Nothing
+End Function
+
+Public Function IsTerraceKamachi(in_varHinban As Variant) As Boolean
+'   *************************************************************
+'   テラス框(YF5/YG5)ドア確認
+
+'   戻り値:Boolean
+'       →True              テラスドア型
+'       →False             テラスドア型以外
+'
+'    Input項目
+'       in_strHinban        建具品番
+
+'   2.1.0 ADD
+'   *************************************************************
+
+    On Error GoTo Err_IsTerraceKamachi
+    
+    Dim strHinban As String
+    
+    IsTerraceKamachi = False
+    
+    If IsNull(in_varHinban) Then Exit Function
+    
+    strHinban = Replace(in_varHinban, "特 ", "")
+    
+    If strHinban Like "Y?B*-####*" Then
+        IsTerraceKamachi = True
+    Else
+        IsTerraceKamachi = False
+    End If
+    
+    Exit Function
+
+Err_IsTerraceKamachi:
+    IsTerraceKamachi = False
 End Function

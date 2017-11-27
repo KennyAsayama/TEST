@@ -15,7 +15,7 @@ Option Explicit
 '--------------------------------------------------------------------------------------------------------------------
 
     'Private objExcel As Excel.Application  'Excel
-    Private objEXCEL As Object
+    Private objExcel As Object
     Private bolQuit As Boolean
     Private BookName As String
     
@@ -57,7 +57,7 @@ Private Sub Class_Initialize()
 '--------------------------------------------------------------------------------------------------------------------
 'コンストラクタ
 '--------------------------------------------------------------------------------------------------------------------
-    Set objEXCEL = CreateObject("Excel.Application")
+    Set objExcel = CreateObject("Excel.Application")
     bolQuit = True
     UserAddin
 End Sub
@@ -71,12 +71,12 @@ Private Sub Class_Terminate()
     'bolQuit=Trueの時Excelを閉じる
     If bolQuit Then
         AllClose
-        objEXCEL.Quit
+        objExcel.Quit
     Else
-        objEXCEL.Visible = True
+        objExcel.Visible = True
     End If
     
-    Set objEXCEL = Nothing
+    Set objExcel = Nothing
 End Sub
 
 Private Function AllClose() As Boolean
@@ -89,7 +89,7 @@ Private Function AllClose() As Boolean
     
     On Error GoTo Err_AllClose
     
-    For Each wb In objEXCEL.Workbooks            '開いている全てのブックに対して
+    For Each wb In objExcel.Workbooks            '開いている全てのブックに対して
         If wb.Saved = False Then
             wb.Close Savechanges:=False
         End If
@@ -112,7 +112,7 @@ Public Function WorkSheetADD(Optional byName As String = "") As Boolean
 '--------------------------------------------------------------------------------------------------------------------
     On Error GoTo Err_WorkSheetADD
         
-    With objEXCEL
+    With objExcel
         .Worksheets.Add After:=.Worksheets(.Worksheets.Count)
         If Not IsMissing(byName) Then
             .Activesheet.Name = byName
@@ -131,11 +131,11 @@ Public Function WorkSheetDelete(WorkSheetName As String) As Boolean
     
     On Error GoTo Err_WorkSheetDelete
     
-    objEXCEL.Application.DisplayAlerts = False
+    objExcel.Application.DisplayAlerts = False
     
-    For Each ws In objEXCEL.Worksheets
+    For Each ws In objExcel.Worksheets
         If ws.Name = WorkSheetName Then
-            objEXCEL.Worksheets(WorkSheetName).Delete
+            objExcel.Worksheets(WorkSheetName).Delete
         End If
     Next ws
     
@@ -147,7 +147,7 @@ Err_WorkSheetDelete:
     WorkSheetDelete = False
     
 Exit_WorkSheetDelete:
-    objEXCEL.Application.DisplayAlerts = True
+    objExcel.Application.DisplayAlerts = True
     Set ws = Nothing
 End Function
 
@@ -161,7 +161,7 @@ Public Function WorkSheetExists(WorkSheetName As String) As Boolean
     
     WorkSheetExists = False
     
-    For Each ws In objEXCEL.Worksheets
+    For Each ws In objExcel.Worksheets
         If ws.Name = WorkSheetName Then
             WorkSheetExists = True
             Exit For
@@ -195,7 +195,7 @@ Public Property Get getExcel() As Object
 '--------------------------------------------------------------------------------------------------------------------
 'Excelオブジェクト取得
 '--------------------------------------------------------------------------------------------------------------------
-    Set getExcel = objEXCEL
+    Set getExcel = objExcel
 End Property
 
 Private Function UserAddin()
@@ -208,8 +208,8 @@ Private Function UserAddin()
     Dim strFName As String
     Dim i As Integer
     
-    strAddinPath = objEXCEL.Application.UserLibraryPath
-    strxlsSTARTPath = objEXCEL.Application.StartupPath
+    strAddinPath = objExcel.Application.UserLibraryPath
+    strxlsSTARTPath = objExcel.Application.StartupPath
     
         i = 0
     'ファイル探索
@@ -221,7 +221,7 @@ Private Function UserAddin()
         i = i + 1
         
         'Debug.Print strFName
-        objEXCEL.Workbooks.Open strAddinPath & "\" & strFName
+        objExcel.Workbooks.Open strAddinPath & "\" & strFName
         strFName = Dir()
         
     Loop
@@ -234,7 +234,7 @@ Private Function UserAddin()
         i = i + 1
         
         'Debug.Print strFName
-        objEXCEL.Workbooks.Open strAddinPath & "\" & strFName
+        objExcel.Workbooks.Open strAddinPath & "\" & strFName
         strFName = Dir()
         
     Loop

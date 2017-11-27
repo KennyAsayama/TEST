@@ -61,7 +61,7 @@ Public Function ExecSelect_Writable(SQL As String) As Boolean
 
 End Function
 
-Public Function ExecSQL(SQL As String, Optional ByRef strErrmsg As String) As Boolean
+Public Function ExecSQL(SQL As String, Optional ByRef strErrMsg As String) As Boolean
 
     ExecSQL = False
 
@@ -73,8 +73,8 @@ Public Function ExecSQL(SQL As String, Optional ByRef strErrmsg As String) As Bo
     If cnADO.Errors.Count = 0 Then
        ExecSQL = True
     Else
-        If Not IsMissing(strErrmsg) Then
-            strErrmsg = cnADO.Errors.Item(0).Description
+        If Not IsMissing(strErrMsg) Then
+            strErrMsg = cnADO.Errors.Item(0).Description
         End If
     End If
 
@@ -117,3 +117,10 @@ Public Sub RecordSetClose()
     rsADO.Close
     
 End Sub
+
+Public Property Let CursorLocation(inValue As ADODB.CursorLocationEnum)
+'2.1.0 ADD
+
+    cnADO.CursorLocation = inValue
+    
+End Property

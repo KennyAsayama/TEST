@@ -118,7 +118,7 @@ Public Function ExecSelect_Writable(SQL As String) As Boolean
 
 End Function
 
-Public Function ExecSQL(SQL As String, Optional ByRef strErrmsg As Variant) As Boolean
+Public Function ExecSQL(SQL As String, Optional ByRef strErrMsg As Variant) As Boolean
     
     ExecSQL = False
 
@@ -130,8 +130,8 @@ Public Function ExecSQL(SQL As String, Optional ByRef strErrmsg As Variant) As B
     If cnADO.Errors.Count = 0 Then
        ExecSQL = True
     Else
-        If Not IsMissing(strErrmsg) Then
-            strErrmsg = cnADO.Errors.Item(0).Description
+        If Not IsMissing(strErrMsg) Then
+            strErrMsg = cnADO.Errors.Item(0).Description
         End If
     End If
 '    Debug.Print strErrMSG
@@ -164,7 +164,7 @@ Public Property Get GetRS() As ADODB.Recordset
 
 End Property
 
-Public Sub TimeoutValue(intVal As Integer)
+Public Sub TimeOutValue(intVal As Integer)
 '1.11.0 ADD
     cnADO.CommandTimeout = intVal
     
@@ -183,7 +183,7 @@ Err_AsyncState:
     AsyncState = 999
 End Function
 
-Public Function ExecSQL_Async(SQL As String, Optional ByRef strErrmsg As Variant) As Boolean
+Public Function ExecSQL_Async(SQL As String, Optional ByRef strErrMsg As Variant) As Boolean
 '1.11.1 ADD îÒìØä˙é¿çs
     ExecSQL_Async = False
 
@@ -195,8 +195,8 @@ Public Function ExecSQL_Async(SQL As String, Optional ByRef strErrmsg As Variant
     If cnADO.Errors.Count = 0 Then
        ExecSQL_Async = True
     Else
-        If Not IsMissing(strErrmsg) Then
-            strErrmsg = cnADO.Errors.Item(0).Description
+        If Not IsMissing(strErrMsg) Then
+            strErrMsg = cnADO.Errors.Item(0).Description
         End If
     End If
 '    Debug.Print strErrMSG
