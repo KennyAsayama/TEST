@@ -1086,6 +1086,8 @@ Public Function IsPainted(in_strHinban As Variant) As Boolean
 '           →エスパのリアラートは塗装
 '   1.12.3
 '           →リアラート新色追加
+'   2.1.1
+'           →1801新色先行追加
 '   *************************************************************
     On Error GoTo Err_IsPainted
     
@@ -1107,6 +1109,10 @@ Public Function IsPainted(in_strHinban As Variant) As Boolean
     
     '1.12.3 ADD
     If in_strHinban Like "*-####*-*(NH)*" Then
+        IsPainted = True
+    End If
+    
+    If in_strHinban Like "*-####*-*(NT)*" Or in_strHinban Like "*-####*-*(NY)*" Then
         IsPainted = True
     End If
     
