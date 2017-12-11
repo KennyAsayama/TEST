@@ -899,6 +899,9 @@ Public Function bolfncMiseizoToExcel() As Boolean
 '   :戻り値
 '       True            :成功
 '       False           :失敗
+
+'2.2.0
+'   →ウォールスルー未製造追加
 '--------------------------------------------------------------------------------------------------------------------
 
     Dim objApp As New cls_Excel
@@ -909,7 +912,7 @@ Public Function bolfncMiseizoToExcel() As Boolean
     Dim intSheetDel As Integer
     Dim strSQL As String
     Dim strSQLJ As String
-    Dim strKBName(2) As String
+    Dim strKBName(3) As String
     Dim strMidashiVal As String
     
     On Error GoTo Err_bolfncMiseizoToExcel
@@ -924,6 +927,7 @@ Public Function bolfncMiseizoToExcel() As Boolean
         strKBName(0) = "建具"
         strKBName(1) = "下地"
         strKBName(2) = "枠"
+        strKBName(3) = "ウォールスルー未出荷"
         
         strSQL = ""
         strSQL = strfncTextFileToString("\\db\prog\製造管理システム\SQL\subMISEIZO.sql")
@@ -972,6 +976,27 @@ Public Function bolfncMiseizoToExcel() As Boolean
 
         Next
         
+        i = 3
+        strSQL = ""
+        strSQL = strfncTextFileToString("\\db\prog\製造管理システム\SQL\subMISHUKKA_Wallthru.sql")
+        If strSQL <> "" Then
+            strSQL = Replace(strSQL, vbCrLf, " ")
+        Else
+            Err.Raise 9999, , "未製造出力異常終了"
+        End If
+        
+        strMidashiVal = "ウォールスルー未出荷残 " & Format(Now, "yyyy-MM-dd")
+        
+        If Not objREMOTEDB.ExecSelect(strSQL) Then
+            Err.Raise 9999, , "台帳集計データ異常終了"
+        End If
+        
+        objApp.WorkSheetADD strKBName(i)
+                
+        If Not bolfncexp_EXCELOBJECT(objREMOTEDB.GetRS, objApp.getExcel, True, strMidashiVal) Then
+            Err.Raise 9999, , "Excelエクスポート異常終了"
+        End If
+        
         '不要なワークシートの削除
         For i = 1 To .Worksheets.Count
             If .Worksheets(i - intSheetDel).Name Like "Sheet*" Then
@@ -1000,5 +1025,6 @@ Exit_bolfncMiseizoToExcel:
     Screen.MousePointer = 0
     Set objApp = Nothing
     Set objREMOTEDB = Nothing
+    
     
 End Function

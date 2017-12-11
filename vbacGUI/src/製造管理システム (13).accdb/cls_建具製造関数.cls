@@ -2475,6 +2475,31 @@ Public Property Get íöî‘íÜâ∫à íu() As Variant
     
 End Property
 
+Public Property Get ûyçﬁçaã–(ByVal ûyçﬁéÌóﬁ As String) As String
+'***********************************************************
+'ûyçﬁçaã–
+'
+'2.2.0 ADD
+'***********************************************************
+    
+    Select Case ûyçﬁéÌóﬁ
+        Case "GRU12"
+            ûyçﬁçaã– = "8.4"
+        
+        Case "HRU12", "HRU15", "HRN15", "HRS22"
+            ûyçﬁçaã– = "5.4"
+            
+        Case "HRG12"
+            ûyçﬁçaã– = "6.4"
+            
+        Case "HRU15"
+            ûyçﬁçaã– = ""
+            
+     End Select
+            
+
+End Property
+
 Private Sub setADOConnection()
 '***********************************************************
 'ADOÉRÉlÉNÉVÉáÉìèàóù
