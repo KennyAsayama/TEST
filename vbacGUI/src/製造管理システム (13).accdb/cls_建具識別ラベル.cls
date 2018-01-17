@@ -53,6 +53,8 @@ End Property
 
 Public Property Get 縁張_外(ByVal 契約番号 As String, ByVal 建具品番 As String, ByVal 色 As Variant) As Variant
     
+'2.3.0 Change トヨタ品番識別方法修正
+
     Dim strHinban As String
     
     縁張_外 = Null
@@ -60,7 +62,7 @@ Public Property Get 縁張_外(ByVal 契約番号 As String, ByVal 建具品番 As String, 
     strHinban = fncGetTateguHinban(建具品番)
     
     'トヨタ
-    If 契約番号 Like "TY*" Then
+    If strHinban Like "TY*" And Not IsSINAColor(strHinban) Then
         縁張_外 = "ローカン"
         Exit Property
     End If
@@ -97,6 +99,8 @@ End Property
 
 Public Property Get 縁張_内(ByVal 契約番号 As String, ByVal 建具品番 As String, ByVal 色 As Variant) As Variant
     
+'2.3.0 Change トヨタ品番識別方法修正
+
     Dim strHinban As String
     
     縁張_内 = Null
@@ -104,7 +108,7 @@ Public Property Get 縁張_内(ByVal 契約番号 As String, ByVal 建具品番 As String, 
     strHinban = fncGetTateguHinban(建具品番)
     
     'トヨタ
-    If 契約番号 Like "TY*" Then
+    If strHinban Like "TY*" And Not IsSINAColor(strHinban) Then
         If IsSideThru(strHinban) Or IsCenterThru(strHinban) Then
             縁張_内 = "エッジ"
         End If
@@ -222,6 +226,7 @@ End Property
 Public Property Get ハンドル引手BS(ByVal 建具品番 As String, ByVal 施錠 As Variant, ByVal 個別Spec As Variant) As Variant
 
 '2.1.0 1708仕様ハンドル追加
+'2.3.0 1801仕様ハンドル追加
 
     Dim strHinban As String
     Dim strHandle As String
@@ -259,8 +264,8 @@ Public Property Get ハンドル引手BS(ByVal 建具品番 As String, ByVal 施錠 As Varia
             strHandle = left(施錠, 2)
             
             Select Case strHandle
-                'KAWAJUN,KURAMAE
-                Case "CN", "CO", "DN", "DO", "CP", "CQ", "CR", "CL", "CM", "BY", "BZ", "DP", "DQ"
+                'KAWAJUN,KURAMAE(OLIVALI含む）
+                Case "CN", "CO", "DN", "DO", "CP", "CQ", "CR", "CL", "CM", "BY", "BZ", "DP", "DQ", "FC", "FD", "FE", "FF", "FG", "FH"
                     ハンドル引手BS = 51
                 'キーノート仕様
                 Case "BA", "BC", "BD", "BE", "BF", "BH", "BI", "BJ", "BL", "BM", "BN", "BO", "BP", "BQ", "BR", "BS"

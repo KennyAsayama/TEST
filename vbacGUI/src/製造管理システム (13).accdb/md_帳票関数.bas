@@ -67,7 +67,7 @@ Public Function bolFncKidoriData(ByVal varSpec As Variant, ByVal strHinban As St
 '       →1608仕様対応
 '   '20170517 K.Asayama Change
 '       →Terrace用柱追加
-
+    
 '   戻り値:Boolean
 '       →True              照合OK　数値戻し
 '       →True              照合NG　数値なし
@@ -127,6 +127,9 @@ Public Function bolFncKidoriData(ByVal varSpec As Variant, ByVal strHinban As St
 '       out_intYokosanh_N   横桟
 '      図面
 '       out_strShingumizu   芯組詳細図
+
+'2.3.0
+'   →CG1関数誤り訂正
 '   *************************************************************
 
 
@@ -1592,10 +1595,13 @@ Public Function bolFncKidoriData(ByVal varSpec As Variant, ByVal strHinban As St
             intSode1H = 0
             dblSode2 = 0
             intSode2H = 0
-            
-        ElseIf strHinban Like "*DC-####*" Or strHinban Like "*DT-####*" Or strHinban Like "*DE-####*" _
-            Or strHinban Like "*KC-####*" Or strHinban Like "*KT-####*" Then
-            
+
+        '2.3.0 品番漏れ修正
+'        ElseIf strHinban Like "*DC-####*" Or strHinban Like "*DT-####*" Or strHinban Like "*DE-####*" _
+'            Or strHinban Like "*KC-####*" Or strHinban Like "*KT-####*" Then
+        ElseIf strHinban Like "*DC-####*" Or strHinban Like "*DT-####*" Or strHinban Like "*DP-####*" Or strHinban Like "*DU-####*" Or strHinban Like "*DE-####*" _
+                Or strHinban Like "*KC-####*" Or strHinban Like "*KT-####*" Or strHinban Like "*KU-####*" Then
+                
             Select Case dblDH
                 Case 2530 To 2589
                     dblDaboShitaji = 150

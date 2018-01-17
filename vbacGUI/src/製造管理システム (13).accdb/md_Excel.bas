@@ -73,7 +73,7 @@ Public Sub exp_EXCEL(strSQL As String, Optional boolFilter As Boolean, Optional 
         j = 1
     Else
         j = 2
-        objApp.Activesheet.cells(1, 1).value = strMIDASHI
+        objApp.Activesheet.Cells(1, 1).value = strMIDASHI
     End If
     
     
@@ -83,28 +83,28 @@ Public Sub exp_EXCEL(strSQL As String, Optional boolFilter As Boolean, Optional 
         
         With objApp.Activesheet
             For i = 0 To rsADO.Fields.Count - 1
-                .cells(j, i + 1).value = rsADO.Fields(i).Name
-                .cells(j, i + 1).Interior.ColorIndex = 15 'Gray
-                .cells(j, i + 1).Borders(xlEdgeTop).LineStyle = xlContinuous
-                .cells(j, i + 1).Borders(xlEdgeBottom).LineStyle = xlContinuous
-                .cells(j, i + 1).Borders(xlEdgeRight).LineStyle = xlContinuous
-                .cells(j, i + 1).Borders(xlEdgeLeft).LineStyle = xlContinuous
+                .Cells(j, i + 1).value = rsADO.Fields(i).Name
+                .Cells(j, i + 1).Interior.ColorIndex = 15 'Gray
+                .Cells(j, i + 1).Borders(xlEdgeTop).LineStyle = xlContinuous
+                .Cells(j, i + 1).Borders(xlEdgeBottom).LineStyle = xlContinuous
+                .Cells(j, i + 1).Borders(xlEdgeRight).LineStyle = xlContinuous
+                .Cells(j, i + 1).Borders(xlEdgeLeft).LineStyle = xlContinuous
             Next i
             
             '1.10.15 見出しマージ
             If j = 2 Then
-                .Range(.cells(1, 1), .cells(1, i)).Merge
+                .Range(.Cells(1, 1), .Cells(1, i)).Merge
             End If
             
-            .cells(j + 1, 1).CopyFromRecordset rsADO
+            .Cells(j + 1, 1).CopyFromRecordset rsADO
             
             '1.10.9 K.Asayama Change Bug Fix
-            .Range(.cells(j, 1), .cells(.cells(j, 1).End(xlDown).Row, i)).Borders(xlEdgeLeft).LineStyle = xlContinuous
-            .Range(.cells(j, 1), .cells(.cells(j, 1).End(xlDown).Row, i)).Borders(xlEdgeTop).LineStyle = xlContinuous
-            .Range(.cells(j, 1), .cells(.cells(j, 1).End(xlDown).Row, i)).Borders(xlEdgeBottom).LineStyle = xlContinuous
-            .Range(.cells(j, 1), .cells(.cells(j, 1).End(xlDown).Row, i)).Borders(xlEdgeRight).LineStyle = xlContinuous
-            .Range(.cells(j, 1), .cells(.cells(j, 1).End(xlDown).Row, i)).Borders(xlInsideVertical).LineStyle = xlContinuous
-            .Range(.cells(j, 1), .cells(.cells(j, 1).End(xlDown).Row, i)).Borders(xlInsideHorizontal).LineStyle = xlContinuous
+            .Range(.Cells(j, 1), .Cells(.Cells(j, 1).End(xlDown).Row, i)).Borders(xlEdgeLeft).LineStyle = xlContinuous
+            .Range(.Cells(j, 1), .Cells(.Cells(j, 1).End(xlDown).Row, i)).Borders(xlEdgeTop).LineStyle = xlContinuous
+            .Range(.Cells(j, 1), .Cells(.Cells(j, 1).End(xlDown).Row, i)).Borders(xlEdgeBottom).LineStyle = xlContinuous
+            .Range(.Cells(j, 1), .Cells(.Cells(j, 1).End(xlDown).Row, i)).Borders(xlEdgeRight).LineStyle = xlContinuous
+            .Range(.Cells(j, 1), .Cells(.Cells(j, 1).End(xlDown).Row, i)).Borders(xlInsideVertical).LineStyle = xlContinuous
+            .Range(.Cells(j, 1), .Cells(.Cells(j, 1).End(xlDown).Row, i)).Borders(xlInsideHorizontal).LineStyle = xlContinuous
             '1.10.9 K.Asayama Change End
             
             .PageSetup.CenterFooter = "&P / &N ページ"
@@ -119,7 +119,7 @@ Public Sub exp_EXCEL(strSQL As String, Optional boolFilter As Boolean, Optional 
             objApp.Rows(j & ":" & j).AutoFilter       '1列目にオートフィルター
         End If
         
-        objApp.cells.EntireColumn.AutoFit   'セル自動調整
+        objApp.Cells.EntireColumn.AutoFit   'セル自動調整
         
     '1.10.15
     Else
@@ -219,7 +219,7 @@ Public Sub exp_EXCEL_LOCAL(strSQL As String, Optional boolFilter As Boolean, Opt
         j = 1
     Else
         j = 2
-        objApp.Activesheet.cells(1, 1).value = strMIDASHI
+        objApp.Activesheet.Cells(1, 1).value = strMIDASHI
     End If
     
     
@@ -229,27 +229,27 @@ Public Sub exp_EXCEL_LOCAL(strSQL As String, Optional boolFilter As Boolean, Opt
         
         With objApp.Activesheet
             For i = 0 To rsADO.Fields.Count - 1
-                .cells(j, i + 1).value = rsADO.Fields(i).Name
-                .cells(j, i + 1).Interior.ColorIndex = 15 'Gray
-                .cells(j, i + 1).Borders(xlEdgeTop).LineStyle = xlContinuous
-                .cells(j, i + 1).Borders(xlEdgeBottom).LineStyle = xlContinuous
-                .cells(j, i + 1).Borders(xlEdgeRight).LineStyle = xlContinuous
-                .cells(j, i + 1).Borders(xlEdgeLeft).LineStyle = xlContinuous
+                .Cells(j, i + 1).value = rsADO.Fields(i).Name
+                .Cells(j, i + 1).Interior.ColorIndex = 15 'Gray
+                .Cells(j, i + 1).Borders(xlEdgeTop).LineStyle = xlContinuous
+                .Cells(j, i + 1).Borders(xlEdgeBottom).LineStyle = xlContinuous
+                .Cells(j, i + 1).Borders(xlEdgeRight).LineStyle = xlContinuous
+                .Cells(j, i + 1).Borders(xlEdgeLeft).LineStyle = xlContinuous
             Next i
             
             '1.10.18 見出しマージ
             If j = 2 Then
-                .Range(.cells(1, 1), .cells(1, i)).Merge
+                .Range(.Cells(1, 1), .Cells(1, i)).Merge
             End If
             
-            .cells(j + 1, 1).CopyFromRecordset rsADO
+            .Cells(j + 1, 1).CopyFromRecordset rsADO
             
-            .Range(.cells(j + 1, 1), .cells(.cells(j + 1, 1).End(xlDown).Row, i)).Borders(xlEdgeLeft).LineStyle = xlContinuous
-            .Range(.cells(j + 1, 1), .cells(.cells(j + 1, 1).End(xlDown).Row, i)).Borders(xlEdgeTop).LineStyle = xlContinuous
-            .Range(.cells(j + 1, 1), .cells(.cells(j + 1, 1).End(xlDown).Row, i)).Borders(xlEdgeBottom).LineStyle = xlContinuous
-            .Range(.cells(j + 1, 1), .cells(.cells(j + 1, 1).End(xlDown).Row, i)).Borders(xlEdgeRight).LineStyle = xlContinuous
-            .Range(.cells(j + 1, 1), .cells(.cells(j + 1, 1).End(xlDown).Row, i)).Borders(xlInsideVertical).LineStyle = xlContinuous
-            .Range(.cells(j + 1, 1), .cells(.cells(j + 1, 1).End(xlDown).Row, i)).Borders(xlInsideHorizontal).LineStyle = xlContinuous
+            .Range(.Cells(j + 1, 1), .Cells(.Cells(j + 1, 1).End(xlDown).Row, i)).Borders(xlEdgeLeft).LineStyle = xlContinuous
+            .Range(.Cells(j + 1, 1), .Cells(.Cells(j + 1, 1).End(xlDown).Row, i)).Borders(xlEdgeTop).LineStyle = xlContinuous
+            .Range(.Cells(j + 1, 1), .Cells(.Cells(j + 1, 1).End(xlDown).Row, i)).Borders(xlEdgeBottom).LineStyle = xlContinuous
+            .Range(.Cells(j + 1, 1), .Cells(.Cells(j + 1, 1).End(xlDown).Row, i)).Borders(xlEdgeRight).LineStyle = xlContinuous
+            .Range(.Cells(j + 1, 1), .Cells(.Cells(j + 1, 1).End(xlDown).Row, i)).Borders(xlInsideVertical).LineStyle = xlContinuous
+            .Range(.Cells(j + 1, 1), .Cells(.Cells(j + 1, 1).End(xlDown).Row, i)).Borders(xlInsideHorizontal).LineStyle = xlContinuous
             
             .PageSetup.CenterFooter = "&P / &N ページ"
             .PageSetup.PrintTitleRows = "$" & j & ":$" & j
@@ -263,7 +263,7 @@ Public Sub exp_EXCEL_LOCAL(strSQL As String, Optional boolFilter As Boolean, Opt
             objApp.Rows(j & ":" & j).AutoFilter       '1列目にオートフィルター
         End If
         
-        objApp.cells.EntireColumn.AutoFit   'セル自動調整
+        objApp.Cells.EntireColumn.AutoFit   'セル自動調整
         
     End If
     
@@ -392,6 +392,9 @@ Public Function bolfncexp_EXCELOBJECT(in_objRS As ADODB.Recordset, in_ExcelObj A
 '       strMIDASHI      Trueの場合は1行目に見出しを表示する
 
 '   1.11.0 K.Asayama ADD
+
+'2.3.0
+'   →罫線をxlDownからxlUpへ変更
 '--------------------------------------------------------------------------------------------------------------------
     
     Dim xlsBookName As String
@@ -429,7 +432,7 @@ Public Function bolfncexp_EXCELOBJECT(in_objRS As ADODB.Recordset, in_ExcelObj A
     ' Others
     '---------------------------------------
     Const xlDown  As Integer = -4121
-    
+    Const xlUp  As Integer = -4162
     
     bolfncexp_EXCELOBJECT = False
     
@@ -441,32 +444,32 @@ Public Function bolfncexp_EXCELOBJECT(in_objRS As ADODB.Recordset, in_ExcelObj A
         j = 1
     Else
         j = 2
-        in_ExcelObj.Activesheet.cells(1, 1).value = strMIDASHI
+        in_ExcelObj.Activesheet.Cells(1, 1).value = strMIDASHI
     End If
     
     
     With in_ExcelObj.Activesheet
         For i = 0 To in_objRS.Fields.Count - 1
-            .cells(j, i + 1).value = in_objRS.Fields(i).Name
-            .cells(j, i + 1).Interior.ColorIndex = 15 'Gray
-            .cells(j, i + 1).Borders(xlEdgeTop).LineStyle = xlContinuous
-            .cells(j, i + 1).Borders(xlEdgeBottom).LineStyle = xlContinuous
-            .cells(j, i + 1).Borders(xlEdgeRight).LineStyle = xlContinuous
-            .cells(j, i + 1).Borders(xlEdgeLeft).LineStyle = xlContinuous
+            .Cells(j, i + 1).value = in_objRS.Fields(i).Name
+            .Cells(j, i + 1).Interior.ColorIndex = 15 'Gray
+            .Cells(j, i + 1).Borders(xlEdgeTop).LineStyle = xlContinuous
+            .Cells(j, i + 1).Borders(xlEdgeBottom).LineStyle = xlContinuous
+            .Cells(j, i + 1).Borders(xlEdgeRight).LineStyle = xlContinuous
+            .Cells(j, i + 1).Borders(xlEdgeLeft).LineStyle = xlContinuous
         Next i
         
         If j = 2 Then
-            .Range(.cells(1, 1), .cells(1, i)).Merge
+            .Range(.Cells(1, 1), .Cells(1, i)).Merge
         End If
         
-        .cells(j + 1, 1).CopyFromRecordset in_objRS
+        .Cells(j + 1, 1).CopyFromRecordset in_objRS
         
-        .Range(.cells(j, 1), .cells(.cells(j, 1).End(xlDown).Row, i)).Borders(xlEdgeLeft).LineStyle = xlContinuous
-        .Range(.cells(j, 1), .cells(.cells(j, 1).End(xlDown).Row, i)).Borders(xlEdgeTop).LineStyle = xlContinuous
-        .Range(.cells(j, 1), .cells(.cells(j, 1).End(xlDown).Row, i)).Borders(xlEdgeBottom).LineStyle = xlContinuous
-        .Range(.cells(j, 1), .cells(.cells(j, 1).End(xlDown).Row, i)).Borders(xlEdgeRight).LineStyle = xlContinuous
-        .Range(.cells(j, 1), .cells(.cells(j, 1).End(xlDown).Row, i)).Borders(xlInsideVertical).LineStyle = xlContinuous
-        .Range(.cells(j, 1), .cells(.cells(j, 1).End(xlDown).Row, i)).Borders(xlInsideHorizontal).LineStyle = xlContinuous
+        .Range(.Cells(j, 1), .Cells(.Cells(.Rows.Count, 1).End(xlUp).Row, i)).Borders(xlEdgeLeft).LineStyle = xlContinuous
+        .Range(.Cells(j, 1), .Cells(.Cells(.Rows.Count, 1).End(xlUp).Row, i)).Borders(xlEdgeTop).LineStyle = xlContinuous
+        .Range(.Cells(j, 1), .Cells(.Cells(.Rows.Count, 1).End(xlUp).Row, i)).Borders(xlEdgeBottom).LineStyle = xlContinuous
+        .Range(.Cells(j, 1), .Cells(.Cells(.Rows.Count, 1).End(xlUp).Row, i)).Borders(xlEdgeRight).LineStyle = xlContinuous
+        .Range(.Cells(j, 1), .Cells(.Cells(.Rows.Count, 1).End(xlUp).Row, i)).Borders(xlInsideVertical).LineStyle = xlContinuous
+        .Range(.Cells(j, 1), .Cells(.Cells(.Rows.Count, 1).End(xlUp).Row, i)).Borders(xlInsideHorizontal).LineStyle = xlContinuous
         
         .PageSetup.CenterFooter = "&P / &N ページ"
         .PageSetup.PrintTitleRows = "$" & j & ":$" & j
@@ -478,7 +481,7 @@ Public Function bolfncexp_EXCELOBJECT(in_objRS As ADODB.Recordset, in_ExcelObj A
         in_ExcelObj.Rows(j & ":" & j).AutoFilter       '1列目にオートフィルター
     End If
         
-    in_ExcelObj.cells.EntireColumn.AutoFit   'セル自動調整
+    in_ExcelObj.Cells.EntireColumn.AutoFit   'セル自動調整
 
     
     Beep

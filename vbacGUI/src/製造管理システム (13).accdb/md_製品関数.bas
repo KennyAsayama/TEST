@@ -330,6 +330,8 @@ Public Function IsFkamachi(in_strHinban As Variant) As Boolean
 '           →テラスドア追加
 '   1.11.3
 '           →モンスター品番変更対応（関数）
+'   2.3.0
+'           →1801仕様追加　G9型
 '   *************************************************************
     
     IsFkamachi = False
@@ -347,6 +349,10 @@ Public Function IsFkamachi(in_strHinban As Variant) As Boolean
     
     'Terrace(YG6型,YG5型)
     ElseIf in_strHinban Like "Y?B??*-####W*-*" Then
+         IsFkamachi = True
+         
+    'G9型
+    ElseIf IsG9(in_strHinban) Then
          IsFkamachi = True
          
     End If
@@ -1266,6 +1272,9 @@ Public Function IsREALART(in_strHinban As Variant) As Boolean
 '    Input項目
 '       in_strHinban        建具品番
 
+'2.3.0（コメントのみ挿入）
+'   →1801仕様でリアラートとタモにシリーズ分割されたがシステムの内容上は一緒の方が
+'     都合がよいのでこの関数はタモを含むようにする
 '   *************************************************************
     On Error GoTo Err_IsREALART
     
@@ -1893,13 +1902,16 @@ Public Function IsSideThru(in_varHinban As Variant) As Boolean
 '       in_varHinban        建具品番
 
 '   2.1.0 ADD
+
+'2.3.0
+'   →1801仕様追加
 '   *************************************************************
     
     IsSideThru = False
     
     If IsNull(in_varHinban) Then Exit Function
 
-    If in_varHinban Like "*-####ST*-*" Or in_varHinban Like "*-####SS*-*" Or in_varHinban Like "*-####SG*-*" Then
+    If in_varHinban Like "*-####ST*-*" Or in_varHinban Like "*-####SS*-*" Or in_varHinban Like "*-####SG*-*" Or in_varHinban Like "*-####SH*-*" Then
         IsSideThru = True
     End If
     
@@ -1993,6 +2005,9 @@ Public Function IsHikido(ByVal in_varHinban As Variant) As Boolean
 '       in_varHinban        建具品番
 
 '   2.1.0 ADD
+
+'2.3.0
+'   →1801仕様追加
 '   *************************************************************
 
     IsHikido = False
@@ -2010,7 +2025,8 @@ Public Function IsHikido(ByVal in_varHinban As Variant) As Boolean
         in_varHinban Like "*DD-####*" Or in_varHinban Like "*DV-####*" Or _
         in_varHinban Like "*VM-####*" Or in_varHinban Like "*VL-####*" Or in_varHinban Like "*VN-####*" Or _
         in_varHinban Like "*VF-####*" Or in_varHinban Like "*VQ-####*" Or _
-        in_varHinban Like "*VI-####*" Or in_varHinban Like "*VG-####*" _
+        in_varHinban Like "*VI-####*" Or in_varHinban Like "*VG-####*" Or _
+        in_varHinban Like "*DY-####*" _
     Then
 
         IsHikido = True
@@ -2545,4 +2561,73 @@ Public Function IsTerraceKamachi(in_varHinban As Variant) As Boolean
 
 Err_IsTerraceKamachi:
     IsTerraceKamachi = False
+End Function
+
+Public Function IsG9(in_varHinban As Variant) As Boolean
+'   *************************************************************
+'   Ｇ９型（細框戸）確認
+'
+'   戻り値:Boolean
+'       →True              G9型
+'       →False             G9型以外
+'
+'    Input項目
+'       in_varHinban        建具品番
+
+'   2.3.0 ADD
+'   *************************************************************
+
+    Dim strHinban As String
+    
+    On Error GoTo Err_IsG9
+    
+    IsG9 = False
+    
+    If IsNull(in_varHinban) Then Exit Function
+
+    strHinban = Replace(in_varHinban, "特 ", "")
+    
+    If strHinban Like "??B*-####E*-*" Then
+        IsG9 = True
+    End If
+    
+    Exit Function
+
+Err_IsG9:
+    IsG9 = False
+    
+End Function
+
+Public Function IsTamo(in_varHinban As Variant) As Boolean
+'   *************************************************************
+'   タモシリーズ（JF1,JG1,JG2)確認
+'
+'   戻り値:Boolean
+'       →True              タモシリーズ
+'       →False             タモシリーズ以外
+'
+'    Input項目
+'       in_varHinban        建具品番
+
+'   2.3.0 ADD
+'   *************************************************************
+    Dim strHinban As String
+    
+    On Error GoTo Err_IsTamo
+    
+    IsTamo = False
+    
+    If IsNull(in_varHinban) Then Exit Function
+
+    strHinban = Replace(in_varHinban, "特 ", "")
+    
+    If strHinban Like "R*-####*-*(NT)*" Or strHinban Like "R*-####*-*(ZT)*" Then
+        IsTamo = True
+    End If
+    
+    Exit Function
+
+Err_IsTamo:
+    IsTamo = False
+    
 End Function

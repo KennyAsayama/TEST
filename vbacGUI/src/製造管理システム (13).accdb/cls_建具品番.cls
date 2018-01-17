@@ -6,7 +6,9 @@ Option Compare Database
 Option Explicit
 
 Private Reg As Object
-Const reTateguPattern As String = "^(特 )?(HE)?([A-Z])([A-Z])([A-Z])([A-Z]{2}S?)-(\d{2})(\d{2})([A-Z][A-Z]?[A-Z]?[A-Z]?)-([NMKC])([LR]?)\((.+)\)$"
+'2.3.0 パターンをブランドシステムと統合
+'Const reTateguPattern As String = "^(特 )?(HE)?([A-Z])([A-Z])([A-Z])([A-Z]{2}S?)-(\d{2})(\d{2})([A-Z][A-Z]?[A-Z]?[A-Z]?)-([NMKC])([LR]?)\((.+)\)$"
+Private Const reTateguPattern As String = "^(特 )?(HE|TY)?([A-Z])([A-Z])([A-Z])([A-Z]{2,3})-(\d{2})(\d{2})([A-Z]{1,5})-([NMKC])([LR]?)\((.+)\)$"
 
 Private Sub Class_Initialize()
     Set Reg = CreateObject("VBScript.RegExp")
@@ -156,6 +158,9 @@ End Property
 
 Public Property Get Style(in_Hinban As Variant) As Variant
     
+'2.3.0
+'   →タモシリーズ追加
+
     Dim strStyle1 As String
     Dim strStyle2 As String
     Dim strStyle3 As String
@@ -187,7 +192,11 @@ Public Property Get Style(in_Hinban As Variant) As Variant
     ElseIf IsTerrace(CStr(strHinban)) Then
         strStyle1 = "Y"
     ElseIf IsLUCENTE(CStr(strHinban)) Then
-        strStyle1 = "P"
+        If IsTamo(CStr(strHinban)) Then
+            strStyle1 = "J"
+        Else
+            strStyle1 = "P"
+        End If
     ElseIf IsPALIO(CStr(strHinban)) Then
         strStyle1 = "B"
     ElseIf IsSINA(CStr(strHinban)) Then
@@ -235,11 +244,11 @@ Public Property Get Style(in_Hinban As Variant) As Variant
     If strStyle2 = "" Then
         
         Select Case strPanelGlass
-            Case "S", "C", "G", "M", "D", "V", "T"
+            Case "S", "C", "G", "M", "D", "V", "T", "E", "Q"
                strStyle2 = "G"
                 
                 Select Case strPanelGlass
-                    Case "S"
+                    Case "S", "Q"
                         strStyle3 = "1"
                     Case "C"
                         strStyle3 = "2"
@@ -255,6 +264,8 @@ Public Property Get Style(in_Hinban As Variant) As Variant
                         strStyle3 = "4"
                     Case "T"
                         strStyle3 = "6"
+                    Case "E"
+                        strStyle3 = "9"
                 End Select
                 
             Case "W"

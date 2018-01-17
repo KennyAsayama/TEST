@@ -1018,6 +1018,8 @@ End Property
 
 Public Property Get ガラス種類枚数(ByVal 種類枚数 As String) As Variant
     
+'2.3.0 1801仕様追加
+
     Dim strShurui As String
     Dim intGlass As Integer
     
@@ -1043,16 +1045,23 @@ Public Property Get ガラス種類枚数(ByVal 種類枚数 As String) As Variant
             If .in検索品番 Like "*-####?J*" Then strShurui = "JB塗装"
             intGlass = .in枚数 * 2
             
-        ElseIf .in検索品番 Like "*-####C*" Or .in検索品番 Like "*-####S*" Or .in検索品番 Like "*-####D*" Or .in検索品番 Like "*-####G*" Or .in検索品番 Like "*-####V*" Then
+        ElseIf .in検索品番 Like "*-####C*" Or .in検索品番 Like "*-####S*" Or .in検索品番 Like "*-####D*" Or .in検索品番 Like "*-####G*" Or .in検索品番 Like "*-####V*" Or .in検索品番 Like "*-####Q*" Or .in検索品番 Like "*-####E*" Then
             If .in検索品番 Like "*-####?T*" Then strShurui = "透明"
             If .in検索品番 Like "*-####?R*" Then strShurui = "ｸﾞﾘｰﾝ"
             If .in検索品番 Like "*-####?G*" Then strShurui = "ｸﾞﾚｰ"
             If .in検索品番 Like "*-####?B*" Then strShurui = "ﾌﾞﾛﾝｽﾞ"
             If .in検索品番 Like "*-####?S*" Then strShurui = "ﾀﾍﾟ"
+            If .in検索品番 Like "*-####?H*" Then strShurui = "ﾊｰﾌﾐﾗｰ"
+            
+            If .in検索品番 Like "*-####?I*" Then strShurui = "強化透明"
+            If .in検索品番 Like "*-####?J*" Then strShurui = "強化ﾀﾍﾟ"
+            If .in検索品番 Like "*-####?K*" Then strShurui = "強化ｸﾞﾚｰ"
+            If .in検索品番 Like "*-####?L*" Then strShurui = "強化ﾊｰﾌ"
             
             If .in検索品番 Like "F?ED?-*" Or .in検索品番 Like "F?FD?-*" Or .in検索品番 Like "F?EP?-*" Or .in検索品番 Like "F?FP?-*" Or .in検索品番 Like "F?ED??-*" Or .in検索品番 Like "F?FD??-*" Or .in検索品番 Like "F?EP??-*" Or .in検索品番 Like "F?FP??-*" Then
                 intGlass = .in枚数 * 2
-            Else
+            '20171220 K.Asayama Change Airが含まれないよう変更
+            ElseIf Not IsAir(.in検索品番) Then
                 intGlass = .in枚数
             End If
             
