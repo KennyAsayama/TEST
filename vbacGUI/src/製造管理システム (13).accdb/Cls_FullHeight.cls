@@ -131,6 +131,8 @@ Public Property Get 製造可能データ(ByVal 製造日 As Date) As ADODB.Recordset
 
 '2.1.0
 '   →複数枚の時集計漏れのため集計化
+'2.4.0
+'   →DH追加
 '--------------------------------------------------------------------------------------------------------------------
     Dim strSQL As String
     Dim strDate As String
@@ -152,6 +154,7 @@ Public Property Get 製造可能データ(ByVal 製造日 As Date) As ADODB.Recordset
     strSQL = strSQL & ",style,max(b.開閉様式) 開閉様式 "
     strSQL = strSQL & ",dbo.fncGetColor(製造品番) 面材色 "
     strSQL = strSQL & ",case 製造確定 when 1 then '仮' when 2 then '確' else '未' end 確定 "
+    strSQL = strSQL & ",DH "
     strSQL = strSQL & Replace(conSQL_FullHeight, "@@SeizoDate@@", strDate)
     strSQL = strSQL & "group by "
     strSQL = strSQL & "契約番号,棟番号,部屋番号,物件名,施工店 "
@@ -161,6 +164,7 @@ Public Property Get 製造可能データ(ByVal 製造日 As Date) As ADODB.Recordset
     strSQL = strSQL & ",style "
     strSQL = strSQL & ",dbo.fncGetColor(製造品番) "
     strSQL = strSQL & ",case 製造確定 when 1 then '仮' when 2 then '確' else '未' end "
+    strSQL = strSQL & ",DH "
     
     With objREMOTEDB
         If .ExecSelect(strSQL) Then

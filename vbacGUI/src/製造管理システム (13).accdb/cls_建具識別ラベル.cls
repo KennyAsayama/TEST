@@ -404,6 +404,8 @@ End Property
 
 Public Property Get ça(ByVal åöãÔïiî‘ As String, ByVal é{è˘ As Variant, ByVal å¬ï Spec As Variant, î‡à íu As Variant) As Variant
 
+'2.4.0 TSCÅiÉgÉàÉ^ÉVÉìÉZÅj1801édólçaã§í âª
+
     Dim strHinban As String
     
     ça = Null
@@ -454,6 +456,10 @@ Public Property Get ça(ByVal åöãÔïiî‘ As String, ByVal é{è˘ As Variant, ByVal å¬
                 ça = "12"
             ElseIf left(Nz(å¬ï Spec, ""), 3) = "BRD" Then
                 'BRD1701à»ç~
+                ça = "4.5"
+                
+            ElseIf left(Nz(å¬ï Spec, ""), 3) = "TSC" And right(Nz(å¬ï Spec, "XXX0000"), 4) >= "1801" Then
+                'TSC1801à»ç~
                 ça = "4.5"
             Else
                 'BRDà»äO
