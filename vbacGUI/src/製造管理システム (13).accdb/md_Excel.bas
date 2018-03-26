@@ -99,12 +99,12 @@ Public Sub exp_EXCEL(strSQL As String, Optional boolFilter As Boolean, Optional 
             .Cells(j + 1, 1).CopyFromRecordset rsADO
             
             '1.10.9 K.Asayama Change Bug Fix
-            .Range(.Cells(j, 1), .Cells(.Cells(j, 1).end(xlDown).Row, i)).Borders(xlEdgeLeft).LineStyle = xlContinuous
-            .Range(.Cells(j, 1), .Cells(.Cells(j, 1).end(xlDown).Row, i)).Borders(xlEdgeTop).LineStyle = xlContinuous
-            .Range(.Cells(j, 1), .Cells(.Cells(j, 1).end(xlDown).Row, i)).Borders(xlEdgeBottom).LineStyle = xlContinuous
-            .Range(.Cells(j, 1), .Cells(.Cells(j, 1).end(xlDown).Row, i)).Borders(xlEdgeRight).LineStyle = xlContinuous
-            .Range(.Cells(j, 1), .Cells(.Cells(j, 1).end(xlDown).Row, i)).Borders(xlInsideVertical).LineStyle = xlContinuous
-            .Range(.Cells(j, 1), .Cells(.Cells(j, 1).end(xlDown).Row, i)).Borders(xlInsideHorizontal).LineStyle = xlContinuous
+            .Range(.Cells(j, 1), .Cells(.Cells(j, 1).End(xlDown).Row, i)).Borders(xlEdgeLeft).LineStyle = xlContinuous
+            .Range(.Cells(j, 1), .Cells(.Cells(j, 1).End(xlDown).Row, i)).Borders(xlEdgeTop).LineStyle = xlContinuous
+            .Range(.Cells(j, 1), .Cells(.Cells(j, 1).End(xlDown).Row, i)).Borders(xlEdgeBottom).LineStyle = xlContinuous
+            .Range(.Cells(j, 1), .Cells(.Cells(j, 1).End(xlDown).Row, i)).Borders(xlEdgeRight).LineStyle = xlContinuous
+            .Range(.Cells(j, 1), .Cells(.Cells(j, 1).End(xlDown).Row, i)).Borders(xlInsideVertical).LineStyle = xlContinuous
+            .Range(.Cells(j, 1), .Cells(.Cells(j, 1).End(xlDown).Row, i)).Borders(xlInsideHorizontal).LineStyle = xlContinuous
             '1.10.9 K.Asayama Change End
             
             .PageSetup.CenterFooter = "&P / &N ページ"
@@ -162,7 +162,7 @@ Public Sub exp_EXCEL_LOCAL(strSQL As String, Optional boolFilter As Boolean, Opt
 '--------------------------------------------------------------------------------------------------------------------
 '
 
-    Dim objLocalDB As New cls_LOCALDB
+    Dim objLOCALDB As New cls_LOCALDB
     
     Dim rsADO As New ADODB.Recordset '1.10.15
     
@@ -223,8 +223,8 @@ Public Sub exp_EXCEL_LOCAL(strSQL As String, Optional boolFilter As Boolean, Opt
     End If
     
     
-    If objLocalDB.ExecSelect(strSQL) Then
-        Set rsADO = objLocalDB.GetRS
+    If objLOCALDB.ExecSelect(strSQL) Then
+        Set rsADO = objLOCALDB.GetRS
         
         
         With objApp.Activesheet
@@ -244,12 +244,12 @@ Public Sub exp_EXCEL_LOCAL(strSQL As String, Optional boolFilter As Boolean, Opt
             
             .Cells(j + 1, 1).CopyFromRecordset rsADO
             
-            .Range(.Cells(j + 1, 1), .Cells(.Cells(j + 1, 1).end(xlDown).Row, i)).Borders(xlEdgeLeft).LineStyle = xlContinuous
-            .Range(.Cells(j + 1, 1), .Cells(.Cells(j + 1, 1).end(xlDown).Row, i)).Borders(xlEdgeTop).LineStyle = xlContinuous
-            .Range(.Cells(j + 1, 1), .Cells(.Cells(j + 1, 1).end(xlDown).Row, i)).Borders(xlEdgeBottom).LineStyle = xlContinuous
-            .Range(.Cells(j + 1, 1), .Cells(.Cells(j + 1, 1).end(xlDown).Row, i)).Borders(xlEdgeRight).LineStyle = xlContinuous
-            .Range(.Cells(j + 1, 1), .Cells(.Cells(j + 1, 1).end(xlDown).Row, i)).Borders(xlInsideVertical).LineStyle = xlContinuous
-            .Range(.Cells(j + 1, 1), .Cells(.Cells(j + 1, 1).end(xlDown).Row, i)).Borders(xlInsideHorizontal).LineStyle = xlContinuous
+            .Range(.Cells(j + 1, 1), .Cells(.Cells(j + 1, 1).End(xlDown).Row, i)).Borders(xlEdgeLeft).LineStyle = xlContinuous
+            .Range(.Cells(j + 1, 1), .Cells(.Cells(j + 1, 1).End(xlDown).Row, i)).Borders(xlEdgeTop).LineStyle = xlContinuous
+            .Range(.Cells(j + 1, 1), .Cells(.Cells(j + 1, 1).End(xlDown).Row, i)).Borders(xlEdgeBottom).LineStyle = xlContinuous
+            .Range(.Cells(j + 1, 1), .Cells(.Cells(j + 1, 1).End(xlDown).Row, i)).Borders(xlEdgeRight).LineStyle = xlContinuous
+            .Range(.Cells(j + 1, 1), .Cells(.Cells(j + 1, 1).End(xlDown).Row, i)).Borders(xlInsideVertical).LineStyle = xlContinuous
+            .Range(.Cells(j + 1, 1), .Cells(.Cells(j + 1, 1).End(xlDown).Row, i)).Borders(xlInsideHorizontal).LineStyle = xlContinuous
             
             .PageSetup.CenterFooter = "&P / &N ページ"
             .PageSetup.PrintTitleRows = "$" & j & ":$" & j
@@ -282,7 +282,7 @@ Err_exp_EXCEL_LOCAL:
     
 Exit_exp_EXCEL_LOCAL:
     
-    Set objLocalDB = Nothing
+    Set objLOCALDB = Nothing
     Set rsADO = Nothing
     Set objApp = Nothing
     
@@ -464,12 +464,12 @@ Public Function bolfncexp_EXCELOBJECT(in_objRS As ADODB.Recordset, in_ExcelObj A
         
         .Cells(j + 1, 1).CopyFromRecordset in_objRS
         
-        .Range(.Cells(j, 1), .Cells(.Cells(.Rows.Count, 1).end(xlUp).Row, i)).Borders(xlEdgeLeft).LineStyle = xlContinuous
-        .Range(.Cells(j, 1), .Cells(.Cells(.Rows.Count, 1).end(xlUp).Row, i)).Borders(xlEdgeTop).LineStyle = xlContinuous
-        .Range(.Cells(j, 1), .Cells(.Cells(.Rows.Count, 1).end(xlUp).Row, i)).Borders(xlEdgeBottom).LineStyle = xlContinuous
-        .Range(.Cells(j, 1), .Cells(.Cells(.Rows.Count, 1).end(xlUp).Row, i)).Borders(xlEdgeRight).LineStyle = xlContinuous
-        .Range(.Cells(j, 1), .Cells(.Cells(.Rows.Count, 1).end(xlUp).Row, i)).Borders(xlInsideVertical).LineStyle = xlContinuous
-        .Range(.Cells(j, 1), .Cells(.Cells(.Rows.Count, 1).end(xlUp).Row, i)).Borders(xlInsideHorizontal).LineStyle = xlContinuous
+        .Range(.Cells(j, 1), .Cells(.Cells(.Rows.Count, 1).End(xlUp).Row, i)).Borders(xlEdgeLeft).LineStyle = xlContinuous
+        .Range(.Cells(j, 1), .Cells(.Cells(.Rows.Count, 1).End(xlUp).Row, i)).Borders(xlEdgeTop).LineStyle = xlContinuous
+        .Range(.Cells(j, 1), .Cells(.Cells(.Rows.Count, 1).End(xlUp).Row, i)).Borders(xlEdgeBottom).LineStyle = xlContinuous
+        .Range(.Cells(j, 1), .Cells(.Cells(.Rows.Count, 1).End(xlUp).Row, i)).Borders(xlEdgeRight).LineStyle = xlContinuous
+        .Range(.Cells(j, 1), .Cells(.Cells(.Rows.Count, 1).End(xlUp).Row, i)).Borders(xlInsideVertical).LineStyle = xlContinuous
+        .Range(.Cells(j, 1), .Cells(.Cells(.Rows.Count, 1).End(xlUp).Row, i)).Borders(xlInsideHorizontal).LineStyle = xlContinuous
         
         .PageSetup.CenterFooter = "&P / &N ページ"
         .PageSetup.PrintTitleRows = "$" & j & ":$" & j

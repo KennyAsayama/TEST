@@ -100,7 +100,7 @@ Public Function fncbolCalender_Replace() As Boolean
     End If
     
     Dim objREMOTEDB As New cls_BRAND_MASTER
-    Dim objLocalDB As New cls_LOCALDB
+    Dim objLOCALDB As New cls_LOCALDB
     
     Dim strSQL_Insert As String
     Dim strSQL As String
@@ -111,12 +111,12 @@ Public Function fncbolCalender_Replace() As Boolean
     strSQL_Insert = "Insert into WK_Calendar_Hê(‹x“ú) values (#"
     
     'Hê—pƒRƒs[iT_Calendar_Hê)
-    If objLocalDB.ExecSQL("delete from WK_Calendar_Hê") Then
+    If objLOCALDB.ExecSQL("delete from WK_Calendar_Hê") Then
         strSQL = "select ‹x“ú from T_Calendar_Hê "
         'strSQL = strSQL & "where convert(datetime,‹x“ú) > '" & "2015/01/01" & "'"
         If objREMOTEDB.ExecSelect(strSQL) Then
             Do While Not objREMOTEDB.GetRS.EOF
-                If Not objLocalDB.ExecSQL(strSQL_Insert & objREMOTEDB.GetRS![‹x“ú] & "#)") Then
+                If Not objLOCALDB.ExecSQL(strSQL_Insert & objREMOTEDB.GetRS![‹x“ú] & "#)") Then
                     Err.Raise 9999, , "‹x“úƒJƒŒƒ“ƒ_[iHêjƒ[ƒJƒ‹ƒRƒs[ƒGƒ‰["
                 End If
                 objREMOTEDB.GetRS.MoveNext
@@ -127,12 +127,12 @@ Public Function fncbolCalender_Replace() As Boolean
     strSQL_Insert = "Insert into WK_Calendar_‹Æ–±(‹x“ú) values (#"
     
     '‹Æ–±—pƒRƒs[iT_Calendar)
-    If objLocalDB.ExecSQL("delete from WK_Calendar_‹Æ–±") Then
+    If objLOCALDB.ExecSQL("delete from WK_Calendar_‹Æ–±") Then
         strSQL = "select ‹x“ú from T_Calendar "
         'strSQL = strSQL & "where convert(datetime,‹x“ú) > '" & "2015/01/01" & "'"
         If objREMOTEDB.ExecSelect(strSQL) Then
             Do While Not objREMOTEDB.GetRS.EOF
-                If Not objLocalDB.ExecSQL(strSQL_Insert & objREMOTEDB.GetRS![‹x“ú] & "#)") Then
+                If Not objLOCALDB.ExecSQL(strSQL_Insert & objREMOTEDB.GetRS![‹x“ú] & "#)") Then
                     Err.Raise 9999, , "‹x“úƒJƒŒƒ“ƒ_[i‹Æ–±jƒ[ƒJƒ‹ƒRƒs[ƒGƒ‰["
                 End If
                 objREMOTEDB.GetRS.MoveNext
@@ -151,7 +151,7 @@ Err_fncbolCalender_Replace:
     
 Exit_fncbolCalender_Replace:
     Set objREMOTEDB = Nothing
-    Set objLocalDB = Nothing
+    Set objLOCALDB = Nothing
 End Function
 
 Public Function bolfncCalc_DayOn(in_datNouhinDate As Variant, in_varHinban As Variant, in_intDays As Integer, out_datDay As Variant, out_datNextDay As Variant) As Boolean
@@ -172,7 +172,7 @@ Public Function bolfncCalc_DayOn(in_datNouhinDate As Variant, in_varHinban As Va
 '       out_datNextDay      out_datDay‚Ì1‰c‹Æ“úŒã‚Ì“ú•t(Fžy‚Æ‹ZŠ¯»‘¢”àˆÈŠO‚ÍNullj
 '   *************************************************************
 
-    Dim objLocalDB As New cls_LOCALDB
+    Dim objLOCALDB As New cls_LOCALDB
     
     Dim strSQL As String
     
@@ -201,10 +201,10 @@ Public Function bolfncCalc_DayOn(in_datNouhinDate As Variant, in_varHinban As Va
     strSQL = strSQL & "where ‹x“ú > #" & in_datNouhinDate & "# "
     strSQL = strSQL & "order by ‹x“ú "
     
-    If objLocalDB.ExecSelect(strSQL) Then
-        Do While Not objLocalDB.GetRS.EOF
-            If datDayBefore = objLocalDB.GetRS![‹x“ú] Then
-                objLocalDB.GetRS.MoveNext
+    If objLOCALDB.ExecSelect(strSQL) Then
+        Do While Not objLOCALDB.GetRS.EOF
+            If datDayBefore = objLOCALDB.GetRS![‹x“ú] Then
+                objLOCALDB.GetRS.MoveNext
             Else
                 i = i - 1
             End If
@@ -272,7 +272,7 @@ Err_bolfncCalc_DayOn:
     bolfncCalc_DayOn = False
     
 Exit_bolfncCalc_DayOn:
-    Set objLocalDB = Nothing
+    Set objLOCALDB = Nothing
     
 End Function
 
@@ -294,7 +294,7 @@ Public Function bolfncCalc_DayOff(in_datNouhinDate As Variant, in_intDays As Int
 
 '   *************************************************************
 
-    Dim objLocalDB As New cls_LOCALDB
+    Dim objLOCALDB As New cls_LOCALDB
     
     Dim strSQL As String
     
@@ -323,10 +323,10 @@ Public Function bolfncCalc_DayOff(in_datNouhinDate As Variant, in_intDays As Int
     strSQL = strSQL & "where ‹x“ú < #" & in_datNouhinDate & "# "
     strSQL = strSQL & "order by ‹x“ú desc "
     
-    If objLocalDB.ExecSelect(strSQL) Then
-        Do While Not objLocalDB.GetRS.EOF
-            If datDayBefore = objLocalDB.GetRS![‹x“ú] Then
-                objLocalDB.GetRS.MoveNext
+    If objLOCALDB.ExecSelect(strSQL) Then
+        Do While Not objLOCALDB.GetRS.EOF
+            If datDayBefore = objLOCALDB.GetRS![‹x“ú] Then
+                objLOCALDB.GetRS.MoveNext
             Else
                 i = i - 1
             End If
@@ -391,7 +391,7 @@ Err_bolfncCalc_DayOff:
     bolfncCalc_DayOff = False
     
 Exit_bolfncCalc_DayOff:
-    Set objLocalDB = Nothing
+    Set objLOCALDB = Nothing
     
 End Function
 
@@ -410,7 +410,7 @@ Public Function bolfncNextDate(in_datStartDate As Variant, ByRef out_datNextDay 
 '       out_datNextDay      Input—p“ú•t‚Ì1‰c‹Æ“úŒã‚Ì“ú•t
 
 '   *************************************************************
-    Dim objLocalDB As New cls_LOCALDB
+    Dim objLOCALDB As New cls_LOCALDB
     
     Dim strSQL As String
     Dim datNextDay As Date
@@ -428,12 +428,12 @@ Public Function bolfncNextDate(in_datStartDate As Variant, ByRef out_datNextDay 
     
     datNextDay = DateDiff("d", -1, in_datStartDate)
     
-    If objLocalDB.ExecSelect(strSQL) Then
+    If objLOCALDB.ExecSelect(strSQL) Then
         i = 1
-        Do While Not objLocalDB.GetRS.EOF
+        Do While Not objLOCALDB.GetRS.EOF
         
-             If datNextDay = objLocalDB.GetRS![‹x“ú] Then
-                 objLocalDB.GetRS.MoveNext
+             If datNextDay = objLOCALDB.GetRS![‹x“ú] Then
+                 objLOCALDB.GetRS.MoveNext
              Else
                  i = i - 1
              End If
@@ -460,7 +460,7 @@ Err_bolfncNextDate:
     bolfncNextDate = False
     
 Exit_bolfncNextDate:
-    Set objLocalDB = Nothing
+    Set objLOCALDB = Nothing
     
 End Function
 
@@ -652,7 +652,7 @@ Public Function IsHoliday(ByVal in_date As String) As Boolean
 
 '--------------------------------------------------------------------------------------------------------------------
 
-    Dim objLocalDB As New cls_LOCALDB
+    Dim objLOCALDB As New cls_LOCALDB
     
     Dim strSQL As String
     
@@ -665,8 +665,8 @@ Public Function IsHoliday(ByVal in_date As String) As Boolean
     strSQL = strSQL & "where ‹x“ú = #" & in_date & "# "
     
     
-    If objLocalDB.ExecSelect(strSQL) Then
-        If Not objLocalDB.GetRS.EOF Then
+    If objLOCALDB.ExecSelect(strSQL) Then
+        If Not objLOCALDB.GetRS.EOF Then
             IsHoliday = True
         End If
     End If
@@ -677,7 +677,7 @@ Err_IsHoliday:
     IsHoliday = False
     
 Exit_IsHoliday:
-    Set objLocalDB = Nothing
+    Set objLOCALDB = Nothing
 End Function
 
 Public Function intfncSeizoNissu_FromSyukkaBi(in_varHinban As Variant, in_Kubun As Integer) As Integer
@@ -818,6 +818,8 @@ Public Function datGetShukkaBi(in_KeiyakuNo As Variant, in_TouNo As Variant, in_
 '   ¨WŒv•û–@•ÏX(BugFix)
 '2.0.0
 '   ¨HêCD 10 ’Ç‰Á
+'2.5.0
+'   ¨o‰×“ú‚ðƒŠ[ƒhƒ^ƒCƒ€Šî€‚É•ÏX
 '   *************************************************************
 
     Dim objREMOTEDB As New cls_BRAND_MASTER
@@ -825,6 +827,7 @@ Public Function datGetShukkaBi(in_KeiyakuNo As Variant, in_TouNo As Variant, in_
     Dim strSQL As String
     Dim intKubun As Integer
     Dim intNoukiKubun As Integer
+    Dim strLTColumnName As String
     
     datGetShukkaBi = Null
     
@@ -838,15 +841,19 @@ Public Function datGetShukkaBi(in_KeiyakuNo As Variant, in_TouNo As Variant, in_
         Case 1, 2, 3
             intKubun = 1
             intNoukiKubun = 1
+            strLTColumnName = "Œš‹ïLT"
         Case 4
             intKubun = 2
             intNoukiKubun = 2
+            strLTColumnName = "˜gLT"
         Case 5
             intKubun = 2
             intNoukiKubun = 5
+            strLTColumnName = "˜gLT"
         Case 6, 7
             intKubun = 3
             intNoukiKubun = 3
+            strLTColumnName = "‰º’nLT"
     End Select
     
     'o‰×“ú‚ª‹LÚÏ‚Ý‚Ìê‡‚Ío‰×“úA‚»‚¤‚Å‚È‚¢ê‡‚Í”[Šú‚©‚çŒvŽZ‚µ‚½o‰×“ú‚ð‘}“ü
@@ -854,12 +861,18 @@ Public Function datGetShukkaBi(in_KeiyakuNo As Variant, in_TouNo As Variant, in_
     strSQL = ""
     strSQL = strSQL & "select "
     strSQL = strSQL & "Format(Min(dbo.fncSeizoSyukkaDate(J.Œ_–ñ”Ô†,J.“”Ô†,J.•”‰®”Ô†,J.€," & intNoukiKubun & ")),'yyyy-MM-dd') AS o‰×“ú "
-    strSQL = strSQL & ",Format(min(dbo.fnco‰×“úŽæ“¾(dbo.fncNohinAddress_DefaultGenba(J.Œ_–ñ”Ô†,J.“”Ô†,J.•”‰®”Ô†,J.€," & intNoukiKubun & ")"
-    strSQL = strSQL & ",(dbo.fncSeizoNohinDate(J.Œ_–ñ”Ô†,J.“”Ô†,J.•”‰®”Ô†,J.€," & intKubun & ")))),'yyyy-MM-dd') AS ŒvŽZo‰×“ú "
+'    strSQL = strSQL & ",Format(min(dbo.fnco‰×“úŽæ“¾(dbo.fncNohinAddress_DefaultGenba(J.Œ_–ñ”Ô†,J.“”Ô†,J.•”‰®”Ô†,J.€," & intNoukiKubun & ")"
+'    strSQL = strSQL & ",(dbo.fncSeizoNohinDate(J.Œ_–ñ”Ô†,J.“”Ô†,J.•”‰®”Ô†,J.€," & intKubun & ")))),'yyyy-MM-dd') AS ŒvŽZo‰×“ú "
+    strSQL = strSQL & ",Format(min(dbo.fnco‰×“úŽæ“¾_LT‚Ì‚Ý(dbo.fncSeizoNohinDate(J.Œ_–ñ”Ô†,J.“”Ô†,J.•”‰®”Ô†,J.€," & intKubun & ")," & strLTColumnName & ")),'yyyy-MM-dd') AS ŒvŽZo‰×“ú "
+    
     strSQL = strSQL & "from T_Žó’–¾× J "
+    strSQL = strSQL & "inner join  T_Žó’Ï½À_2 JM2 "
+    strSQL = strSQL & "on J.Œ_–ñ”Ô† = JM2.Œ_–ñ”Ô† and J.“”Ô† = JM2.“”Ô† and J.•”‰®”Ô† = JM2.•”‰®”Ô† "
     '1.10.16 Change
     'strSQL = strSQL & "left join T_»‘¢ŽwŽ¦ S "
-    strSQL = strSQL & "left join (select * from T_»‘¢ŽwŽ¦ where »‘¢‹æ•ª = " & in_intKubun & ") S "
+    strSQL = strSQL & "left join (select * from T_»‘¢ŽwŽ¦ where »‘¢‹æ•ª = " & in_intKubun & " "
+    strSQL = strSQL & "and Œ_–ñ”Ô† = '" & in_KeiyakuNo & "' and “”Ô† = '" & in_TouNo & "' and •”‰®”Ô† = '" & in_HeyaNo & "' "
+    strSQL = strSQL & ") S "
     strSQL = strSQL & "on J.Œ_–ñ”Ô† = S.Œ_–ñ”Ô† and J.“”Ô† = S.“”Ô† and J.•”‰®”Ô† = S.•”‰®”Ô† and J.€ = S.€ "
     strSQL = strSQL & "where J.Œ_–ñ”Ô† = '" & in_KeiyakuNo & "' and J.“”Ô† = '" & in_TouNo & "' and J.•”‰®”Ô† = '" & in_HeyaNo & "' "
     '1.10.15
@@ -1000,4 +1013,82 @@ Err_bolfncDateCheck:
         MsgBox Err.Description, vbCritical
     End If
     
+End Function
+
+Public Function fncbolSyukkaBiFromLeadTime(in_varLT As Variant, in_varNouhinBi As Variant, ByRef out_SyukkaBi As Variant, ByRef out_MinusDay As Integer) As Boolean
+'--------------------------------------------------------------------------------------------------------------------
+'ƒŠ[ƒhƒ^ƒCƒ€‚©‚ço‰×“úŽæ“¾
+
+'   :ˆø”
+'       in_varLT            :ƒŠ[ƒhƒ^ƒCƒ€
+'       in_varNouhinBi      :”[•i“ú
+'       out_SyukkaBi        :o‰×“úio—Íj@Žæ“¾‚Å‚«‚È‚¢ê‡‚ÍNull
+'       out_MinusDay        :ƒŠ[ƒhƒ^ƒCƒ€‚ð‚»‚Ì‚Ü‚Ü•Ô‚·i‹ŒŠÖ”‚Æ‚ÌŒÝŠ·«‚Ì‚½‚ßj
+
+'
+'   :–ß‚è’l
+'       True            :Žæ“¾¬Œ÷
+'       False           :Žæ“¾Ž¸”s
+'
+'   2.5.0 ADD
+'--------------------------------------------------------------------------------------------------------------------
+
+    Dim objREMOTEDB As New cls_BRAND_MASTER
+
+    Dim intMinusDays As Integer
+    Dim datTMPSyukkaBi As Date
+    Dim datTMPKeisan As Date
+    Dim i As Integer
+    Dim strSQL As String
+    
+    fncbolSyukkaBiFromLeadTime = False
+    strSQL = ""
+    
+    On Error GoTo Err_fncbolSyukkaBiFromLeadTime
+    
+    If IsNull(in_varLT) Then
+        Exit Function
+    End If
+
+    If IsNumeric(in_varLT) Then
+        intMinusDays = in_varLT
+    Else
+        Exit Function
+    End If
+    
+    strSQL = ""
+    If IsDate(in_varNouhinBi) Then
+        strSQL = strSQL & "select dbo.fnco‰×“úŽæ“¾_LT‚Ì‚Ý('" & Format(in_varNouhinBi, "yyyy-mm-dd") & "'," & intMinusDays & ") AS o‰×“ú "
+
+    
+        If objREMOTEDB.ExecSelect(strSQL) Then
+            If Not objREMOTEDB.GetRS.EOF Then
+                If IsNull(objREMOTEDB.GetRS("o‰×“ú")) Then
+                    out_SyukkaBi = Null
+                Else
+                    out_SyukkaBi = CDate(objREMOTEDB.GetRS("o‰×“ú"))
+                End If
+            Else
+                out_SyukkaBi = Null
+            End If
+        Else
+            out_SyukkaBi = Null
+    
+        End If
+    
+    Else
+        out_SyukkaBi = Null
+    
+    End If
+    
+    out_MinusDay = intMinusDays
+    
+    fncbolSyukkaBiFromLeadTime = True
+    
+    GoTo Exit_fncbolSyukkaBiFromLeadTime
+    
+Err_fncbolSyukkaBiFromLeadTime:
+
+Exit_fncbolSyukkaBiFromLeadTime:
+    Set objREMOTEDB = Nothing
 End Function

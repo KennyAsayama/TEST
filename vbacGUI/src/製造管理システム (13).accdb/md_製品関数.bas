@@ -522,7 +522,7 @@ Public Function IsSxL(in_strHinban As Variant, out_strKamiyahinban As Variant) A
 '   1.10.6 K.Asayama SxLコピー初回のみ実行に変更したため本処理に追加
 '   *************************************************************
     
-    Dim objLocalDB As New cls_LOCALDB
+    Dim objLOCALDB As New cls_LOCALDB
     Dim strHinban As String
     Dim bolMentori As Boolean
     
@@ -549,9 +549,9 @@ Public Function IsSxL(in_strHinban As Variant, out_strKamiyahinban As Variant) A
         bolMentori = False
     End If
     '1.10.3 K.Asayama 20151119 SxL品番読替表ローカルテーブル名変更
-    If objLocalDB.ExecSelect("select ブランド品番 from WK_SxL品番読替表 where S×L品番 = '" & Trim(strHinban) & "'") Then
-        If Not objLocalDB.GetRS.EOF Then
-            out_strKamiyahinban = objLocalDB.GetRS![ブランド品番]
+    If objLOCALDB.ExecSelect("select ブランド品番 from WK_SxL品番読替表 where S×L品番 = '" & Trim(strHinban) & "'") Then
+        If Not objLOCALDB.GetRS.EOF Then
+            out_strKamiyahinban = objLOCALDB.GetRS![ブランド品番]
             If bolMentori Then
                 out_strKamiyahinban = out_strKamiyahinban & right(in_strHinban, 10)
             End If
@@ -566,7 +566,7 @@ Err_IsSxL:
     
 Exit_IsSxL:
 'クラスのインスタンスを破棄
-    Set objLocalDB = Nothing
+    Set objLOCALDB = Nothing
 End Function
 
 Public Function valfncHinmei(in_objRemoteDB As cls_BRAND_MASTER, in_RS As ADODB.Recordset, in_strHinban As Variant, in_intSeihinkubun As Integer, in_strSpec As Variant) As Variant
@@ -1222,7 +1222,7 @@ Public Function fncbolSxL_Replace() As Boolean
     End If
     
     Dim objREMOTEDB As New cls_BRAND_MASTER
-    Dim objLocalDB As New cls_LOCALDB
+    Dim objLOCALDB As New cls_LOCALDB
     
     On Error GoTo Err_fncbolSxL_Replace
     
@@ -1231,11 +1231,11 @@ Public Function fncbolSxL_Replace() As Boolean
     strSQL_Insert = "Insert into WK_SxL品番読替表(S×L品番,ブランド品番,DH,DW,CH) values ("
     
     '工場用コピー（T_Calendar_工場)
-    If objLocalDB.ExecSQL("delete from WK_SxL品番読替表") Then
+    If objLOCALDB.ExecSQL("delete from WK_SxL品番読替表") Then
         strSQL = "select distinct [S×L品番],ブランド品番,DW,DH,CH from SxL品番読替表 "
         If objREMOTEDB.ExecSelect(strSQL) Then
             Do While Not objREMOTEDB.GetRS.EOF
-                If Not objLocalDB.ExecSQL(strSQL_Insert & "'" & objREMOTEDB.GetRS![S×L品番] & "','" & objREMOTEDB.GetRS![ブランド品番] & "'," & objREMOTEDB.GetRS![DW] & "," & objREMOTEDB.GetRS![DH] & "," & objREMOTEDB.GetRS![CH] & ")") Then
+                If Not objLOCALDB.ExecSQL(strSQL_Insert & "'" & objREMOTEDB.GetRS![S×L品番] & "','" & objREMOTEDB.GetRS![ブランド品番] & "'," & objREMOTEDB.GetRS![DW] & "," & objREMOTEDB.GetRS![DH] & "," & objREMOTEDB.GetRS![CH] & ")") Then
                     Err.Raise 9999, , "SxL品番読替表 ローカルコピーエラー"
                 End If
                 objREMOTEDB.GetRS.MoveNext
@@ -1256,7 +1256,7 @@ Err_fncbolSxL_Replace:
 Exit_fncbolSxL_Replace:
 
     Set objREMOTEDB = Nothing
-    Set objLocalDB = Nothing
+    Set objLOCALDB = Nothing
     
 End Function
 
@@ -2048,13 +2048,15 @@ Public Function IsKabetsukeGuide(in_varHinban As Variant) As Boolean
 '       in_varHinban        建具品番
 
 '   2.1.0 ADD
+'   2.5.0
+'       →バグ修正 KTとKUの頭の[*]が抜けていた
 '   *************************************************************
     
     IsKabetsukeGuide = False
     
     If IsNull(in_varHinban) Then Exit Function
     
-    If in_varHinban Like "*KC-####*-*" Or in_varHinban Like "KT-####*-*" Or in_varHinban Like "KU-####*-*" Then
+    If in_varHinban Like "*KC-####*-*" Or in_varHinban Like "*KT-####*-*" Or in_varHinban Like "*KU-####*-*" Then
         IsKabetsukeGuide = True
     End If
     
@@ -2630,4 +2632,72 @@ Public Function IsTamo(in_varHinban As Variant) As Boolean
 Err_IsTamo:
     IsTamo = False
     
+End Function
+
+Public Function IsRendouTategu(in_varHinban As Variant) As Boolean
+'   *************************************************************
+'   連動建具確認
+'
+'   戻り値:Boolean
+'       →True              連動建具（ガイドピース用下穴がある）
+'       →False             連動建具以外
+'
+'    Input項目
+'       in_varHinban        建具品番
+
+'   2.5.0 ADD
+'   *************************************************************
+    Dim strHinban As String
+    
+    On Error GoTo Err_IsRendouTategu
+    
+    IsRendouTategu = False
+    
+    If IsNull(in_varHinban) Then Exit Function
+
+    strHinban = Replace(in_varHinban, "特 ", "")
+    
+    If strHinban Like "*VF-####*-*" Or strHinban Like "*DF-####*-*" Or strHinban Like "*DH-####*-*" Or strHinban Like "*DJ-####*-*" Then
+        IsRendouTategu = True
+    End If
+    
+    Exit Function
+
+Err_IsRendouTategu:
+    IsRendouTategu = False
+
+End Function
+
+Public Function IsHiRendouTategu(in_varHinban As Variant) As Boolean
+'   *************************************************************
+'   非連動建具確認
+'
+'   戻り値:Boolean
+'       →True              非連動建具
+'       →False             非連動建具以外
+'
+'    Input項目
+'       in_varHinban        建具品番
+
+'   2.5.0 ADD
+'   *************************************************************
+    Dim strHinban As String
+    
+    On Error GoTo Err_IsHiRendouTategu
+    
+    IsHiRendouTategu = False
+    
+    If IsNull(in_varHinban) Then Exit Function
+
+    strHinban = Replace(in_varHinban, "特 ", "")
+    
+    If strHinban Like "*DQ-####*-*" Or strHinban Like "*VQ-####*-*" Then
+        IsHiRendouTategu = True
+    End If
+    
+    Exit Function
+
+Err_IsHiRendouTategu:
+    IsHiRendouTategu = False
+
 End Function

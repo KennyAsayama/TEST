@@ -16,7 +16,7 @@ Public Function bolfnc製造指示データ抽出(Optional SeizoDate As Date = #6/19/2017
 '--------------------------------------------------------------------------------------------------------------------
 
     Dim objREMOTEDB As New cls_BRAND_MASTER
-    Dim objLocalDB As New cls_LOCALDB
+    Dim objLOCALDB As New cls_LOCALDB
     Dim objTateguHinban As New cls_建具品番
     
     Dim conSQL As String
@@ -231,7 +231,7 @@ Public Function bolfnc製造指示データ抽出(Optional SeizoDate As Date = #6/19/2017
     strSQL = strSQL & ",吊元"
     strSQL = strSQL & ",b.契約番号,b.棟番号,b.部屋番号,b.項 "
     
-    If Not objLocalDB.ExecSQL("delete * from WK_製造依頼書建具 ", strErrMsg) Then
+    If Not objLOCALDB.ExecSQL("delete * from WK_製造依頼書建具 ", strErrMsg) Then
         Err.Raise 9999, , strErrMsg
     End If
     
@@ -322,7 +322,7 @@ Public Function bolfnc製造指示データ抽出(Optional SeizoDate As Date = #6/19/2017
                         strSQL = Replace(strSQL, "@製造日@", varNullChk(.GetRS![製造日], 1))
                         strSQL = Replace(strSQL, "@子扉@", False)
 
-                        If Not objLocalDB.ExecSQL(strSQL, strErrMsg) Then
+                        If Not objLOCALDB.ExecSQL(strSQL, strErrMsg) Then
                             Err.Raise 9999, , strErrMsg
                         End If
                     
@@ -395,7 +395,7 @@ Public Function bolfnc製造指示データ抽出(Optional SeizoDate As Date = #6/19/2017
                         strSQL = Replace(strSQL, "@製造日@", varNullChk(.GetRS![製造日], 1))
                         strSQL = Replace(strSQL, "@子扉@", True)
                         
-                        If Not objLocalDB.ExecSQL(strSQL, strErrMsg) Then
+                        If Not objLOCALDB.ExecSQL(strSQL, strErrMsg) Then
                             Err.Raise 9999, , strErrMsg
                         End If
                     End If
@@ -431,7 +431,7 @@ Err_bolfnc製造指示データ抽出:
     'Resume
 Exit_bolfnc製造指示データ抽出:
     Set objREMOTEDB = Nothing
-    Set objLocalDB = Nothing
+    Set objLOCALDB = Nothing
     Set objTateguHinban = Nothing
 
     
@@ -528,7 +528,7 @@ Private Function 部材展開WK符号更新() As Boolean
 '       False           :失敗
 
 '--------------------------------------------------------------------------------------------------------------------
-    Dim objLocalDB As New cls_LOCALDB
+    Dim objLOCALDB As New cls_LOCALDB
     Dim objSKAMIYADB As New cls_SKAMIYADB
     
     Dim strSQL As String
@@ -541,7 +541,7 @@ Private Function 部材展開WK符号更新() As Boolean
     strSQL = strSQL & "where 商品CD is not null "
     
     
-    With objLocalDB
+    With objLOCALDB
         If .ExecSelect_Writable(strSQL) Then
             
             If Not .GetRS.EOF Then
@@ -580,7 +580,7 @@ Err_部材展開WK符号更新:
 
 Exit_部材展開WK符号更新:
     Set objSKAMIYADB = Nothing
-    Set objLocalDB = Nothing
+    Set objLOCALDB = Nothing
     
 End Function
 
@@ -595,7 +595,7 @@ Public Function bolfnc製造指示_フルハイト() As Boolean
 
 '--------------------------------------------------------------------------------------------------------------------
     Dim objREMOTEDB As cls_BRAND_MASTER
-    Dim objLocalDB As New cls_LOCALDB
+    Dim objLOCALDB As New cls_LOCALDB
     Dim objTateguHinban As New cls_建具品番
     Dim objFullHeight As New Cls_FullHeight
     
@@ -728,7 +728,7 @@ Public Function bolfnc製造指示_フルハイト() As Boolean
     conSQLW = conSQLW & "order by 通番 "
         
     
-    With objLocalDB
+    With objLOCALDB
         If Not .ExecSQL("delete * from WK_製造依頼書建具_Fullheight") Then Err.Raise 9999, , "建具製造リスト_ローカル削除エラー"
         
         .CursorLocation = adUseClient
@@ -810,7 +810,7 @@ Public Function bolfnc製造指示_フルハイト() As Boolean
                         strSQL = Replace(strSQL, "@建具確定日@", varNullChk(.GetRS![建具確定日], 1))
                         strSQL = Replace(strSQL, "@製造日@", varNullChk(.GetRS![製造日], 1))
                         
-                        If Not objLocalDB.ExecSQL(strSQL, strErrMsg) Then
+                        If Not objLOCALDB.ExecSQL(strSQL, strErrMsg) Then
                             Err.Raise 9999, , strErrMsg
                         End If
                 
@@ -850,7 +850,7 @@ Err_bolfnc製造指示_フルハイト:
 Exit_bolfnc製造指示_フルハイト:
     
     Set objREMOTEDB = Nothing
-    Set objLocalDB = Nothing
+    Set objLOCALDB = Nothing
     Set objTateguHinban = Nothing
     Set objFullHeight = Nothing
     Set rsADO = Nothing
@@ -861,7 +861,7 @@ End Function
 
 Public Function bolfnc製造指示フルハイト帳票データ() As Boolean
 
-Dim objLocalDB As New cls_LOCALDB
+Dim objLOCALDB As New cls_LOCALDB
     Dim objTateguKansu As New cls_建具製造関数
     Dim objCheckLabel As New cls_建具識別ラベル
     
@@ -890,7 +890,7 @@ Dim objLocalDB As New cls_LOCALDB
     strSQL = "select * from WK_製造依頼書建具_FullHeight "
     strSQL = strSQL & "order by 通番 "
     
-    With objLocalDB
+    With objLOCALDB
         If Not .ExecSQL("delete * from WK_建具製造リスト_FullHeight") Then Err.Raise 9999, , "建具製造リスト_ローカル削除エラー"
         
         .CursorLocation = adUseClient
@@ -1208,12 +1208,12 @@ Err_bolfnc製造指示フルハイト帳票データ:
     'Resume
 Exit_bolfnc製造指示フルハイト帳票データ:
     SysCmd acSysCmdSetStatus, " "
-    Set objLocalDB = Nothing
+    Set objLOCALDB = Nothing
     Set objTateguKansu = Nothing
 End Function
 
 Public Function bolfnc製造指示フルハイト帳票データ_金物更新() As Boolean
-    Dim objLocalDB As New cls_LOCALDB
+    Dim objLOCALDB As New cls_LOCALDB
     Dim objREMOTEDB As New cls_BRAND_MASTER
     
     Dim strSQL As String
@@ -1253,7 +1253,7 @@ Public Function bolfnc製造指示フルハイト帳票データ_金物更新() As Boolean
     strSQL = strSQL & ", 取付金物10 = null "
     strSQL = strSQL & ", 取付金物10数量 = null "
     
-    If Not objLocalDB.ExecSQL(strSQL) Then
+    If Not objLOCALDB.ExecSQL(strSQL) Then
         Err.Raise 9999, , "初期化エラー"
     End If
     
@@ -1267,7 +1267,7 @@ Public Function bolfnc製造指示フルハイト帳票データ_金物更新() As Boolean
     
     strSQL = "select * from WK_建具製造リスト_FullHeight "
     
-    With objLocalDB
+    With objLOCALDB
         If .ExecSelect_Writable(strSQL) Then
             If Not .GetRS.EOF Then
                 Do Until .GetRS.EOF
@@ -1347,12 +1347,12 @@ Err_bolfnc製造指示フルハイト帳票データ_金物更新:
     'Resume
 Exit_bolfnc製造指示フルハイト帳票データ_金物更新:
     Set objREMOTEDB = Nothing
-    Set objLocalDB = Nothing
+    Set objLOCALDB = Nothing
     
 End Function
 
 Private Function bolfnc製造指示フルハイト帳票データ_他ライン指示数取得() As Boolean
-    Dim objLocalDB As New cls_LOCALDB
+    Dim objLOCALDB As New cls_LOCALDB
     Dim objREMOTEDB As New cls_BRAND_MASTER
     
     Dim strSQL As String
@@ -1384,7 +1384,7 @@ Private Function bolfnc製造指示フルハイト帳票データ_他ライン指示数取得() As Bool
     strSQL = strSQL & "(select 契約No,sum(枚数) as 建具枚数2 from WK_製造依頼書建具_FullHeight group by 契約No) as FillHeightLine "
     strSQL = strSQL & "on ALLDATA.契約No = FillHeightLine.契約No "
     
-    With objLocalDB
+    With objLOCALDB
         If .ExecSelect(strSQL) Then
             Do Until .GetRS.EOF
                                 
@@ -1430,7 +1430,7 @@ Private Function bolfnc製造指示フルハイト帳票データ_他ライン指示数取得() As Bool
 Err_bolfnc製造指示フルハイト帳票データ_他ライン指示数取得:
     MsgBox Err.Description
 Exit_bolfnc製造指示フルハイト帳票データ_他ライン指示数取得:
-    Set objLocalDB = Nothing
+    Set objLOCALDB = Nothing
     Set objREMOTEDB = Nothing
     
 End Function

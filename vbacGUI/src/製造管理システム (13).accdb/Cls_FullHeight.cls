@@ -229,15 +229,15 @@ Public Function fnc契約番号別製造可能数集計(ByVal in区分 As Byte, ByVal 日付 As 
 '
 '      in区分 : 1→確定日 2→製造日
 '--------------------------------------------------------------------------------------------------------------------
-    Dim objLocalDB As New cls_LOCALDB
+    Dim objLOCALDB As New cls_LOCALDB
     Dim strSQL As String
     Dim strDate As String
     
     'Nullの場合はワークファイルを消してそのまま終了
     If IsNull(日付) Then
-        objLocalDB.ExecSQL ("delete * from WK_フルハイトライン製造数邸別")
+        objLOCALDB.ExecSQL ("delete * from WK_フルハイトライン製造数邸別")
         fnc契約番号別製造可能数集計 = True
-        Set objLocalDB = Nothing
+        Set objLOCALDB = Nothing
         Exit Function
     End If
     
@@ -262,7 +262,7 @@ Public Function fnc契約番号別製造可能数集計(ByVal in区分 As Byte, ByVal 日付 As 
     
 '    Debug.Print strSQL
     
-    If objLocalDB.ExecSQL("delete * from WK_フルハイトライン製造数邸別") Then
+    If objLOCALDB.ExecSQL("delete * from WK_フルハイトライン製造数邸別") Then
     
     
         With objREMOTEDB
@@ -279,7 +279,7 @@ Public Function fnc契約番号別製造可能数集計(ByVal in区分 As Byte, ByVal 日付 As 
                         strSQL = strSQL & "," & varNullChk(.GetRS![製造可能枚数], 1) & " "
                         strSQL = strSQL & "," & varNullChk(.GetRS![指示済枚数], 1) & " "
                         strSQL = strSQL & ") "
-                        If Not objLocalDB.ExecSQL(strSQL) Then
+                        If Not objLOCALDB.ExecSQL(strSQL) Then
                            Err.Raise 9999, , "製造可能数集計 ローカルファイル追加エラー "
                         End If
                         
@@ -304,7 +304,7 @@ Err_fnc契約番号別製造可能数集計:
     Debug.Print Err.Description
     fnc契約番号別製造可能数集計 = False
 Exit_fnc契約番号別製造可能数集計:
-    Set objLocalDB = Nothing
+    Set objLOCALDB = Nothing
 End Function
 
 Public Function fnc契約番号別製造可能数集計_期間(ByVal in区分 As Byte, ByVal from日付 As Variant, ByVal to日付 As Variant) As Boolean
@@ -313,16 +313,16 @@ Public Function fnc契約番号別製造可能数集計_期間(ByVal in区分 As Byte, ByVal fro
 '
 '      in区分 : 1→確定日 2→製造日
 '--------------------------------------------------------------------------------------------------------------------
-    Dim objLocalDB As New cls_LOCALDB
+    Dim objLOCALDB As New cls_LOCALDB
     Dim strSQL As String
     Dim strDateF As String
     Dim strDateT As String
     
     'Nullの場合はワークファイルを消してそのまま終了
     If IsNull(from日付) Or IsNull(to日付) Then
-        objLocalDB.ExecSQL ("delete * from WK_フルハイトライン製造数邸別")
+        objLOCALDB.ExecSQL ("delete * from WK_フルハイトライン製造数邸別")
         fnc契約番号別製造可能数集計_期間 = True
-        Set objLocalDB = Nothing
+        Set objLOCALDB = Nothing
         Exit Function
     End If
     
@@ -346,7 +346,7 @@ Public Function fnc契約番号別製造可能数集計_期間(ByVal in区分 As Byte, ByVal fro
     
 '    Debug.Print strSQL
     
-    If objLocalDB.ExecSQL("delete * from WK_フルハイトライン製造数邸別") Then
+    If objLOCALDB.ExecSQL("delete * from WK_フルハイトライン製造数邸別") Then
     
     
         With objREMOTEDB
@@ -363,7 +363,7 @@ Public Function fnc契約番号別製造可能数集計_期間(ByVal in区分 As Byte, ByVal fro
                         strSQL = strSQL & "," & varNullChk(.GetRS![製造可能枚数], 1) & " "
                         strSQL = strSQL & "," & varNullChk(.GetRS![指示済枚数], 1) & " "
                         strSQL = strSQL & ") "
-                        If Not objLocalDB.ExecSQL(strSQL) Then
+                        If Not objLOCALDB.ExecSQL(strSQL) Then
                            Err.Raise 9999, , "製造可能数集計 ローカルファイル追加エラー "
                         End If
                         
@@ -388,7 +388,7 @@ Err_fnc契約番号別製造可能数集計_期間:
     Debug.Print Err.Description
     fnc契約番号別製造可能数集計_期間 = False
 Exit_fnc契約番号別製造可能数集計_期間:
-    Set objLocalDB = Nothing
+    Set objLOCALDB = Nothing
 End Function
 
 Public Property Get Rs建具種類(契約番号 As String, 棟番号 As String, 部屋番号 As String, 項 As String, 親子 As Integer) As ADODB.Recordset
@@ -436,4 +436,34 @@ Public Property Get Rs建具種類(契約番号 As String, 棟番号 As String, 部屋番号 As
 Err_Rs建具種類:
     MsgBox Err.Description
     
+End Property
+
+Public Property Get str抽出SQL(製造日 As Date) As String
+'--------------------------------------------------------------------------------------------------------------------
+' conSQL_FullHeightのデータを製造日入りで返す
+'
+'   引数
+'       製造日
+
+'   戻り値
+'       抽出SQL
+
+'2.5.0 ADD
+'--------------------------------------------------------------------------------------------------------------------
+    Dim strDate As String
+    Dim strSQL As String
+    
+    On Error GoTo Err_str抽出SQL
+    
+    strDate = Format(製造日, "yyyy-MM-dd")
+    
+    strSQL = Replace(conSQL_FullHeight, "@@SeizoDate@@", strDate)
+    
+    str抽出SQL = strSQL
+       
+    Exit Property
+
+Err_str抽出SQL:
+    MsgBox Err.Description
+    str抽出SQL = ""
 End Property

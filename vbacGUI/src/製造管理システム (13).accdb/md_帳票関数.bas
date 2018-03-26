@@ -160,7 +160,7 @@ Public Function bolFncKidoriData(ByVal varSpec As Variant, ByVal in_strHinban As
     
     Dim dblShinAtsu As Double, dblShinAtsu_N As Double
     
-    '20180201 K.Asayama ADD
+    '20180205 K.Asayama ADD
     Dim dblGakuYokoLVL30 As Double
     Dim dblhashira2_N As Double
     Dim dblsanH2_N As Double
@@ -176,14 +176,14 @@ Public Function bolFncKidoriData(ByVal varSpec As Variant, ByVal in_strHinban As
     '20151211 K.Asayama ADD
     Dim intHashiraShitaH_N As Integer, intYokoSanH_N As Integer
     
-    '20180201 K.Asayama ADD
+    '20180205 K.Asayama ADD
     Dim intGakuYokoLVL30 As Integer
     Dim intsanh2_N As Integer
     Dim inthashiraH2_N As Integer
     
     Dim strShingumizu As String
     
-    '20180201 K.Asayama ADD
+    '20180205 K.Asayama ADD
     Dim strHinban As String
     strHinban = Replace(in_strHinban, "特 ", "")
     
@@ -355,7 +355,7 @@ Public Function bolFncKidoriData(ByVal varSpec As Variant, ByVal in_strHinban As
 
         
         Select Case dblDH
-            '20180201 K.Asayama ADD
+            '20180205 K.Asayama ADD
             Case 2589.5 To 2689
                 intSanH = 4 * intMaisu
                 intGakuYokoH1 = 2 * intMaisu
@@ -421,7 +421,7 @@ Public Function bolFncKidoriData(ByVal varSpec As Variant, ByVal in_strHinban As
             intsanh2_N = 1 * intMaisu
             
             Select Case dblDH
-                '20180201 K.Asayama ADD
+                '20180205 K.Asayama ADD
                 Case 2589.5 To 2689
                     intSanH = 4 * intMaisu
                     intGakuYokoH1 = 2 * intMaisu
@@ -468,7 +468,7 @@ Public Function bolFncKidoriData(ByVal varSpec As Variant, ByVal in_strHinban As
                     
             End Select
             
-            '20180201 K.Asayama Change
+            '20180205 K.Asayama Change
             If dblDH > 2589 Then
                 dblCupShitaji = 60
                 intCupShitajiH = 2 * intMaisu
@@ -712,7 +712,7 @@ Public Function bolFncKidoriData(ByVal varSpec As Variant, ByVal in_strHinban As
         '20160825 K.Asayama Change END
         
         Select Case dblDH
-            '20180201 K.Asayama ADD
+            '20180205 K.Asayama ADD
             Case 2589.5 To 2689
                 intSanH = 4 * intMaisu
                 intGakuYokoH1 = 2 * intMaisu
@@ -747,7 +747,7 @@ Public Function bolFncKidoriData(ByVal varSpec As Variant, ByVal in_strHinban As
                 'strShingumizu = "SS-1"
         End Select
         
-        '20180201 K.Asayama Change
+        '20180205 K.Asayama Change
         If dblDH > 2589 Then
             dblCupShitaji = 60
             intCupShitajiH = 6 * intMaisu
@@ -774,7 +774,7 @@ Public Function bolFncKidoriData(ByVal varSpec As Variant, ByVal in_strHinban As
         End If
         '******************************************************
         
-        '20180201 K.Asayama Change
+        '20180205 K.Asayama Change
         If dblDH <= 2589 Then
         '20151211 K.Asayama Change 1601仕様追加
             If IsHidden_Hinge(strHinban) Then
@@ -821,7 +821,7 @@ Public Function bolFncKidoriData(ByVal varSpec As Variant, ByVal in_strHinban As
         
         Select Case dblDH
             
-            '20180201 K.Asayama ADD
+            '20180205 K.Asayama ADD
             Case 2589.5 To 2689
                 intSanH = 4 * intMaisu
                 
@@ -923,13 +923,13 @@ Public Function bolFncKidoriData(ByVal varSpec As Variant, ByVal in_strHinban As
             dblSode1 = 0
             intSode1H = 0
             
-            '20180201 K.Asayama ADD
+            '20180205 K.Asayama ADD
             dblGakuYokoLVL30 = 0
             intGakuYokoLVL30 = 0
             dblGakutate3 = 0
             intGakutateH3 = 0
             
-        '20180201 K.Asayama ADD
+        '20180205 K.Asayama ADD
         ElseIf dblDH > 2589 Then
                 dblCupShitaji = 60
                 intCupShitajiH = 8 * intMaisu
@@ -969,7 +969,7 @@ Public Function bolFncKidoriData(ByVal varSpec As Variant, ByVal in_strHinban As
                 intGakuYokoH2 = 2
                 intGakutateH1 = 1
                 Select Case dblDH
-                '20180201 K.Asayama Change
+                '20180205 K.Asayama Change
                     Case Is > 2589
                         dblGakutate1 = dblDH - 114
                     Case 2530 To 2589
@@ -978,7 +978,7 @@ Public Function bolFncKidoriData(ByVal varSpec As Variant, ByVal in_strHinban As
                         dblGakutate1 = dblDH - 114
                 End Select
             Else
-            '20180201 K.Asayama Change
+            '20180205 K.Asayama Change
                 If dblDH <= 2589 Then
                     dblGakutate1 = 210
                     intGakutateH1 = 2
@@ -1031,7 +1031,7 @@ Public Function bolFncKidoriData(ByVal varSpec As Variant, ByVal in_strHinban As
         
         
         Select Case dblDH
-            '20180201 K.Asayama ADD
+            '20180205 K.Asayama ADD
             Case 2589.5 To 2689
                 intSanH = 4 * intMaisu
 
@@ -1098,13 +1098,13 @@ Public Function bolFncKidoriData(ByVal varSpec As Variant, ByVal in_strHinban As
             dblSode2 = 0
             intSode2H = 0
             
-            '20180201 K.Asayama ADD
+            '20180205 K.Asayama ADD
             dblGakuYokoLVL30 = 0
             intGakuYokoLVL30 = 0
             dblGakutate3 = 0
             intGakutateH3 = 0
             
-        '20180201 K.Asayama ADD
+        '20180205 K.Asayama ADD
         ElseIf dblDH > 2589 Then
             dblCupShitaji = 60
             If IsHirakido(strHinban) Or IsOyatobira(strHinban) Then
@@ -1122,7 +1122,7 @@ Public Function bolFncKidoriData(ByVal varSpec As Variant, ByVal in_strHinban As
                 dblCupShitaji = 35
                 intCupShitajiH = 2 * intMaisu
             End If
-            '20180201 K.Asayama ADD
+            '20180205 K.Asayama ADD
             If dblDH > 2589 Then
                 dblCupShitaji = 60
                 intCupShitajiH = 5 * intMaisu
@@ -1139,7 +1139,7 @@ Public Function bolFncKidoriData(ByVal varSpec As Variant, ByVal in_strHinban As
                 intGakuYokoH2 = 2
                 intGakutateH1 = 1
                 Select Case dblDH
-                    '20180201 K.Asayama ADD
+                    '20180205 K.Asayama ADD
                     Case Is > 2589
                         dblGakutate1 = dblDH - 114
                     Case 2530 To 2589
@@ -1147,7 +1147,7 @@ Public Function bolFncKidoriData(ByVal varSpec As Variant, ByVal in_strHinban As
                     Case Is <= 2529
                         dblGakutate1 = dblDH - 114
                 End Select
-            '20180201 K.Asayama ADD
+            '20180205 K.Asayama ADD
             ElseIf dblDH <= 2589 Then
                 dblGakutate1 = 210
                 intGakutateH1 = 2
@@ -1196,7 +1196,7 @@ Public Function bolFncKidoriData(ByVal varSpec As Variant, ByVal in_strHinban As
         '20160825 K.Asayama Change END
         
         Select Case dblDH
-            '20180201 K.Asayama ADD
+            '20180205 K.Asayama ADD
             Case 2589.5 To 2689
                 intSanH = 4 * intMaisu
                 dblHashira = dblDH - 114
@@ -1292,13 +1292,13 @@ Public Function bolFncKidoriData(ByVal varSpec As Variant, ByVal in_strHinban As
             dblSode1 = 0
             intSode1H = 0
             
-            '20180201 K.Asayama ADD
+            '20180205 K.Asayama ADD
             dblGakuYokoLVL30 = 0
             intGakuYokoLVL30 = 0
             dblGakutate3 = 0
             intGakutateH3 = 0
             
-        '20180201 K.Asayama Change
+        '20180205 K.Asayama Change
         ElseIf dblDH > 2589 Then
             dblCupShitaji = 60
             intCupShitajiH = 8 * intMaisu
@@ -1338,7 +1338,7 @@ Public Function bolFncKidoriData(ByVal varSpec As Variant, ByVal in_strHinban As
                 intGakuYokoH2 = 2
                 intGakutateH1 = 1
                 Select Case dblDH
-                    '20180201 K.Asayama ADD
+                    '20180205 K.Asayama ADD
                     Case Is > 2589
                         dblGakutate1 = dblDH - 114
                     Case 2530 To 2589
@@ -1401,7 +1401,7 @@ Public Function bolFncKidoriData(ByVal varSpec As Variant, ByVal in_strHinban As
         
         Select Case dblDH
         
-            '20180201 K.Asayama ADD
+            '20180205 K.Asayama ADD
             Case 2589.5 To 2689
                 intSanH = 4 * intMaisu
                 intGakuYokoH1 = 2 * intMaisu
@@ -1438,7 +1438,7 @@ Public Function bolFncKidoriData(ByVal varSpec As Variant, ByVal in_strHinban As
                 
         End Select
         
-        '20180201 K.Asayama Change
+        '20180205 K.Asayama Change
         If dblDH > 2589 Then
             dblCupShitaji = 60
             intCupShitajiH = 6 * intMaisu
@@ -1472,7 +1472,7 @@ Public Function bolFncKidoriData(ByVal varSpec As Variant, ByVal in_strHinban As
         '******************************************************
         
         '20160822 K.Asayama ADD 1601仕様漏れ追加
-        '20180201 K.Asayama Change
+        '20180205 K.Asayama Change
         If dblDH <= 2589 Then
             If IsHidden_Hinge(strHinban) Then
                 dblGakutate1 = 210
@@ -1529,7 +1529,7 @@ Public Function bolFncKidoriData(ByVal varSpec As Variant, ByVal in_strHinban As
         
         Select Case dblDH
         
-            '20180201 K.Asayama ADD
+            '20180205 K.Asayama ADD
             Case 2589.5 To 2689
                 intSanH = 4 * intMaisu
                 If strHinban Like "*DN-####*" Or strHinban Like "*VN-####*" Then
@@ -1607,7 +1607,7 @@ Public Function bolFncKidoriData(ByVal varSpec As Variant, ByVal in_strHinban As
                 
         End Select
         
-        '20180201 K.Asayama Change
+        '20180205 K.Asayama Change
         If dblDH > 2589 Then
             dblCupShitaji = 60
             intCupShitajiH = 6 * intMaisu
@@ -1631,7 +1631,7 @@ Public Function bolFncKidoriData(ByVal varSpec As Variant, ByVal in_strHinban As
         '******************************************************
         
         '20151211 K.Asayama Change 1601仕様追加
-        '20180201 K.Asayama Change
+        '20180205 K.Asayama Change
         'If IsHidden_Hinge(strHinban) Then
         If IsHidden_Hinge(strHinban) And dblDH <= 2589 Then
             dblGakutate1 = 210
@@ -1791,7 +1791,7 @@ Public Function bolFncKidoriData(ByVal varSpec As Variant, ByVal in_strHinban As
         
         
         Select Case dblDH
-            '20180201 K.Asayama ADD
+            '20180205 K.Asayama ADD
             Case 2589.5 To 2689
                 intSanH = 4 * intMaisu
                 intGakuYokoH1 = 2 * intMaisu
@@ -1860,13 +1860,13 @@ Public Function bolFncKidoriData(ByVal varSpec As Variant, ByVal in_strHinban As
             dblSode2 = 0
             intSode2H = 0
             
-            '20180201 K.Asayama ADD
+            '20180205 K.Asayama ADD
             dblGakuYokoLVL30 = 0
             intGakuYokoLVL30 = 0
             dblGakutate3 = 0
             intGakutateH3 = 0
             
-        '20180201 K.Asayama Change
+        '20180205 K.Asayama Change
         ElseIf dblDH > 2589 Then
             dblCupShitaji = 60
             If IsHirakido(strHinban) Or IsOyatobira(strHinban) Then
@@ -1904,7 +1904,7 @@ Public Function bolFncKidoriData(ByVal varSpec As Variant, ByVal in_strHinban As
                 intGakuYokoH2 = 2
                 intGakutateH1 = 1
                 Select Case dblDH
-                    '20180201 K.Asayama Change
+                    '20180205 K.Asayama Change
                     Case Is > 2589
                         dblGakutate1 = dblDH - 114
                     Case 2530 To 2589
@@ -1913,7 +1913,7 @@ Public Function bolFncKidoriData(ByVal varSpec As Variant, ByVal in_strHinban As
                         dblGakutate1 = dblDH - 114
                 End Select
             Else
-                '20180201 K.Asayama Change
+                '20180205 K.Asayama Change
                 If dblDH <= 2589 Then
                     dblGakutate1 = 210
                     intGakutateH1 = 2
@@ -1972,7 +1972,7 @@ Public Function bolFncKidoriData(ByVal varSpec As Variant, ByVal in_strHinban As
         
         Select Case dblDH
             
-            '20180201 K.Asayama ADD
+            '20180205 K.Asayama ADD
             Case 2589.5 To 2689
                 intSanH = 4 * intMaisu
                 intGakuYokoH1 = 2 * intMaisu
@@ -2018,7 +2018,7 @@ Public Function bolFncKidoriData(ByVal varSpec As Variant, ByVal in_strHinban As
                 
         End Select
         
-        '20180201 K.Asayama Change
+        '20180205 K.Asayama Change
         If dblDH > 2589 Then
             dblCupShitaji = 60
             intCupShitajiH = 6 * intMaisu
@@ -2052,7 +2052,7 @@ Public Function bolFncKidoriData(ByVal varSpec As Variant, ByVal in_strHinban As
         '******************************************************
         
         '20151211 K.Asayama Change 1601仕様追加
-        '20180201 K.Asayama Change
+        '20180205 K.Asayama Change
         'If IsHidden_Hinge(strHinban) Then
         If IsHidden_Hinge(strHinban) And dblDH <= 2589 Then
             '20160823 K.Asayama Change 誤り訂正
@@ -2374,7 +2374,7 @@ Public Function bolFncKidoriData(ByVal varSpec As Variant, ByVal in_strHinban As
         
         Select Case dblDH
         
-            '20180201 K.Asayama ADD
+            '20180205 K.Asayama ADD
             Case 2589.5 To 2689
                 intSanH = 4 * intMaisu
                 intGakuYokoH1 = 2 * intMaisu
@@ -2420,7 +2420,7 @@ Public Function bolFncKidoriData(ByVal varSpec As Variant, ByVal in_strHinban As
 
         End Select
         
-        '20180201 K.Asayama Change
+        '20180205 K.Asayama Change
         If dblDH > 2589 Then
             dblCupShitaji = 60
             intCupShitajiH = 6 * intMaisu
@@ -2453,7 +2453,7 @@ Public Function bolFncKidoriData(ByVal varSpec As Variant, ByVal in_strHinban As
         '******************************************************
         
         '20151211 K.Asayama Change 1601仕様追加
-        '20180201 K.Asayama Change
+        '20180205 K.Asayama Change
         'If IsHidden_Hinge(strHinban) Then
         If IsHidden_Hinge(strHinban) And dblDH <= 2589 Then
             '20160823 K.Asayama Change 誤り訂正
@@ -2515,7 +2515,7 @@ Public Function bolFncKidoriData(ByVal varSpec As Variant, ByVal in_strHinban As
         '20160825 K.Asayama Change END
         
         Select Case dblDH
-            '20180201 K.Asayama ADD
+            '20180205 K.Asayama ADD
             Case 2589.5 To 2689
                 intSanH = 4 * intMaisu
                 intGakuYokoH1 = 2 * intMaisu
@@ -2551,7 +2551,7 @@ Public Function bolFncKidoriData(ByVal varSpec As Variant, ByVal in_strHinban As
                 'strShingumizu = "SS-1"
         End Select
         
-        '20180201 K.Asayama ADD
+        '20180205 K.Asayama ADD
         If dblDH > 2589.5 Then
             dblCupShitaji = 60
             intCupShitajiH = 6 * intMaisu
@@ -2586,7 +2586,7 @@ Public Function bolFncKidoriData(ByVal varSpec As Variant, ByVal in_strHinban As
         
         '20151211 K.Asayama Change 1601仕様追加
         If IsHidden_Hinge(strHinban) Then
-            '20180201 K.Asayama Chnage
+            '20180205 K.Asayama Chnage
             If dblDH <= 2589 Then
                 dblGakutate1 = 210
                 intGakutateH1 = 2
@@ -2642,7 +2642,7 @@ Public Function bolFncKidoriData(ByVal varSpec As Variant, ByVal in_strHinban As
         
         Select Case dblDH
         
-            '20180201 K.Asayama ADD
+            '20180205 K.Asayama ADD
             Case 2589.5 To 2689
                 intSanH = 4 * intMaisu
                 intGakuYokoH1 = 2 * intMaisu
@@ -2702,13 +2702,13 @@ Public Function bolFncKidoriData(ByVal varSpec As Variant, ByVal in_strHinban As
             intSode1H = 0
             dblSode2 = 0
             intSode2H = 0
-            '20180201 K.Asayama ADD
+            '20180205 K.Asayama ADD
             dblGakuYokoLVL30 = 0
             intGakuYokoLVL30 = 0
             dblGakutate3 = 0
             intGakutateH3 = 0
             
-        '20180201 K.Asayama ADD
+        '20180205 K.Asayama ADD
         ElseIf dblDH > 2589 Then
             dblCupShitaji = 60
             If IsHirakido(strHinban) Or IsOyatobira(strHinban) Then
@@ -2750,7 +2750,7 @@ Public Function bolFncKidoriData(ByVal varSpec As Variant, ByVal in_strHinban As
                         dblGakutate1 = dblDH - 114
                 End Select
             Else
-                '20180201 K.Asayama ADD
+                '20180205 K.Asayama ADD
                 If dblDH <= 2589 Then
                     dblGakutate1 = 210
                     intGakutateH1 = 2
@@ -2790,7 +2790,7 @@ Public Function bolFncKidoriData(ByVal varSpec As Variant, ByVal in_strHinban As
         
         
         Select Case dblDH
-            '20180201 K.Asayama ADD
+            '20180205 K.Asayama ADD
             Case 2589.5 To 2689
                 intSanH = 4 * intMaisu
                 intGakuYokoH1 = 4 * intMaisu
@@ -2880,13 +2880,13 @@ Public Function bolFncKidoriData(ByVal varSpec As Variant, ByVal in_strHinban As
             dblSode1 = 0
             intSode1H = 0
             
-            '20180201 K.Asayama ADD
+            '20180205 K.Asayama ADD
             dblGakuYokoLVL30 = 0
             intGakuYokoLVL30 = 0
             dblGakutate3 = 0
             intGakutateH3 = 0
             
-        '20180201 K.Asayama ADD
+        '20180205 K.Asayama ADD
         ElseIf dblDH > 2589 Then
             dblCupShitaji = 60
             intCupShitajiH = 8 * intMaisu
@@ -2937,7 +2937,7 @@ Public Function bolFncKidoriData(ByVal varSpec As Variant, ByVal in_strHinban As
                             dblGakutate1 = dblDH - 114
                     End Select
                 Else
-                    '20180201 K.Asayama Chnage
+                    '20180205 K.Asayama Chnage
                     If dblDH <= 2589 Then
                         dblGakutate1 = 210
                         intGakutateH1 = 2
@@ -3370,9 +3370,9 @@ Public Function bolFncKidoriData(ByVal varSpec As Variant, ByVal in_strHinban As
     '20170412 K.Asayama ADD
 '   *OF1(新)*******************************************************
 '   *OG1***********************************************************
-'   20180201 K.Asayama 柱LVL45追加対応
+'   20180205 K.Asayama 柱LVL45追加対応
 
-    '20180201 K.Asayama Change
+    '20180205 K.Asayama Change
     'ElseIf strHinban Like "*O?C??*-####N*-*" Then
     ElseIf strHinban Like "O?C??*-####N*-*" Or strHinban Like "O?C??*-####Q*-*" Then
         'SH色****************************************************
@@ -3381,11 +3381,11 @@ Public Function bolFncKidoriData(ByVal varSpec As Variant, ByVal in_strHinban As
             dblShinAtsu = 30.2
             dblShinAtsu_N = 30.2
             dblSan = dblDW - 248.5
-            '20180201 K.Asayama Change
+            '20180205 K.Asayama Change
             'dblGakuYoko1 = (dblDW - 678.5) / 3
             dblGakuYoko1 = (dblDW - 663.5) / 3
             
-            '20180201 K.Asayama Change
+            '20180205 K.Asayama Change
             'intHashiraH = 3 * intMaisu
             intHashiraH = 1 * intMaisu
             intHashiraH2 = 1 * intMaisu
@@ -3398,7 +3398,7 @@ Public Function bolFncKidoriData(ByVal varSpec As Variant, ByVal in_strHinban As
             intCupShitajiH = 20 * intMaisu
             
             dblSan_N = 215.5
-            '20180201 K.Asayama Change
+            '20180205 K.Asayama Change
             'dblGakuYoko1_N = 90.5
             dblGakuYoko1_N = 105.5
             
@@ -3443,11 +3443,11 @@ Public Function bolFncKidoriData(ByVal varSpec As Variant, ByVal in_strHinban As
             dblShinAtsu = 30.2
             dblShinAtsu_N = 30.2
             dblSan = dblDW - 247
-            '20180201 K.Asayama Change
+            '20180205 K.Asayama Change
             dblGakuYoko1 = (dblDW - 663.5) / 3
             dblGakuYoko1 = (dblDW - 662) / 3
             
-            '20180201 K.Asayama Change
+            '20180205 K.Asayama Change
             'intHashiraH = 3 * intMaisu
             intHashiraH = 1 * intMaisu
             intHashiraH2 = 1 * intMaisu
@@ -3460,7 +3460,7 @@ Public Function bolFncKidoriData(ByVal varSpec As Variant, ByVal in_strHinban As
             dblCupShitaji = 100
             intCupShitajiH = 20 * intMaisu
             
-            '20180201 K.Asayama Change
+            '20180205 K.Asayama Change
             'dblGakuYoko1_N = 92
             dblGakuYoko1_N = 107
             
@@ -3515,7 +3515,7 @@ Public Function bolFncKidoriData(ByVal varSpec As Variant, ByVal in_strHinban As
             
         End If
         
-        '20180201 K.Asayama ADD
+        '20180205 K.Asayama ADD
         dblHashira2 = dblHashira
         dblhashira2_N = dblHashira_N
             
@@ -3752,7 +3752,7 @@ Public Function bolFncKidoriData(ByVal varSpec As Variant, ByVal in_strHinban As
         'strShingumizu = "SS-43"
         
         Select Case dblDH
-            '20180201 K.Asayama ADD
+            '20180205 K.Asayama ADD
             Case 2589.5 To 2689
                 intGakuYokoH1 = 4
                 dblGakutate3 = 150
@@ -3907,7 +3907,7 @@ Public Function bolFncKidoriData(ByVal varSpec As Variant, ByVal in_strHinban As
         
         Select Case dblDH
             
-            '20180201 K.Asayama ADD
+            '20180205 K.Asayama ADD
             Case 2589.5 To 2689
                 intGakuYokoH1 = 2
                 
@@ -4037,7 +4037,7 @@ Public Function bolFncKidoriData(ByVal varSpec As Variant, ByVal in_strHinban As
         
         Select Case dblDH
             
-            '20180201 K.Asayama ADD
+            '20180205 K.Asayama ADD
             Case 2589.5 To 2689
                 intGakuYokoH1 = 2
                 dblGakutate3 = 150
@@ -4323,6 +4323,7 @@ Public Function bolFncKidoriData(ByVal varSpec As Variant, ByVal in_strHinban As
         
 '   *CG7/EG7/ZG7*************************************************
     '1608以降 20160923 K.Asayama ADD
+    '20180214 K.Asayama Change 中板上下桟全面改定
     ElseIf strHinban Like "F?C??*-####M*-*" Then
         dblShinAtsu = 30.2
         intHashiraH = 5 * intMaisu
@@ -4347,7 +4348,7 @@ Public Function bolFncKidoriData(ByVal varSpec As Variant, ByVal in_strHinban As
         
         Select Case dblDH
             
-            '20180201 K.Asayama ADD
+            '20180205 K.Asayama ADD
             Case 2589.5 To 2689
                 intSanH = 4 * intMaisu
                 
@@ -4360,11 +4361,13 @@ Public Function bolFncKidoriData(ByVal varSpec As Variant, ByVal in_strHinban As
                 
                 dblHashira = dblDH - 114
                 
-                dblHashira_N = dblDH - 100
+                'dblHashira_N = dblDH - 100
+                dblHashira_N = dblDH - 85
                 intHashiraH_N = 2 * intMaisu
                 
-                intSanH_N = 2 * intMaisu
-                intsanh2_N = 1 * intMaisu
+                'intSanH_N = 2 * intMaisu
+                'intsanh2_N = 1 * intMaisu
+                intsanh2_N = 2 * intMaisu
                 intGakuYokoH1_N = 7 * intMaisu
                 
                 intGakuYokoLVL30 = 4 * intMaisu
@@ -4372,7 +4375,7 @@ Public Function bolFncKidoriData(ByVal varSpec As Variant, ByVal in_strHinban As
                 intGakutateH3 = 8 * intMaisu
                 
                 
-                '20180201 K.Asayama ADD
+                '20180205 K.Asayama ADD
                 '2700固定値取得
                 bolFncLVL30_Koteichi dblDW, dblDH, strHinban, dblGakuYokoLVL30, dblCupShitaji
 
@@ -4391,15 +4394,17 @@ Public Function bolFncKidoriData(ByVal varSpec As Variant, ByVal in_strHinban As
                 
                 dblHashira = dblDH - 174
                 
-                '20180201 K.Asayama Change
+                '20180205 K.Asayama Change
                 'dblHashira_N = dblDH - 175
-                dblHashira_N = dblDH - 160
+                'dblHashira_N = dblDH - 160
+                dblHashira_N = dblDH - 175
                 intHashiraH_N = 2 * intMaisu
                 
-                '20180201 K.Asayama Change
+                '20180205 K.Asayama Change
                 'intSanH_N = 6 * intMaisu
-                intSanH_N = 4 * intMaisu
-                intsanh2_N = 1 * intMaisu
+                'intSanH_N = 4 * intMaisu
+                'intsanh2_N = 1 * intMaisu
+                intsanh2_N = 4 * intMaisu
                 
                 intGakuYokoH1_N = 7 * intMaisu
                 
@@ -4418,15 +4423,17 @@ Public Function bolFncKidoriData(ByVal varSpec As Variant, ByVal in_strHinban As
                 
                 dblHashira = dblDH - 114
                 
-                '20180201 K.Asayama Change
+                '20180205 K.Asayama Change
                 'dblHashira_N = dblDH - 115
-                dblHashira_N = dblDH - 100
+'                dblHashira_N = dblDH - 100
+                dblHashira_N = dblDH - 85
                 intHashiraH_N = 2 * intMaisu
                 
-                '20180201 K.Asayama Change
+                '20180205 K.Asayama Change
                 'intSanH_N = 4 * intMaisu
-                intSanH_N = 2 * intMaisu
-                intsanh2_N = 1 * intMaisu
+'                intSanH_N = 2 * intMaisu
+'                intsanh2_N = 1 * intMaisu
+                intsanh2_N = 2 * intMaisu
                 intGakuYokoH1_N = 6 * intMaisu
                 
             Case Is <= 1800
@@ -4444,15 +4451,17 @@ Public Function bolFncKidoriData(ByVal varSpec As Variant, ByVal in_strHinban As
                 
                 dblHashira = dblDH - 114
                 
-                '20180201 K.Asayama Change
+                '20180205 K.Asayama Change
                 'dblHashira_N = dblDH - 115
-                dblHashira_N = dblDH - 100
+'                dblHashira_N = dblDH - 100
+                dblHashira_N = dblDH - 85
                 intHashiraH_N = 2 * intMaisu
                 
-                '20180201 K.Asayama Change
+                '20180205 K.Asayama Change
                 'intSanH_N = 4 * intMaisu
-                intSanH_N = 2 * intMaisu
-                intsanh2_N = 1 * intMaisu
+'                intSanH_N = 2 * intMaisu
+'                intsanh2_N = 1 * intMaisu
+                intsanh2_N = 2 * intMaisu
                 intGakuYokoH1_N = 5 * intMaisu
                 
         End Select
@@ -4473,14 +4482,16 @@ Public Function bolFncKidoriData(ByVal varSpec As Variant, ByVal in_strHinban As
         End If
         
         '中板関数
-        If bolFncSan_Koteichi_Nakaita(dblDW, dblDH, strHinban, dblSan_N, dblGakuYoko1_N) Then
-            '20180201 K.Asayama ADD
-            dblsanH2_N = dblSan_N
+        '20180214 K.Asayama Change
+       ' If bolFncSan_Koteichi_Nakaita(dblDW, dblDH, strHinban, dblSan_N, dblGakuYoko1_N) Then
+        If bolFncSan_Koteichi_Nakaita(dblDW, dblDH, strHinban, dblsanH2_N, dblGakuYoko1_N) Then
+            '20180205 K.Asayama ADD
+'            dblsanH2_N = dblSan_N
         Else
             'エラー（0を送る)
         End If
         
-        '20180201 K.Asayama ADD
+        '20180205 K.Asayama ADD
         If dblDH > 2589 Then
             If dblCupShitaji > 0 Then
                 If dblDW < 571 Then
@@ -4501,7 +4512,7 @@ Public Function bolFncKidoriData(ByVal varSpec As Variant, ByVal in_strHinban As
  
             
         If IsHidden_Hinge(strHinban) Then
-            '20180201 K.Asayama ADD
+            '20180205 K.Asayama ADD
             If dblDH <= 2589 Then
                 dblGakutate1 = 210
                 intGakutateH1 = 2
@@ -4697,7 +4708,7 @@ Public Function bolFncKidoriData(ByVal varSpec As Variant, ByVal in_strHinban As
         End If
         
         Select Case dblDH
-            '20180201 K.Asayama ADD
+            '20180205 K.Asayama ADD
             Case 2589.5 To 2689
                 intSanH = 4 * intMaisu
                 
@@ -4714,7 +4725,7 @@ Public Function bolFncKidoriData(ByVal varSpec As Variant, ByVal in_strHinban As
                 intGakuYokoLVL30 = 4 * intMaisu
                 dblGakutate3 = 150
                 
-                '20180201 K.Asayama ADD
+                '20180205 K.Asayama ADD
                 '2700固定値取得
                 bolFncLVL30_Koteichi dblDW, dblDH, strHinban, dblGakuYokoLVL30, dblCupShitaji
                 
@@ -4802,7 +4813,7 @@ Public Function bolFncKidoriData(ByVal varSpec As Variant, ByVal in_strHinban As
             dblGakuYoko1 = 59.5
             dblSode1 = 0
             intSode1H = 0
-            '20180201 K.Asayama ADD
+            '20180205 K.Asayama ADD
             dblGakuYokoLVL30 = 0
             intGakuYokoLVL30 = 0
             dblGakutate3 = 0
@@ -4823,7 +4834,7 @@ Public Function bolFncKidoriData(ByVal varSpec As Variant, ByVal in_strHinban As
             Else
                 'エラー
             End If
-            '20180201 K.Asayama Change
+            '20180205 K.Asayama Change
             If dblDH > 2589 Then
                 If dblCupShitaji > 0 Then
                     intCupShitajiH = 8 * intMaisu
@@ -4851,7 +4862,7 @@ Public Function bolFncKidoriData(ByVal varSpec As Variant, ByVal in_strHinban As
                 intGakuYokoH2 = 2
                 intGakutateH1 = 1
                 Select Case dblDH
-                    '20180201 K.Asayama ADD
+                    '20180205 K.Asayama ADD
                     Case Is > 2589
                         dblGakutate1 = dblDH - 114
                     Case 2530 To 2589
@@ -4860,7 +4871,7 @@ Public Function bolFncKidoriData(ByVal varSpec As Variant, ByVal in_strHinban As
                         dblGakutate1 = dblDH - 114
                 End Select
             Else
-                '20180201 K.Asayama Change
+                '20180205 K.Asayama Change
                 If dblDH <= 2589 Then
                     dblGakutate1 = 210
                     intGakutateH1 = 2
@@ -4891,7 +4902,7 @@ Public Function bolFncKidoriData(ByVal varSpec As Variant, ByVal in_strHinban As
             
             Select Case dblDH
                 
-                '20180201 K.Asayama ADD
+                '20180205 K.Asayama ADD
                 Case 2589.5 To 2689
                     intSanH = 4 * intMaisu
     
@@ -4950,13 +4961,13 @@ Public Function bolFncKidoriData(ByVal varSpec As Variant, ByVal in_strHinban As
                 dblGakuYoko1 = (dblDW / 2) - 140.5
                 dblSode1 = 0
                 intSode1H = 0
-                '20180201 K.Asayama ADD
+                '20180205 K.Asayama ADD
                 dblGakuYokoLVL30 = 0
                 intGakuYokoLVL30 = 0
                 dblGakutate3 = 0
                 intGakutateH3 = 0
                 
-            '20180201 K.Asayama Change
+            '20180205 K.Asayama Change
             ElseIf dblDH > 2589 Then
                 dblCupShitaji = 60
                 intCupShitajiH = 8 * intMaisu
@@ -4997,7 +5008,7 @@ Public Function bolFncKidoriData(ByVal varSpec As Variant, ByVal in_strHinban As
                 intGakuYokoH2 = 2
                 intGakutateH1 = 1
                 Select Case dblDH
-                    '20180201 K.Asayama ADD
+                    '20180205 K.Asayama ADD
                     Case Is > 2589
                         dblGakutate1 = dblDH - 114
                     Case 2530 To 2589
@@ -5006,7 +5017,7 @@ Public Function bolFncKidoriData(ByVal varSpec As Variant, ByVal in_strHinban As
                         dblGakutate1 = dblDH - 114
                 End Select
             Else
-                '20180201 K.Asayama ADD
+                '20180205 K.Asayama ADD
                 If dblDH <= 2589 Then
                     dblGakutate1 = 210
                     intGakutateH1 = 2
@@ -5043,7 +5054,7 @@ Public Function bolFncKidoriData(ByVal varSpec As Variant, ByVal in_strHinban As
             
             Select Case dblDH
                 
-                '20180201 K.Asayama ADD
+                '20180205 K.Asayama ADD
                 Case 2589.5 To 2689
                     intSanH = 4 * intMaisu
                     intGakuYokoH1 = 2 * intMaisu
@@ -5109,13 +5120,13 @@ Public Function bolFncKidoriData(ByVal varSpec As Variant, ByVal in_strHinban As
                 dblSode2 = 0
                 intSode2H = 0
                 
-                '20180201 K.Asayama ADD
+                '20180205 K.Asayama ADD
                 dblGakuYokoLVL30 = 0
                 intGakuYokoLVL30 = 0
                 dblGakutate3 = 0
                 intGakutateH3 = 0
             
-            '20180201 K.Asayama Change
+            '20180205 K.Asayama Change
             ElseIf dblDH > 2589 Then
                 dblCupShitaji = 60
                 If IsHirakido(strHinban) Or IsOyatobira(strHinban) Then
@@ -5147,7 +5158,7 @@ Public Function bolFncKidoriData(ByVal varSpec As Variant, ByVal in_strHinban As
                 intGakuYokoH2 = 2
                 intGakutateH1 = 1
                 Select Case dblDH
-                    '20180201 K.Asayama ADD
+                    '20180205 K.Asayama ADD
                     Case Is > 2589
                         dblGakutate1 = dblDH - 114
                     Case 2530 To 2589
@@ -5156,7 +5167,7 @@ Public Function bolFncKidoriData(ByVal varSpec As Variant, ByVal in_strHinban As
                         dblGakutate1 = dblDH - 114
                 End Select
             Else
-                '20180201 K.Asayama ADD
+                '20180205 K.Asayama ADD
                 If dblDH <= 2589 Then
                     dblGakutate1 = 210
                     intGakutateH1 = 2
@@ -5624,7 +5635,7 @@ Public Function bolFncKidoriData(ByVal varSpec As Variant, ByVal in_strHinban As
         
             Select Case dblDH
                 
-                '20180201 K.Asayama ADD
+                '20180205 K.Asayama ADD
                 Case 2589.5 To 2689
                     intSanH = 4 * intMaisu
                     dblHashira = dblDH - 114
@@ -5661,7 +5672,7 @@ Public Function bolFncKidoriData(ByVal varSpec As Variant, ByVal in_strHinban As
 '            If strHinban Like "*DC-####*" Or strHinban Like "*DT-####*" Or strHinban Like "*DP-####*" Or strHinban Like "*DU-####*" Or strHinban Like "*DE-####*" Or strHinban Like "*DH-####*" Or strHinban Like "*DF-####*" Or strHinban Like "*DJ-####*" Or strHinban Like "*DQ-####*" _
 '                Or strHinban Like "*KC-####*" Or strHinban Like "*KT-####*" Or strHinban Like "*KU-####*" Then
              
-             '20180201 K.Asayama Change
+             '20180205 K.Asayama Change
             If dblDH > 2589 Then
                 dblCupShitaji = 60
                 intCupShitajiH = 6 * intMaisu
@@ -5689,7 +5700,7 @@ Public Function bolFncKidoriData(ByVal varSpec As Variant, ByVal in_strHinban As
         
         '20151211 K.Asayama Change 1601仕様追加
 
-        '20180201 K.Asayama Change
+        '20180205 K.Asayama Change
         'If IsHidden_Hinge(strHinban)
         If IsHidden_Hinge(strHinban) And dblDH <= 2589 Then
             dblGakutate1 = 210
@@ -5762,7 +5773,7 @@ Public Function bolFncKidoriData(ByVal varSpec As Variant, ByVal in_strHinban As
 
 '   *CF4/EF4(旧VF1)**********************************************
 '   '20150902 K.Asayama ADD
-'   '20180201 K.Asayama 柱LVL45追加対応
+'   '20180205 K.Asayama 柱LVL45追加対応
 
     ElseIf strHinban Like "F?V??*-####P*-*" Then
     
@@ -5801,7 +5812,7 @@ Public Function bolFncKidoriData(ByVal varSpec As Variant, ByVal in_strHinban As
         
         Select Case dblDH
             
-            '20180201 K.Asayama ADD
+            '20180205 K.Asayama ADD
             Case 2589.5 To 2689
                 intSanH = 4 * intMaisu
                 intGakuYokoH1 = 2 * intMaisu
@@ -5840,7 +5851,7 @@ Public Function bolFncKidoriData(ByVal varSpec As Variant, ByVal in_strHinban As
         
         dblHashira2 = dblHashira
         
-        '20180201 K.Asayama Change
+        '20180205 K.Asayama Change
         If dblDH > 2589 Then
             dblCupShitaji = 60
             intCupShitajiH = 6 * intMaisu
@@ -5865,7 +5876,7 @@ Public Function bolFncKidoriData(ByVal varSpec As Variant, ByVal in_strHinban As
         
 '   *CG4/EG4(旧VG4)**********************************************
 '   '20151211 K.Asayama ADD
-    '20180201 K.Asayama 柱LVL45追加対応
+    '20180205 K.Asayama 柱LVL45追加対応
     
     ElseIf strHinban Like "F?V??*-####V*-*" Then
     
@@ -5904,7 +5915,7 @@ Public Function bolFncKidoriData(ByVal varSpec As Variant, ByVal in_strHinban As
         
         Select Case dblDH
             
-            '20180201 K.Asayama ADD
+            '20180205 K.Asayama ADD
             Case 2589.5 To 2689
                 intSanH = 4 * intMaisu
                 intGakuYokoH1 = 2 * intMaisu
@@ -5943,7 +5954,7 @@ Public Function bolFncKidoriData(ByVal varSpec As Variant, ByVal in_strHinban As
         
         dblHashira2 = dblHashira
         
-        '20180201 K.Asayama Change
+        '20180205 K.Asayama Change
         If dblDH > 2589 Then
             dblCupShitaji = 60
             intCupShitajiH = 6 * intMaisu
@@ -6325,7 +6336,7 @@ Public Function bolFncKidoriData(ByVal varSpec As Variant, ByVal in_strHinban As
 '   20160308 K.Asayama ADD
 '   *************************************************************
     
-    '20180201 K.Asayama Change
+    '20180205 K.Asayama Change
     '2700から番号体系が変わっているので別モジュール化
     If dblDH > 2589 Then
         strShingumizu = fncstrShingumiShousai2700(strHinban, dblDH, varHandle)
@@ -6361,7 +6372,7 @@ Public Function bolFncKidoriData(ByVal varSpec As Variant, ByVal in_strHinban As
     KidoriSunpo.out_dblsode2 = IIf(dblSode2 = 0, Null, dblSode2)
     KidoriSunpo.out_dbldaboshitaji = IIf(dblDaboShitaji = 0, Null, dblDaboShitaji)
     KidoriSunpo.out_dblCupShitaji = IIf(dblCupShitaji = 0, Null, dblCupShitaji)
-    '20180201 K.Asayama ADD
+    '20180205 K.Asayama ADD
     KidoriSunpo.out_dblGakuyokoLVL30 = IIf(dblGakuYokoLVL30 = 0, Null, dblGakuYokoLVL30)
     KidoriSunpo.out_dblhashira2_N = IIf(dblhashira2_N = 0, Null, dblhashira2_N)
     
@@ -6381,20 +6392,20 @@ Public Function bolFncKidoriData(ByVal varSpec As Variant, ByVal in_strHinban As
     KidoriSunpo.out_intdaboshitaji = IIf(intDaboShitajiH = 0, Null, intDaboShitajiH)
     KidoriSunpo.out_intcupshitaji = IIf(intCupShitajiH = 0, Null, intCupShitajiH)
     
-    '20180201 K.Asayama ADD
+    '20180205 K.Asayama ADD
     KidoriSunpo.out_intgakuyokoLVL30 = IIf(intGakuYokoLVL30 = 0, Null, intGakuYokoLVL30)
     
     KidoriSunpo.out_dblShinAtsu_N = IIf(dblShinAtsu_N = 0, Null, dblShinAtsu_N)
     KidoriSunpo.out_dblsan_N = IIf(dblSan_N = 0, Null, dblFIVEorZERO(dblSan_N))
     KidoriSunpo.out_dblgakuyoko1_N = IIf(dblGakuYoko1_N = 0, Null, dblFIVEorZERO(dblGakuYoko1_N))
     KidoriSunpo.out_dblhashira_N = IIf(dblHashira_N = 0, Null, dblFIVEorZERO(dblHashira_N))
-    '20180201 K.Asayama ADD
+    '20180205 K.Asayama ADD
     KidoriSunpo.out_dblsanH2_N = IIf(dblsanH2_N = 0, Null, dblsanH2_N)
     
     KidoriSunpo.out_intsanh_N = IIf(intSanH_N = 0, Null, intSanH_N)
     KidoriSunpo.out_intgakuyokoH1_N = IIf(intGakuYokoH1_N = 0, Null, intGakuYokoH1_N)
     KidoriSunpo.out_inthashiraH_N = IIf(intHashiraH_N = 0, Null, intHashiraH_N)
-    '20180201 K.Asayama ADD
+    '20180205 K.Asayama ADD
     KidoriSunpo.out_intsanh2_N = IIf(intsanh2_N = 0, Null, intsanh2_N)
     KidoriSunpo.out_inthashiraH2_N = IIf(inthashiraH2_N = 0, Null, inthashiraH2_N)
         
@@ -6608,13 +6619,12 @@ Public Function dblfncTekake_Shurui(in_strHinban As String, in_strHandle As Stri
 '       in_strHinban        建具品番
 '       in_strHandle        ハンドル種類
 '       in_strSpec          個別Spec
-'2.1.0 1708ハンドル追加
 '   *************************************************************
 '表示条件について(20170419記載）
 '   1.引戸はすべて500（引き手レスを除く）
 '   2.ヴェルチカは200
 '   3.モンスターは0
-'   4.蔵前製ハンドル,OLIVARIは140
+'   4.蔵前製ハンドル、OLVARIは140
 '   5.その他は100（特注はカワジュン製のみなので100でよい）
 '   *************************************************************
 
@@ -6622,8 +6632,7 @@ Public Function dblfncTekake_Shurui(in_strHinban As String, in_strHandle As Stri
 '    If fncbol_Handle_引手_長(in_strHandle, in_strSpec) Or fncbol_Handle_引手_短(in_strHandle, in_strSpec) Then
 '
 '        dblfncTekake_Shurui = 500
-
-    '20180201 K.Asayama ADD
+    '20180205 K.Asayama ADD
     If IsKotobira(in_strHinban) Then
         dblfncTekake_Shurui = 0
         Exit Function
@@ -6648,7 +6657,9 @@ Public Function dblfncTekake_Shurui(in_strHinban As String, in_strHandle As Stri
 '        Or fncstrHandle_Name(in_strHandle, in_strSpec) = "AL" Or fncstrHandle_Name(in_strHandle, in_strSpec) = "AM" _
 '        Or fncstrHandle_Name(in_strHandle, in_strSpec) = "BY" Or fncstrHandle_Name(in_strHandle, in_strSpec) = "BZ" Then
     '20170419 K.Asayama キーノート追加
-    '20180201 K.Asayama 1801仕様追加(OLIVARI)
+    '20170704 K.Asayama 1708仕様追加(DP,DQ)
+    '20180205 K.Asayama 1801仕様追加(OLIVARI)
+    '20180306 K.Asayama グランアートハンドルが漏れていたので追加
     ElseIf fncstrHandle_Name(in_strHandle, in_strSpec) = "L" Or fncstrHandle_Name(in_strHandle, in_strSpec) = "M" _
         Or fncstrHandle_Name(in_strHandle, in_strSpec) = "AL" Or fncstrHandle_Name(in_strHandle, in_strSpec) = "AM" _
         Or fncstrHandle_Name(in_strHandle, in_strSpec) = "CL" Or fncstrHandle_Name(in_strHandle, in_strSpec) = "CM" _
@@ -6664,6 +6675,7 @@ Public Function dblfncTekake_Shurui(in_strHinban As String, in_strHandle As Stri
         Or fncstrHandle_Name(in_strHandle, in_strSpec) = "FC" Or fncstrHandle_Name(in_strHandle, in_strSpec) = "FD" _
         Or fncstrHandle_Name(in_strHandle, in_strSpec) = "FE" Or fncstrHandle_Name(in_strHandle, in_strSpec) = "FF" _
         Or fncstrHandle_Name(in_strHandle, in_strSpec) = "FG" Or fncstrHandle_Name(in_strHandle, in_strSpec) = "FH" _
+        Or fncstrHandle_Name(in_strHandle, in_strSpec) = "BY" Or fncstrHandle_Name(in_strHandle, in_strSpec) = "BZ" _
         Or fncstrHandle_Name(in_strHandle, in_strSpec) = "BR" Then
     '20151211 K.Asayama Change End
     
