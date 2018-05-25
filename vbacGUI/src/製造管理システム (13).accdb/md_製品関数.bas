@@ -332,6 +332,8 @@ Public Function IsFkamachi(in_strHinban As Variant) As Boolean
 '           →モンスター品番変更対応（関数）
 '   2.3.0
 '           →1801仕様追加　G9型
+'   2.5.2
+'           →1801仕様追加　格子扉
 '   *************************************************************
     
     IsFkamachi = False
@@ -355,6 +357,9 @@ Public Function IsFkamachi(in_strHinban As Variant) As Boolean
     ElseIf IsG9(in_strHinban) Then
          IsFkamachi = True
          
+    '格子型
+    ElseIf IsKousi(in_strHinban) Then
+         IsFkamachi = True
     End If
     
     '1.10.11 ADD エスパスライドウォール
@@ -423,6 +428,8 @@ Public Function IsThruGlass(in_strHinban As Variant) As Boolean
 '           →1608より7型はFlush（ガラス）扱い
 '   1.11.0
 '           →テラスドア(YG6型)
+'   2.5.2
+'           →YG6型はスルーガラスから外す
 '   *************************************************************
     On Error GoTo Err_IsThruGlass
     
@@ -436,8 +443,8 @@ Public Function IsThruGlass(in_strHinban As Variant) As Boolean
         
         IsThruGlass = True
     'YG6型
-    ElseIf in_strHinban Like "Y*-####T*-*" Then
-        IsThruGlass = True
+'    ElseIf in_strHinban Like "Y*-####T*-*" Then
+'        IsThruGlass = True
         
     Else
         IsThruGlass = False
@@ -2166,6 +2173,34 @@ Public Function IsHidden_Hinge(in_varHinban As Variant) As Boolean
     
 End Function
 
+Public Function IsYG6(in_varHinban As Variant) As Boolean
+'   *************************************************************
+'   テラス面縁ガラスドア確認
+
+'   戻り値:Boolean
+'       →True              テラス面縁ガラスドア
+'       →False             テラス面縁ガラスドア以外
+'
+'    Input項目
+'       in_varHinban        建具品番
+
+'   2.5.2 ADD
+'   *************************************************************
+
+    Dim strHinban As String
+
+    IsYG6 = False
+    
+    If IsNull(in_varHinban) Then Exit Function
+
+    strHinban = Replace(in_varHinban, "特 ", "")
+    
+    If strHinban Like "Y*-####T*" Then
+        IsYG6 = True
+    End If
+
+End Function
+
 Public Function IsPALIOBlack(in_varHinban As Variant) As Boolean
 '   *************************************************************
 '   パリオブラック（ビアンコ）確認
@@ -2700,4 +2735,38 @@ Public Function IsHiRendouTategu(in_varHinban As Variant) As Boolean
 Err_IsHiRendouTategu:
     IsHiRendouTategu = False
 
+End Function
+
+Public Function IsKousi(in_varHinban As Variant) As Boolean
+'   *************************************************************
+'   格子扉確認
+'
+'   戻り値:Boolean
+'       →True              格子扉
+'       →False             格子扉以外
+'
+'    Input項目
+'       in_varHinban        建具品番
+
+'   2.5.2 ADD
+'   *************************************************************
+    Dim strHinban As String
+    
+    On Error GoTo Err_IsKousi
+    
+    IsKousi = False
+    
+    If IsNull(in_varHinban) Then Exit Function
+
+    strHinban = Replace(in_varHinban, "特 ", "")
+    
+    If strHinban Like "Z?B*-####*-*" Then
+        IsKousi = True
+    End If
+    
+    Exit Function
+
+Err_IsKousi:
+    IsKousi = False
+    
 End Function

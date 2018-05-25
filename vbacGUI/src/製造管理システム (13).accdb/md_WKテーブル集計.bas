@@ -29,6 +29,8 @@ Public Function SetOrderData(ByVal inDate As Date, ByVal inDateKbn As Byte, inSe
 '       →下地、ステルス分割
 '2.5.0
 '       →出荷日計算をリードタイムに変更
+'2.5.2
+'       →F框の塗装集計対応
 '--------------------------------------------------------------------------------------------------------------------
     Dim objREMOTEDB As New cls_BRAND_MASTER
     Dim objLOCALDB As New cls_LOCALDB
@@ -259,7 +261,11 @@ Public Function SetOrderData(ByVal inDate As Date, ByVal inDateKbn As Byte, inSe
                             End If
                             
                             If IsPainted(.GetRS![登録時品番]) Then
-                                objLOCALDB.GetRS![塗装扉数] = .GetRS![Flush数]
+                                If .GetRS![F框数] > 0 Then
+                                    objLOCALDB.GetRS![塗装扉数] = .GetRS![F框数]
+                                Else
+                                    objLOCALDB.GetRS![塗装扉数] = .GetRS![Flush数]
+                                End If
                                 '1.10.7 ADD
                                 objLOCALDB.GetRS![色] = fncvalDoorColor(.GetRS![登録時品番])
                                 '1.10.7 ADD End

@@ -227,6 +227,7 @@ Public Property Get ハンドル引手BS(ByVal 建具品番 As String, ByVal 施錠 As Varia
 
 '2.1.0 1708仕様ハンドル追加
 '2.3.0 1801仕様ハンドル追加
+'2.5.2 スライド収納金物変更によるBS変更(157→150）
 
     Dim strHinban As String
     Dim strHandle As String
@@ -243,7 +244,7 @@ Public Property Get ハンドル引手BS(ByVal 建具品番 As String, ByVal 施錠 As Varia
     
     'スライド収納
     If IsCloset_Slide(strHinban) Then
-        ハンドル引手BS = 157
+        ハンドル引手BS = 150
         Exit Property
     End If
     
