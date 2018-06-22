@@ -2770,3 +2770,82 @@ Err_IsKousi:
     IsKousi = False
     
 End Function
+
+Public Function IsReversible(in_varHinban As Variant, varTateguSekkeiBikou As Variant, varSpec As Variant) As Boolean
+'   *************************************************************
+'   リバーシブル確認
+'
+'   戻り値:Boolean
+'       →True                  リバーシブル
+'       →False                 リバーシブル以外
+'
+'    Input項目
+'       in_varHinban            建具品番
+'       varTateguSekkeiBikou    建具設計備考
+'       varSpec                 個別Spec
+
+'   2.5.3 ADD
+'   *************************************************************
+
+    Dim strTateguSekkeiBikou As String
+    
+    On Error GoTo Err_IsReversible
+    
+    IsReversible = False
+
+    If IsNull(in_varHinban) Or IsNull(varSpec) Then
+        Exit Function
+    End If
+    
+    strTateguSekkeiBikou = Nz(varTateguSekkeiBikou, "")
+
+
+    '   *************************************************************
+    '   建具設計備考に「リバーシブル」が含まれている場合
+    '   リバーシブル扱い
+    '   *************************************************************
+    
+    If strTateguSekkeiBikou Like "*リバーシブル*" Or strTateguSekkeiBikou Like "*ﾘﾊﾞｰｼﾌﾞﾙ*" Then
+        IsReversible = True
+        
+    '   *************************************************************
+    '   F/Sシリーズ
+    '   ZZ色(KF1)はリバーシブルでない
+    '   *************************************************************
+    
+    ElseIf IsFs(CStr(in_varHinban)) Then
+        If in_varHinban Like "*(ZZ)" Then 'KF1型
+            Exit Function
+        Else
+            IsReversible = True 'KF7型はリバーシブル
+        End If
+        
+    '   *************************************************************
+    '   物入れ引き違い
+    '   PH色はリバーシブルでない
+    '   ミラーオプションはPHでもリバーシブル扱い
+    '   *************************************************************
+    
+    ElseIf IsCloset_Hikichigai(CStr(in_varHinban)) Then '物入引き違い
+
+        If in_varHinban Like "*-####*-*(PH)" Or (in_varHinban Like "*-####*-*(SH)" And right(varSpec, 4) >= "1701") Then
+        
+            If in_varHinban Like "*-####M*" Then
+            
+                IsReversible = True
+            Else
+                IsReversible = False
+            End If
+        Else
+            IsReversible = True
+            
+        End If
+        
+    End If
+    
+    Exit Function
+    
+Err_IsReversible:
+    IsReversible = False
+    
+End Function

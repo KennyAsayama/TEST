@@ -131,7 +131,7 @@ Public Function WorkSheetDelete(WorkSheetName As String) As Boolean
     
     On Error GoTo Err_WorkSheetDelete
     
-    objExcel.Application.DisplayAlerts = False
+    objExcel.Application.displayalerts = False
     
     For Each ws In objExcel.Worksheets
         If ws.Name = WorkSheetName Then
@@ -147,7 +147,7 @@ Err_WorkSheetDelete:
     WorkSheetDelete = False
     
 Exit_WorkSheetDelete:
-    objExcel.Application.DisplayAlerts = True
+    objExcel.Application.displayalerts = True
     Set ws = Nothing
 End Function
 
@@ -294,4 +294,41 @@ Public Function UnnecessarySheetDel(Optional inSheetName As String = "Sheet*") A
 Err_UnnecessarySheetDel:
     MsgBox Err.Description
 
+End Function
+
+Public Function WorkBookSave(ByVal inPath As String, ByVal inFileName As String) As Boolean
+'--------------------------------------------------------------------------------------------------------------------
+'開いたブックに名前を付けて保存する
+
+'   開いたExcelオブジェクトに名前を付けて保存する
+'   保存に成功した場合とはTrueを返す
+'   保存に失敗した場合はFalseを返す
+'   （ただし同じファイル名がすでに存在している場合は上書きをするかメッセージを出す
+'     その場合は保存するしないにかかわらずTrueを返す）
+
+'       引数:   inPath      保存するパス名
+'               inFileName  保存するファイル名（拡張子付き）
+
+'2.5.3 ADD
+'--------------------------------------------------------------------------------------------------------------------
+    WorkBookSave = False
+    
+    With Me.getExcel
+        If Dir(inPath & "\" & inFileName) <> "" Then
+        
+            If MsgBox("同じファイル名のファイルが既にあります。" & vbCrLf & "上書きしますか？", vbExclamation + vbYesNo, "ファイル上書き確認") = vbYes Then
+                .DisplayAlarts = False
+                .ActiveWorkBook.SaveAs FileName:=inPath & "\" & inFileName
+                .DisplayAlarts = True
+            End If
+            
+        Else
+            .ActiveWorkBook.SaveAs FileName:=inPath & "\" & inFileName
+            
+        End If
+        
+        WorkBookSave = True
+        
+    End With
+    
 End Function

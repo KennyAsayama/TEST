@@ -2633,10 +2633,12 @@ Public Function bolFncKidoriData(ByVal varSpec As Variant, ByVal in_strHinban As
 '        If strHinban Like "*DN-####*" Then
         If strHinban Like "*DN-####*" Or strHinban Like "*VN-####*" Then
         '20170105 K.Asayama Change END
-
-            dblGakuYoko1 = dblDW - 492.5
-        Else
+        '2.5.3ä÷êîèCê≥
+            'dblGakuYoko1 = dblDW - 492.5
             dblGakuYoko1 = dblDW - 432.5
+        Else
+            'dblGakuYoko1 = dblDW - 432.5
+            dblGakuYoko1 = dblDW - 492.5
         End If
         '20160825 K.Asayama Change END
         
@@ -5034,7 +5036,14 @@ Public Function bolFncKidoriData(ByVal varSpec As Variant, ByVal in_strHinban As
         Else
             dblShinAtsu = 30.2
             dblSan = dblDW - 61
-            dblGakuYoko1 = dblDW - 492.5
+            If strHinban Like "*DN-####*" Or strHinban Like "*VN-####*" Then
+                'ä÷êîèCê≥
+                'dblGakuYoko1 = dblDW - 492.5
+                dblGakuYoko1 = dblDW - 432.5
+            Else
+                'dblGakuYoko1 = dblDW - 432.5
+                dblGakuYoko1 = dblDW - 492.5
+            End If
             intHashiraH = 5 * intMaisu
             dblSode1 = 91.5
             dblSode2 = 60

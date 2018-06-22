@@ -713,7 +713,7 @@ Public Function SetBikouData() As Boolean
                 strSQL = strSQL & "," & varNullChk(.GetRS![ステルス枠備考], 1) & " "
                 strSQL = strSQL & ")"
                 
-                Debug.Print strSQL
+                'Debug.Print strSQL
                 
                 If Not .ExecSQL(strSQL, strErrMsg) Then
                     Err.Raise 9999, , strErrMsg
