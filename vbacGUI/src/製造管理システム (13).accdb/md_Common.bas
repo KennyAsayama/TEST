@@ -2,6 +2,9 @@ Option Compare Database
 Option Explicit
 '--------------------------------------------------------------------------------------------------------------------
 '共通変数
+
+'2.6.0
+'   →bolShizaiUpdatable　追加
 '--------------------------------------------------------------------------------------------------------------------
 '本番データベース名
 Public Const strDBName As String = "DB02"
@@ -14,6 +17,8 @@ Public strUserID As String
 Public strUserName As String
 Public bolUpdatable As Boolean
 Public bolAdministrator As Boolean
+
+Public bolShizaiUpdatable As Boolean
 
 '1.10.6 K.Asayama 20151211 追加
 'SxLローカルコピー,カレンダーコピー
