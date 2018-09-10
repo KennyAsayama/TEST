@@ -151,6 +151,8 @@ End Property
 
 Public Property Get ハンドル引手センター(ByVal 建具品番 As String, ByVal 施錠 As Variant, ByVal 個別Spec As Variant) As Variant
 
+'2.7.0 1808ハンドル追加
+
     Dim strHinban As String
     Dim strHandle As String
     
@@ -189,6 +191,10 @@ Public Property Get ハンドル引手センター(ByVal 建具品番 As String, ByVal 施錠 As
                 'KAWAJUN
                 Case "CN", "CO", "DN", "DO", "CP", "CQ", "CR"
                     ハンドル引手センター = 1030
+                
+                Case "HA", "HB", "HC", "HD", "HP", "HQ", "HR"
+                    ハンドル引手センター = 1039
+                    
                 Case Else
                     ハンドル引手センター = 1037
             End Select
@@ -228,6 +234,7 @@ Public Property Get ハンドル引手BS(ByVal 建具品番 As String, ByVal 施錠 As Varia
 '2.1.0 1708仕様ハンドル追加
 '2.3.0 1801仕様ハンドル追加
 '2.5.2 スライド収納金物変更によるBS変更(157→150）
+'2.7.0 エンド枠なしIF分バグ修正
 
     Dim strHinban As String
     Dim strHandle As String
@@ -252,8 +259,9 @@ Public Property Get ハンドル引手BS(ByVal 建具品番 As String, ByVal 施錠 As Varia
     If IsHikido(strHinban) Or IsCloset_Hikichigai(strHinban) Then
         If IsEndWakunashi(strHinban) Then
             ハンドル引手BS = 61
+        Else
+            ハンドル引手BS = 51
         End If
-        ハンドル引手BS = 51
         
         Exit Property
     End If
@@ -507,6 +515,7 @@ End Property
 
 Public Property Get 子扉ラッチ受けセンター(ByVal 建具品番 As String, ByVal 施錠 As Variant, ByVal 個別Spec As Variant) As Variant
 '2.1.0 1708ハンドル追加
+'2.7.0 1808ハンドル追加
 
     Dim strHandle As String
     Dim strHinban As String
@@ -559,6 +568,9 @@ Public Property Get 子扉ラッチ受けセンター(ByVal 建具品番 As String, ByVal 施錠 
                         Case Else
                             子扉ラッチ受けセンター = 1052
                     End Select
+                   
+                Case "H"
+                    子扉ラッチ受けセンター = 1059
                     
                 Case Else
                     子扉ラッチ受けセンター = 1052
@@ -754,6 +766,9 @@ Public Property Get 戸開き図パス(ByVal 建具品番 As String, ByVal 開閉様式 As Var
 End Property
 
 Public Function 建具設計備考(ByVal 建具品番 As String, ByVal 個別Spec As Variant, ByVal 設計備考 As Variant) As Variant
+'2.7.0
+'   →物入れ引き違い1808仕様以降表示なし
+
     Dim strBikou As String
     
     If IsCloset_Hikichigai(建具品番) Or IsCloset_Slide(建具品番) Then
@@ -763,7 +778,9 @@ Public Function 建具設計備考(ByVal 建具品番 As String, ByVal 個別Spec As Variant
             If right(個別Spec, 4) <= "1608" Then
                 strBikou = " 裏面はPH色"
             Else
-                strBikou = " 裏面はSH色"
+                If IsCloset_Slide(建具品番) Or right(個別Spec, 4) < "1808" Then
+                    strBikou = " 裏面はSH色"
+                End If
             End If
         End If
         

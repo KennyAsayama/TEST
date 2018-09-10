@@ -15,6 +15,9 @@ Private conSQL_FullHeight As String
 Private Sub Class_Initialize()
 '--------------------------------------------------------------------------------------------------------------------
 'コンストラクタ
+
+'2.7.0
+'   →品番で対象外にする関数追加
 '--------------------------------------------------------------------------------------------------------------------
 
     Set objREMOTEDB = New cls_BRAND_MASTER
@@ -37,6 +40,7 @@ Private Sub Class_Initialize()
     conSQL_FullHeight = conSQL_FullHeight & "where s.製造区分 in (1,2,3) "
     conSQL_FullHeight = conSQL_FullHeight & "and s.製造日 = '@@SeizoDate@@' "
     conSQL_FullHeight = conSQL_FullHeight & "and x.製造ライン = '00' "
+    conSQL_FullHeight = conSQL_FullHeight & "and [dbo].[FullHeightLineProduct_Exception](dbo.fncGetHinban(品番1,特注建具品番)) = 0 "
     conSQL_FullHeight = conSQL_FullHeight & ") b "
     conSQL_FullHeight = conSQL_FullHeight & "on a.シリーズ名 = b.Style "
     conSQL_FullHeight = conSQL_FullHeight & "and a.開閉様式 = b.開閉様式 "
@@ -133,6 +137,8 @@ Public Property Get 製造可能データ(ByVal 製造日 As Date) As ADODB.Recordset
 '   →複数枚の時集計漏れのため集計化
 '2.4.0
 '   →DH追加
+'2.7.0
+'   →DW追加
 '--------------------------------------------------------------------------------------------------------------------
     Dim strSQL As String
     Dim strDate As String
@@ -155,6 +161,7 @@ Public Property Get 製造可能データ(ByVal 製造日 As Date) As ADODB.Recordset
     strSQL = strSQL & ",dbo.fncGetColor(製造品番) 面材色 "
     strSQL = strSQL & ",case 製造確定 when 1 then '仮' when 2 then '確' else '未' end 確定 "
     strSQL = strSQL & ",DH "
+    strSQL = strSQL & ",DW "
     strSQL = strSQL & Replace(conSQL_FullHeight, "@@SeizoDate@@", strDate)
     strSQL = strSQL & "group by "
     strSQL = strSQL & "契約番号,棟番号,部屋番号,物件名,施工店 "
@@ -165,6 +172,7 @@ Public Property Get 製造可能データ(ByVal 製造日 As Date) As ADODB.Recordset
     strSQL = strSQL & ",dbo.fncGetColor(製造品番) "
     strSQL = strSQL & ",case 製造確定 when 1 then '仮' when 2 then '確' else '未' end "
     strSQL = strSQL & ",DH "
+    strSQL = strSQL & ",DW "
     
     With objREMOTEDB
         If .ExecSelect(strSQL) Then

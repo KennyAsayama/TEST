@@ -285,6 +285,8 @@ Public Function fncstrHandleKigoFileName(ByVal in_Hinban As String, ByVal in_Han
 '   →DP,DQハンドル追加（蔵前）
 '2.3.0
 '   →1801仕様追加
+'2.7.0
+'   →1808仕様追加
 '   *************************************************************
     Dim Reg As Object
     'ディクショナリ
@@ -319,6 +321,7 @@ Public Function fncstrHandleKigoFileName(ByVal in_Hinban As String, ByVal in_Han
     
             
             .Add "^(C[B-KST]|D[B-FI-KST])", "SHIBUTANI"
+            .Add "^(H[A-DPQR])", "KAWAJ_LJ"
             .Add "^(C[N-R]|D[NO])", "KAWAJUN"
             .Add "^(C[LM]|B[YZ]|B[ACDEFHIJLMNOPQRS]|D[PQ])", "KURAMAE"
             .Add "^A[EFON]", "NAGASAWA"

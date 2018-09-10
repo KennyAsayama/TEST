@@ -119,6 +119,8 @@ Public Function intFncSeizokubun(in_strShurui As String, in_varHinban As Variant
 '       in_strShurui        種類
 '       in_varHinban        品番
 
+'2.7.0
+'   →フルガラスは区分0（製造しない）
 '   *************************************************************
     
     intFncSeizokubun = 0
@@ -127,7 +129,11 @@ Public Function intFncSeizokubun(in_strShurui As String, in_varHinban As Variant
     
         Case "建具", "子扉"
             
-            If IsKamachi(in_varHinban) Then
+            If IsFullGlass(in_varHinban) Then
+                
+                intFncSeizokubun = 0
+            
+            ElseIf IsKamachi(in_varHinban) Then
             
                 intFncSeizokubun = 3
                 
@@ -2015,6 +2021,8 @@ Public Function IsHikido(ByVal in_varHinban As Variant) As Boolean
 
 '2.3.0
 '   →1801仕様追加
+'2.7.0
+'   →1808仕様追加
 '   *************************************************************
 
     IsHikido = False
@@ -2033,6 +2041,7 @@ Public Function IsHikido(ByVal in_varHinban As Variant) As Boolean
         in_varHinban Like "*VM-####*" Or in_varHinban Like "*VL-####*" Or in_varHinban Like "*VN-####*" Or _
         in_varHinban Like "*VF-####*" Or in_varHinban Like "*VQ-####*" Or _
         in_varHinban Like "*VI-####*" Or in_varHinban Like "*VG-####*" Or _
+        in_varHinban Like "*JC-####*" Or in_varHinban Like "*GU-####*" Or _
         in_varHinban Like "*DY-####*" _
     Then
 
@@ -2785,6 +2794,8 @@ Public Function IsReversible(in_varHinban As Variant, varTateguSekkeiBikou As Va
 '       varSpec                 個別Spec
 
 '   2.5.3 ADD
+'   2.7.0
+'       →ME扉1808にてリバーシブル廃止
 '   *************************************************************
 
     Dim strTateguSekkeiBikou As String
@@ -2828,17 +2839,26 @@ Public Function IsReversible(in_varHinban As Variant, varTateguSekkeiBikou As Va
     
     ElseIf IsCloset_Hikichigai(CStr(in_varHinban)) Then '物入引き違い
 
-        If in_varHinban Like "*-####*-*(PH)" Or (in_varHinban Like "*-####*-*(SH)" And right(varSpec, 4) >= "1701") Then
         
-            If in_varHinban Like "*-####M*" Then
+        'ミラーはリバーシブル（中板があるため）
+        If in_varHinban Like "*-####M*" Then
             
-                IsReversible = True
-            Else
-                IsReversible = False
-            End If
+            IsReversible = True
+                
+        '1808仕様以降はリバーシブルでない
+        ElseIf right(varSpec, 4) >= "1808" Then
+            
+            IsReversible = False
+            
+        '1801以前でも白はリバーシブルでない
+        ElseIf in_varHinban Like "*-####*-*(PH)" Or (in_varHinban Like "*-####*-*(SH)" And right(varSpec, 4) >= "1701") Then
+
+            IsReversible = False
+        
+        '1801以前の残り全てはリバーシブル
         Else
             IsReversible = True
-            
+
         End If
         
     End If
@@ -2847,5 +2867,40 @@ Public Function IsReversible(in_varHinban As Variant, varTateguSekkeiBikou As Va
     
 Err_IsReversible:
     IsReversible = False
+    
+End Function
+
+Public Function IsFullGlass(in_varHinban As Variant) As Boolean
+'   *************************************************************
+'   ＶＧ１型（フルガラス）確認
+'
+'   戻り値:Boolean
+'       →True              VG1型
+'       →False             VG1型以外
+'
+'    Input項目
+'       in_varHinban        建具品番
+
+'   2.7.0 ADD
+'   *************************************************************
+
+    Dim strHinban As String
+    
+    On Error GoTo Err_IsFullglass
+    
+    IsFullGlass = False
+    
+    If IsNull(in_varHinban) Then Exit Function
+
+    strHinban = Replace(in_varHinban, "特 ", "")
+    
+    If strHinban Like "X*-####X*-*" Then
+        IsFullGlass = True
+    End If
+    
+    Exit Function
+
+Err_IsFullglass:
+    IsFullGlass = False
     
 End Function

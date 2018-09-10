@@ -414,3 +414,50 @@ Public Function fncstrUwawakuShitajiT(ByVal in_varHinban As Variant, ByVal in_va
 Err_fncstrUwawakuShitajiT:
     
 End Function
+
+Public Function strfncFullHeightHinge(in_varHinban As Variant, in_varSpec As Variant) As String
+'   *************************************************************
+'   フルハイトヒンジメーカー確認
+
+'   引数:
+'       →建具品番
+'         個別Spec
+
+'
+'   戻り値:String
+'       →メーカー名
+'
+'  2.7.0 ADD
+
+'   *************************************************************
+
+    Dim datNow As Date
+    
+    strfncFullHeightHinge = ""
+    
+    '2018/9/6以降から適用とする**************
+    datNow = Date
+    If datNow < #9/6/2018# Then Exit Function
+    '****************************************
+    
+    If IsNull(in_varHinban) Then Exit Function
+    If IsNull(in_varSpec) Then Exit Function
+    
+    If (IsHirakido(CStr(in_varHinban)) Or IsOyatobira(CStr(in_varHinban)) Or IsKotobira(CStr(in_varHinban))) And Not IsHidden_Hinge(in_varHinban) Then
+    
+        If left(in_varSpec, 3) = "BRD" Then
+        
+            If right(in_varSpec, 4) >= "1808" Then
+                strfncFullHeightHinge = "NISHIMURA"
+            Else
+                strfncFullHeightHinge = "YOGO"
+            End If
+
+        Else
+        
+            strfncFullHeightHinge = "YOGO"
+            
+        End If
+    End If
+    
+End Function
