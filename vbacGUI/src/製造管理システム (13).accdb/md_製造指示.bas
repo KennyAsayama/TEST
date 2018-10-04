@@ -431,13 +431,13 @@ Public Function strfncFullHeightHinge(in_varHinban As Variant, in_varSpec As Var
 
 '   *************************************************************
 
-    Dim datNow As Date
+    Dim datNOW As Date
     
     strfncFullHeightHinge = ""
     
     '2018/9/6à»ç~Ç©ÇÁìKópÇ∆Ç∑ÇÈ**************
-    datNow = Date
-    If datNow < #9/6/2018# Then Exit Function
+    datNOW = Date
+    If datNOW < #9/6/2018# Then Exit Function
     '****************************************
     
     If IsNull(in_varHinban) Then Exit Function

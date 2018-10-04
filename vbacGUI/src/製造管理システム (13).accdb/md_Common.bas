@@ -1046,3 +1046,69 @@ Public Function RPADB(strValue As String, strCharactor As String, intKeta As Int
     RPADB = strValue & String(intKeta - LenB(strSJIS), strCharactor)
         
 End Function
+
+Public Function fncFileSelector(ByVal inFolder As String, ByVal inShurui As Integer) As String
+'***********************************************************
+'ダイアログを表示してファイルを選択する
+
+'
+'   引数
+'       :inFolder               初期パス
+'       :inShurui               ファイル種類 0:xlsx
+
+'   戻り値（String型)
+'
+'2.8.0 ADD
+'***********************************************************
+
+    Dim strFile As String
+    Dim intRet As Integer
+    
+    On Error GoTo Err_fncFileSelector
+    
+    fncFileSelector = ""
+    With Application.FileDialog(msoFileDialogOpen)
+    
+        'ダイアログのタイトルを設定
+        '.Title = "ダイアログ"
+        
+        'ファイルの種類を設定
+        .Filters.Clear
+        
+        Select Case inShurui
+            Case 0
+                .Filters.Add "Microsoft Office Excelファイル", "*.xlsx"
+        End Select
+        
+        .FilterIndex = 1
+        
+        '複数ファイル選択を許可しない
+        .AllowMultiSelect = False
+        '初期パスを設定
+        
+        .InitialFileName = inFolder
+        'ダイアログを表示
+        intRet = .Show
+        
+        If intRet <> 0 Then
+          'ファイルが選択されたとき
+          'そのフルパスを返り値に設定
+          strFile = Trim(.SelectedItems.Item(1))
+        Else
+          'ファイルが選択されなければブランク
+          strFile = ""
+        End If
+        
+    End With
+
+    If strFile <> "" Then
+        fncFileSelector = strFile
+    End If
+    
+    Exit Function
+    
+Err_fncFileSelector:
+    MsgBox Err.Description
+    
+    
+End Function

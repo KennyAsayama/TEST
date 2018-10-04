@@ -31,6 +31,8 @@ Public Function SetOrderData(ByVal inDate As Date, ByVal inDateKbn As Byte, inSe
 '       →出荷日計算をリードタイムに変更
 '2.5.2
 '       →F框の塗装集計対応
+'2.8.0
+'       →アラジンオフィス納期情報データ取り込み
 '--------------------------------------------------------------------------------------------------------------------
     Dim objREMOTEDB As New cls_BRAND_MASTER
     Dim objLOCALDB As New cls_LOCALDB
@@ -134,6 +136,12 @@ Public Function SetOrderData(ByVal inDate As Date, ByVal inDateKbn As Byte, inSe
     '1.10.7 ADD End
     strSQL = strSQL & ",建具LT,枠LT,下地材LT,WTLT,金物LT,玄関収納LT,造作材LT "
     
+    If inSeizoKbn = "建具" Then
+        strSQL = strSQL & ",ガラス入荷日,ルーバー入荷日,その他入荷日,出荷金物入荷日 "
+    Else
+        strSQL = strSQL & ",Null as ガラス入荷日,Null as ルーバー入荷日,Null as その他入荷日,Null as 出荷金物入荷日 "
+    End If
+    
     strSQL = strSQL & "from T_製造指示 s "
     strSQL = strSQL & "inner join T_受注ﾏｽﾀ m "
     strSQL = strSQL & "on s.契約番号 = m.契約番号 and s.棟番号 = m.棟番号 and s.部屋番号 = m.部屋番号 "
@@ -141,6 +149,19 @@ Public Function SetOrderData(ByVal inDate As Date, ByVal inDateKbn As Byte, inSe
     strSQL = strSQL & "on s.契約番号 = m2.契約番号 and s.棟番号 = m2.棟番号 and s.部屋番号 = m2.部屋番号 "
     strSQL = strSQL & "left join T_製造予備 y "
     strSQL = strSQL & "on s.契約番号 = y.契約番号 and s.棟番号 = y.棟番号 and s.部屋番号 = y.部屋番号 and s.製造区分 = y.製造区分 "
+    
+    If inSeizoKbn = "建具" Then
+        strSQL = strSQL & "left join (select 契約番号,棟番号,部屋番号,項 "
+        strSQL = strSQL & ",max(case when 部材種別CD like '%ｶﾞﾗｽ%' or 部材種別CD like '%ﾐﾗｰ%'  then 入荷日 end) ガラス入荷日 "
+        strSQL = strSQL & ",max(case when 部材種別CD like '%ﾙｰﾊﾞｰﾕﾆｯﾄ%' then 入荷日 end) ルーバー入荷日 "
+        strSQL = strSQL & ",max(case when 部材種別CD not like '%ｶﾞﾗｽ%' and 部材種別CD not like '%ﾐﾗｰ%' and 部材種別CD not like '%ﾙｰﾊﾞｰﾕﾆｯﾄ%' and (同梱品 is null or 同梱品 <> '○') then 入荷日 end) その他入荷日 "
+        strSQL = strSQL & ",max(case when 同梱品 = '○' then 入荷日 end) 出荷金物入荷日 "
+        strSQL = strSQL & "from T_AO資材納期情報 AO "
+        strSQL = strSQL & "where 品番区分 = 1 and 製造区分 = 1 "
+        strSQL = strSQL & "group by 契約番号,棟番号,部屋番号,項 "
+        strSQL = strSQL & ") AO "
+        strSQL = strSQL & "on s.契約番号 = AO.契約番号 and s.棟番号 = AO.棟番号 and s.部屋番号 = AO.部屋番号 and s.項 = AO.項 "
+    End If
     
     If inDateKbn = 1 Then
         strSQL = strSQL & "where s.確定日 = '" & Format(inDate, "yyyy/mm/dd") & "' "
@@ -296,9 +317,14 @@ Public Function SetOrderData(ByVal inDate As Date, ByVal inDateKbn As Byte, inSe
                         End If
                         
                         objLOCALDB.GetRS![備考] = .GetRS![備考]
-                        
-                    objLOCALDB.GetRS.Update
                     
+                    objLOCALDB.GetRS![ガラス入荷日] = .GetRS![ガラス入荷日]
+                    objLOCALDB.GetRS![ルーバー入荷日] = .GetRS![ルーバー入荷日]
+                    objLOCALDB.GetRS![その他入荷日] = .GetRS![その他入荷日]
+                    objLOCALDB.GetRS![出荷金物入荷日] = .GetRS![出荷金物入荷日]
+                    
+                    objLOCALDB.GetRS.Update
+                                        
                     .GetRS.MoveNext
                 Loop
                 
@@ -920,6 +946,8 @@ Public Function bolfncMiseizoToExcel() As Boolean
 
 '2.2.0
 '   →ウォールスルー未製造追加
+'2.8.0
+'   →クロゼット未出荷追加
 '--------------------------------------------------------------------------------------------------------------------
 
     Dim objApp As New cls_Excel
@@ -930,7 +958,7 @@ Public Function bolfncMiseizoToExcel() As Boolean
     Dim intSheetDel As Integer
     Dim strSQL As String
     Dim strSQLJ As String
-    Dim strKBName(3) As String
+    Dim strKBName(4) As String
     Dim strMidashiVal As String
     
     On Error GoTo Err_bolfncMiseizoToExcel
@@ -946,6 +974,7 @@ Public Function bolfncMiseizoToExcel() As Boolean
         strKBName(1) = "下地"
         strKBName(2) = "枠"
         strKBName(3) = "ウォールスルー未出荷"
+        strKBName(4) = "クロゼット未出荷"
         
         strSQL = ""
         strSQL = strfncTextFileToString("\\db\prog\製造管理システム\SQL\subMISEIZO.sql")
@@ -1004,6 +1033,27 @@ Public Function bolfncMiseizoToExcel() As Boolean
         End If
         
         strMidashiVal = "ウォールスルー未出荷残 " & Format(Now, "yyyy-MM-dd")
+        
+        If Not objREMOTEDB.ExecSelect(strSQL) Then
+            Err.Raise 9999, , "台帳集計データ異常終了"
+        End If
+        
+        objApp.WorkSheetADD strKBName(i)
+                
+        If Not bolfncexp_EXCELOBJECT(objREMOTEDB.GetRS, objApp.getExcel, True, strMidashiVal) Then
+            Err.Raise 9999, , "Excelエクスポート異常終了"
+        End If
+        
+        i = 4
+        strSQL = ""
+        strSQL = strfncTextFileToString("\\db\prog\製造管理システム\SQL\subMISHUKKA_Oredo.sql")
+        If strSQL <> "" Then
+            strSQL = Replace(strSQL, vbCrLf, " ")
+        Else
+            Err.Raise 9999, , "未製造出力異常終了"
+        End If
+        
+        strMidashiVal = "クロゼット未出荷残 " & Format(Now, "yyyy-MM-dd")
         
         If Not objREMOTEDB.ExecSelect(strSQL) Then
             Err.Raise 9999, , "台帳集計データ異常終了"

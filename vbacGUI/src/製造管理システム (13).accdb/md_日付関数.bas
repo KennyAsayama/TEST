@@ -938,7 +938,7 @@ Public Function bolfncDateCheck(ByVal inputMode As Byte, ByVal in_txtDate As Str
     Dim strMM As String
     Dim strDD As String
     
-    Dim datNow As Date
+    Dim datNOW As Date
     
     On Error GoTo Err_bolfncDateCheck
     
