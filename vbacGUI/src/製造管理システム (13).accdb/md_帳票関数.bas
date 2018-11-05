@@ -82,6 +82,8 @@ Public Function bolFncKidoriData(ByVal varSpec As Variant, ByVal in_strHinban As
 '       →Terrace用柱追加
 '   '20180201 K.Asayama Change
 '       →1801仕様対応
+'   '2.9.0 K.Asayama Change
+'       →1808(JC)仕様対応
 
 '   戻り値:Boolean
 '       →True              照合OK　数値戻し
@@ -756,7 +758,7 @@ Public Function bolFncKidoriData(ByVal varSpec As Variant, ByVal in_strHinban As
         ElseIf strHinban Like "*DC-####*" Or strHinban Like "*DT-####*" Or strHinban Like "*DP-####*" Or strHinban Like "*DU-####*" Or strHinban Like "*DE-####*" _
         Or strHinban Like "*KC-####*" Or strHinban Like "*KT-####*" Or strHinban Like "*KU-####*" _
         Or strHinban Like "*DF-####*" Or strHinban Like "*DJ-####*" Or strHinban Like "*DQ-####*" _
-        Or strHinban Like "*VF-####*" Or strHinban Like "*VQ-####*" Then
+        Or strHinban Like "*VF-####*" Or strHinban Like "*VQ-####*" Or strHinban Like "*JC-####*" Or strHinban Like "*JC-####*" Then
         '20170105 K.Asayama Change END
         
             If dblDH <= 2529 Then
@@ -935,7 +937,7 @@ Public Function bolFncKidoriData(ByVal varSpec As Variant, ByVal in_strHinban As
                 intCupShitajiH = 8 * intMaisu
                 
         ElseIf strHinban Like "*DC-####*" Or strHinban Like "*DT-####*" Or strHinban Like "*DP-####*" Or strHinban Like "*DU-####*" Or strHinban Like "*DE-####*" _
-                Or strHinban Like "*KC-####*" Or strHinban Like "*KT-####*" Or strHinban Like "*KU-####*" Then
+                Or strHinban Like "*KC-####*" Or strHinban Like "*KT-####*" Or strHinban Like "*KU-####*" Or strHinban Like "*JC-####*" Then
 
             dblDaboShitaji = 150
             intDaboShitajiH = 2 * intMaisu
@@ -1114,7 +1116,7 @@ Public Function bolFncKidoriData(ByVal varSpec As Variant, ByVal in_strHinban As
             End If
             
         ElseIf strHinban Like "*DC-####*" Or strHinban Like "*DT-####*" Or strHinban Like "*DP-####*" Or strHinban Like "*DU-####*" Or strHinban Like "*DE-####*" _
-                Or strHinban Like "*KC-####*" Or strHinban Like "*KT-####*" Or strHinban Like "*KU-####*" Then
+                Or strHinban Like "*KC-####*" Or strHinban Like "*KT-####*" Or strHinban Like "*KU-####*" Or strHinban Like "*JC-####*" Then
 
             dblDaboShitaji = 150
             intDaboShitajiH = 2 * intMaisu
@@ -1304,7 +1306,7 @@ Public Function bolFncKidoriData(ByVal varSpec As Variant, ByVal in_strHinban As
             intCupShitajiH = 8 * intMaisu
             
         ElseIf strHinban Like "*DC-####*" Or strHinban Like "*DT-####*" Or strHinban Like "*DP-####*" Or strHinban Like "*DU-####*" Or strHinban Like "*DE-####*" _
-            Or strHinban Like "*KC-####*" Or strHinban Like "*KT-####*" Or strHinban Like "*KU-####*" Then
+            Or strHinban Like "*KC-####*" Or strHinban Like "*KT-####*" Or strHinban Like "*KU-####*" Or strHinban Like "*JC-####*" Then
 
             dblDaboShitaji = 150
             intDaboShitajiH = 2 * intMaisu
@@ -1444,7 +1446,7 @@ Public Function bolFncKidoriData(ByVal varSpec As Variant, ByVal in_strHinban As
             intCupShitajiH = 6 * intMaisu
             
         ElseIf strHinban Like "*DC-####*" Or strHinban Like "*DT-####*" Or strHinban Like "*DP-####*" Or strHinban Like "*DU-####*" Or strHinban Like "*DE-####*" _
-            Or strHinban Like "*KC-####*" Or strHinban Like "*KT-####*" Or strHinban Like "*KU-####*" Then
+            Or strHinban Like "*KC-####*" Or strHinban Like "*KT-####*" Or strHinban Like "*KU-####*" Or strHinban Like "*JC-####*" Then
             
             If dblDH <= 2529 Then
                 dblCupShitaji = 35
@@ -1613,7 +1615,7 @@ Public Function bolFncKidoriData(ByVal varSpec As Variant, ByVal in_strHinban As
             intCupShitajiH = 6 * intMaisu
             
         ElseIf strHinban Like "*DC-####*" Or strHinban Like "*DT-####*" Or strHinban Like "*DP-####*" Or strHinban Like "*DU-####*" Or strHinban Like "*DE-####*" _
-            Or strHinban Like "*KC-####*" Or strHinban Like "*KT-####*" Or strHinban Like "*KU-####*" Then
+            Or strHinban Like "*KC-####*" Or strHinban Like "*KT-####*" Or strHinban Like "*KU-####*" Or strHinban Like "*JC-####*" Then
             
             If dblDH <= 2529 Then
                 dblCupShitaji = 35
@@ -1723,7 +1725,7 @@ Public Function bolFncKidoriData(ByVal varSpec As Variant, ByVal in_strHinban As
             intSode1H = 0
             
         ElseIf strHinban Like "*DC-####*" Or strHinban Like "*DT-####*" Or strHinban Like "*DP-####*" Or strHinban Like "*DU-####*" Or strHinban Like "*DE-####*" _
-            Or strHinban Like "*KC-####*" Or strHinban Like "*KT-####*" Or strHinban Like "*KU-####*" Then
+            Or strHinban Like "*KC-####*" Or strHinban Like "*KT-####*" Or strHinban Like "*KU-####*" Or strHinban Like "*JC-####*" Then
 
             dblDaboShitaji = 150
             intDaboShitajiH = 2 * intMaisu
@@ -1878,7 +1880,7 @@ Public Function bolFncKidoriData(ByVal varSpec As Variant, ByVal in_strHinban As
 '        ElseIf strHinban Like "*DC-####*" Or strHinban Like "*DT-####*" Or strHinban Like "*DE-####*" _
 '            Or strHinban Like "*KC-####*" Or strHinban Like "*KT-####*" Then
         ElseIf strHinban Like "*DC-####*" Or strHinban Like "*DT-####*" Or strHinban Like "*DP-####*" Or strHinban Like "*DU-####*" Or strHinban Like "*DE-####*" _
-                Or strHinban Like "*KC-####*" Or strHinban Like "*KT-####*" Or strHinban Like "*KU-####*" Then
+                Or strHinban Like "*KC-####*" Or strHinban Like "*KT-####*" Or strHinban Like "*KU-####*" Or strHinban Like "*JC-####*" Then
             
             dblDaboShitaji = 150
             intDaboShitajiH = 2 * intMaisu
@@ -2032,7 +2034,7 @@ Public Function bolFncKidoriData(ByVal varSpec As Variant, ByVal in_strHinban As
         ElseIf strHinban Like "*DC-####*" Or strHinban Like "*DT-####*" Or strHinban Like "*DP-####*" Or strHinban Like "*DU-####*" Or strHinban Like "*DE-####*" _
             Or strHinban Like "*DH-####*" Or strHinban Like "*DF-####*" Or strHinban Like "*DJ-####*" Or strHinban Like "*DQ-####*" _
             Or strHinban Like "*KC-####*" Or strHinban Like "*KT-####*" Or strHinban Like "*KU-####*" _
-            Or strHinban Like "*VF-####*" Or strHinban Like "*VQ-####*" Then
+            Or strHinban Like "*VF-####*" Or strHinban Like "*VQ-####*" Or strHinban Like "*JC-####*" Then
         '20170105 K.Asayama Change
             
             If dblDH <= 2529 Then
@@ -2176,7 +2178,7 @@ Public Function bolFncKidoriData(ByVal varSpec As Variant, ByVal in_strHinban As
                 
         End Select
         
-        If strHinban Like "*DC-####*" Or strHinban Like "*KC-####*" Then
+        If strHinban Like "*DC-####*" Or strHinban Like "*KC-####*" Or strHinban Like "*JC-####*" Then
         
             dblDaboShitaji = 150
             intDaboShitajiH = 2
@@ -2242,7 +2244,7 @@ Public Function bolFncKidoriData(ByVal varSpec As Variant, ByVal in_strHinban As
                 
         End Select
         
-        If strHinban Like "*DC-####*" Or strHinban Like "*KC-####*" Then
+        If strHinban Like "*DC-####*" Or strHinban Like "*KC-####*" Or strHinban Like "*JC-####*" Then
         
             dblDaboShitaji = 150
             intDaboShitajiH = 2
@@ -2435,7 +2437,7 @@ Public Function bolFncKidoriData(ByVal varSpec As Variant, ByVal in_strHinban As
         Or strHinban Like "*VM-####*" Or strHinban Like "*VL-####*" Or strHinban Like "*VN-####*" _
         Or strHinban Like "*DF-####*" Or strHinban Like "*DJ-####*" Or strHinban Like "*DQ-####*" _
         Or strHinban Like "*VF-####*" Or strHinban Like "*VQ-####*" _
-        Or strHinban Like "*KC-####*" Or strHinban Like "*KT-####*" Or strHinban Like "*KU-####*" Then
+        Or strHinban Like "*KC-####*" Or strHinban Like "*KT-####*" Or strHinban Like "*KU-####*" Or strHinban Like "*JC-####*" Then
         '20170105 K.Asayama Change END
             If dblDH <= 2529 Then
                 dblCupShitaji = 35
@@ -2557,7 +2559,7 @@ Public Function bolFncKidoriData(ByVal varSpec As Variant, ByVal in_strHinban As
             intCupShitajiH = 6 * intMaisu
             
         ElseIf strHinban Like "*DC-####*" Or strHinban Like "*DT-####*" Or strHinban Like "*DP-####*" Or strHinban Like "*DU-####*" Or strHinban Like "*DE-####*" _
-            Or strHinban Like "*KC-####*" Or strHinban Like "*KT-####*" Or strHinban Like "*KU-####*" Then
+            Or strHinban Like "*KC-####*" Or strHinban Like "*KT-####*" Or strHinban Like "*KU-####*" Or strHinban Like "*JC-####*" Then
             
             If dblDH <= 2529 Then
                 dblCupShitaji = 35
@@ -2720,7 +2722,7 @@ Public Function bolFncKidoriData(ByVal varSpec As Variant, ByVal in_strHinban As
             End If
             
         ElseIf strHinban Like "*DC-####*" Or strHinban Like "*DT-####*" Or strHinban Like "*DP-####*" Or strHinban Like "*DU-####*" Or strHinban Like "*DE-####*" _
-                Or strHinban Like "*KC-####*" Or strHinban Like "*KT-####*" Or strHinban Like "*KU-####*" Then
+                Or strHinban Like "*KC-####*" Or strHinban Like "*KT-####*" Or strHinban Like "*KU-####*" Or strHinban Like "*JC-####*" Then
                 
             Select Case dblDH
                     
@@ -2896,7 +2898,7 @@ Public Function bolFncKidoriData(ByVal varSpec As Variant, ByVal in_strHinban As
         '20160825 K.Asayama Change
         'ElseIf strHinban Like "*DC-####*" Or strHinban Like "*DT-####*" Or strHinban Like "*DE-####*" Or strHinban Like "*KC-####*" Or strHinban Like "*KT-####*" Then
         ElseIf strHinban Like "*DC-####*" Or strHinban Like "*DT-####*" Or strHinban Like "*DP-####*" Or strHinban Like "*DU-####*" Or strHinban Like "*DE-####*" _
-                Or strHinban Like "*KC-####*" Or strHinban Like "*KT-####*" Or strHinban Like "*KU-####*" Then
+                Or strHinban Like "*KC-####*" Or strHinban Like "*KT-####*" Or strHinban Like "*KU-####*" Or strHinban Like "*JC-####*" Then
         '20160825 K.Asayama Change END
         
             Select Case dblDH
@@ -3033,7 +3035,7 @@ Public Function bolFncKidoriData(ByVal varSpec As Variant, ByVal in_strHinban As
             intSode1H = 0
             
         ElseIf strHinban Like "*DC-####*" Or strHinban Like "*DT-####*" Or strHinban Like "*DP-####*" Or strHinban Like "*DU-####*" Or strHinban Like "*DE-####*" _
-                Or strHinban Like "*KC-####*" Or strHinban Like "*KT-####*" Or strHinban Like "*KU-####*" Then
+                Or strHinban Like "*KC-####*" Or strHinban Like "*KT-####*" Or strHinban Like "*KU-####*" Or strHinban Like "*JC-####*" Then
 
             dblDaboShitaji = 150
             intDaboShitajiH = 2 * intMaisu
@@ -3133,7 +3135,7 @@ Public Function bolFncKidoriData(ByVal varSpec As Variant, ByVal in_strHinban As
             dblSode1 = 0
             intSode1H = 0
             
-        ElseIf strHinban Like "*DC-####*" Or strHinban Like "*DT-####*" Or strHinban Like "*DE-####*" Or strHinban Like "*KC-####*" Or strHinban Like "*KT-####*" Then
+        ElseIf strHinban Like "*DC-####*" Or strHinban Like "*DT-####*" Or strHinban Like "*DE-####*" Or strHinban Like "*KC-####*" Or strHinban Like "*KT-####*" Or strHinban Like "*JC-####*" Then
             Select Case dblDH
                 Case 2530 To 2589
                     dblDaboShitaji = 150
@@ -3211,7 +3213,7 @@ Public Function bolFncKidoriData(ByVal varSpec As Variant, ByVal in_strHinban As
                 
         End Select
         
-        If strHinban Like "*DC-####*" Or strHinban Like "*KC-####*" Then
+        If strHinban Like "*DC-####*" Or strHinban Like "*KC-####*" Or strHinban Like "*JC-####*" Then
         
             Select Case dblDH
                 Case Is <= 2529
@@ -3353,7 +3355,7 @@ Public Function bolFncKidoriData(ByVal varSpec As Variant, ByVal in_strHinban As
             End Select
               
             If strHinban Like "*DC-####*" Or strHinban Like "*DT-####*" Or strHinban Like "*DP-####*" Or strHinban Like "*DU-####*" Or strHinban Like "*DE-####*" Or strHinban Like "*DH-####*" _
-                Or strHinban Like "*KC-####*" Or strHinban Like "*KT-####*" Or strHinban Like "*KU-####*" Then
+                Or strHinban Like "*KC-####*" Or strHinban Like "*KT-####*" Or strHinban Like "*KU-####*" Or strHinban Like "*JC-####*" Then
                 
                 dblSan_N = 217
             
@@ -3502,7 +3504,7 @@ Public Function bolFncKidoriData(ByVal varSpec As Variant, ByVal in_strHinban As
             End Select
               
             If strHinban Like "*DC-####*" Or strHinban Like "*DT-####*" Or strHinban Like "*DP-####*" Or strHinban Like "*DU-####*" Or strHinban Like "*DE-####*" Or strHinban Like "*DH-####*" _
-                Or strHinban Like "*KC-####*" Or strHinban Like "*KT-####*" Or strHinban Like "*KU-####*" Then
+                Or strHinban Like "*KC-####*" Or strHinban Like "*KT-####*" Or strHinban Like "*KU-####*" Or strHinban Like "*JC-####*" Then
                 
                 dblSan_N = 217
             
@@ -3601,7 +3603,7 @@ Public Function bolFncKidoriData(ByVal varSpec As Variant, ByVal in_strHinban As
 '        If strHinban Like "*DC-####*" Or strHinban Like "*DT-####*" Or strHinban Like "*DP-####*" Or strHinban Like "*DU-####*" Or strHinban Like "*DE-####*" Or strHinban Like "*DH-####*" Or strHinban Like "*DF-####*" Or strHinban Like "*DJ-####*" _
 '            Or strHinban Like "*KC-####*" Or strHinban Like "*KT-####*" Or strHinban Like "*KU-####*" Then
         If strHinban Like "*DC-####*" Or strHinban Like "*DT-####*" Or strHinban Like "*DP-####*" Or strHinban Like "*DU-####*" Or strHinban Like "*DE-####*" Or strHinban Like "*DH-####*" Or strHinban Like "*DF-####*" Or strHinban Like "*DJ-####*" _
-            Or strHinban Like "*KC-####*" Or strHinban Like "*KT-####*" Or strHinban Like "*KU-####*" Or strHinban Like "*VF-####*" Then
+            Or strHinban Like "*KC-####*" Or strHinban Like "*KT-####*" Or strHinban Like "*KU-####*" Or strHinban Like "*VF-####*" Or strHinban Like "*JC-####*" Then
         '20170105 K.Asayama Change END
             
             If dblDH <= 2529 Then
@@ -3689,7 +3691,7 @@ Public Function bolFncKidoriData(ByVal varSpec As Variant, ByVal in_strHinban As
         'strShingumizu = "SS-29"
         
         If strHinban Like "*DC-####*" Or strHinban Like "*DT-####*" Or strHinban Like "*DP-####*" Or strHinban Like "*DU-####*" Or strHinban Like "*DE-####*" _
-            Or strHinban Like "*KC-####*" Or strHinban Like "*KT-####*" Or strHinban Like "*KU-####*" Then
+            Or strHinban Like "*KC-####*" Or strHinban Like "*KT-####*" Or strHinban Like "*KU-####*" Or strHinban Like "*JC-####*" Then
             
             dblCupShitaji = 35
             intCupShitajiH = 2 * intMaisu
@@ -3853,7 +3855,7 @@ Public Function bolFncKidoriData(ByVal varSpec As Variant, ByVal in_strHinban As
             intGakutateH1 = 2
             
         ElseIf strHinban Like "*DC-####*" Or strHinban Like "*DT-####*" Or strHinban Like "*DP-####*" Or strHinban Like "*DU-####*" Or strHinban Like "*DE-####*" _
-            Or strHinban Like "*KC-####*" Or strHinban Like "*KT-####*" Or strHinban Like "*KU-####*" Then
+            Or strHinban Like "*KC-####*" Or strHinban Like "*KT-####*" Or strHinban Like "*KU-####*" Or strHinban Like "*JC-####*" Then
 
             dblDaboShitaji = 150
             intDaboShitajiH = 2 * intMaisu
@@ -3994,7 +3996,7 @@ Public Function bolFncKidoriData(ByVal varSpec As Variant, ByVal in_strHinban As
             intSode1H = 0
             
         ElseIf strHinban Like "*DC-####*" Or strHinban Like "*DT-####*" Or strHinban Like "*DP-####*" Or strHinban Like "*DU-####*" Or strHinban Like "*DE-####*" _
-            Or strHinban Like "*KC-####*" Or strHinban Like "*KT-####*" Or strHinban Like "*KU-####*" Then
+            Or strHinban Like "*KC-####*" Or strHinban Like "*KT-####*" Or strHinban Like "*KU-####*" Or strHinban Like "*JC-####*" Then
 
             dblDaboShitaji = 150
             intDaboShitajiH = 2 * intMaisu
@@ -4137,7 +4139,7 @@ Public Function bolFncKidoriData(ByVal varSpec As Variant, ByVal in_strHinban As
 '        If strHinban Like "*DC-####*" Or strHinban Like "*DT-####*" Or strHinban Like "*DP-####*" Or strHinban Like "*DU-####*" Or strHinban Like "*DE-####*" Or strHinban Like "*DF-####*" Or strHinban Like "*DJ-####*" Or strHinban Like "*DQ-####*" _
 '            Or strHinban Like "*KC-####*" Or strHinban Like "*KT-####*" Or strHinban Like "*KU-####*" Then
         If strHinban Like "*DC-####*" Or strHinban Like "*DT-####*" Or strHinban Like "*DP-####*" Or strHinban Like "*DU-####*" Or strHinban Like "*DE-####*" Or strHinban Like "*DF-####*" Or strHinban Like "*DJ-####*" Or strHinban Like "*DQ-####*" _
-            Or strHinban Like "*KC-####*" Or strHinban Like "*KT-####*" Or strHinban Like "*KU-####*" Or strHinban Like "*VF-####*" Or strHinban Like "*VQ-####*" Then
+            Or strHinban Like "*KC-####*" Or strHinban Like "*KT-####*" Or strHinban Like "*KU-####*" Or strHinban Like "*VF-####*" Or strHinban Like "*VQ-####*" Or strHinban Like "*JC-####*" Then
         '20170105 K.Asayama Change END
         
             dblCupShitaji = 35
@@ -4217,7 +4219,7 @@ Public Function bolFncKidoriData(ByVal varSpec As Variant, ByVal in_strHinban As
             End Select
             
             If strHinban Like "*DC-####*" Or strHinban Like "*DT-####*" Or strHinban Like "*DU-####*" _
-                Or strHinban Like "*KC-####*" Or strHinban Like "*KT-####*" Or strHinban Like "*KU-####*" Then
+                Or strHinban Like "*KC-####*" Or strHinban Like "*KT-####*" Or strHinban Like "*KU-####*" Or strHinban Like "*JC-####*" Then
                 
                 '20151211 K.Asayama Change 1601仕様追加
                 dblDaboShitaji = 150
@@ -4267,7 +4269,7 @@ Public Function bolFncKidoriData(ByVal varSpec As Variant, ByVal in_strHinban As
                     dblHashira = dblDH - 174
                     
                     If strHinban Like "*DC-####*" Or strHinban Like "*DT-####*" Or strHinban Like "*DU-####*" _
-                        Or strHinban Like "*KC-####*" Or strHinban Like "*KT-####*" Or strHinban Like "*KU-####*" Then
+                        Or strHinban Like "*KC-####*" Or strHinban Like "*KT-####*" Or strHinban Like "*KU-####*" Or strHinban Like "*JC-####*" Then
                         
                         intSanH = 4
                         intGakuYokoH1 = 2
@@ -4282,7 +4284,7 @@ Public Function bolFncKidoriData(ByVal varSpec As Variant, ByVal in_strHinban As
                     dblHashira = dblDH - 114
                     
                     If strHinban Like "*DC-####*" Or strHinban Like "*DT-####*" Or strHinban Like "*DU-####*" _
-                        Or strHinban Like "*KC-####*" Or strHinban Like "*KT-####*" Or strHinban Like "*KU-####*" Then
+                        Or strHinban Like "*KC-####*" Or strHinban Like "*KT-####*" Or strHinban Like "*KU-####*" Or strHinban Like "*JC-####*" Then
                         
                         intSanH = 4
                         intGakuYokoH1 = 1
@@ -4299,7 +4301,7 @@ Public Function bolFncKidoriData(ByVal varSpec As Variant, ByVal in_strHinban As
                     dblHashira = dblDH - 114
                     
                     If strHinban Like "*DC-####*" Or strHinban Like "*DT-####*" Or strHinban Like "*DU-####*" _
-                        Or strHinban Like "*KC-####*" Or strHinban Like "*KT-####*" Or strHinban Like "*KU-####*" Then
+                        Or strHinban Like "*KC-####*" Or strHinban Like "*KT-####*" Or strHinban Like "*KU-####*" Or strHinban Like "*JC-####*" Then
                         
                         intSanH = 6
                         intGakuYokoH1 = 2
@@ -4503,7 +4505,7 @@ Public Function bolFncKidoriData(ByVal varSpec As Variant, ByVal in_strHinban As
                 End If
             End If
         ElseIf strHinban Like "*DC-####*" Or strHinban Like "*DT-####*" Or strHinban Like "*DP-####*" Or strHinban Like "*DU-####*" Or strHinban Like "*DE-####*" _
-            Or strHinban Like "*KC-####*" Or strHinban Like "*KT-####*" Or strHinban Like "*KU-####*" Then
+            Or strHinban Like "*KC-####*" Or strHinban Like "*KT-####*" Or strHinban Like "*KU-####*" Or strHinban Like "*JC-####*" Then
 
             If dblDH <= 2529 Then
                 dblCupShitaji = 35
@@ -4639,7 +4641,7 @@ Public Function bolFncKidoriData(ByVal varSpec As Variant, ByVal in_strHinban As
             '20160903 K.Asayama Change
             
             If strHinban Like "*DC-####*" Or strHinban Like "*DT-####*" Or strHinban Like "*DP-####*" Or strHinban Like "*DU-####*" Or strHinban Like "*DE-####*" _
-                Or strHinban Like "*KC-####*" Or strHinban Like "*KT-####*" Or strHinban Like "*KU-####*" Then
+                Or strHinban Like "*KC-####*" Or strHinban Like "*KT-####*" Or strHinban Like "*KU-####*" Or strHinban Like "*JC-####*" Then
 
                 If dblDH <= 2529 Then
                     dblCupShitaji = 35
@@ -4843,7 +4845,7 @@ Public Function bolFncKidoriData(ByVal varSpec As Variant, ByVal in_strHinban As
                 End If
                 
             ElseIf strHinban Like "*DC-####*" Or strHinban Like "*DT-####*" Or strHinban Like "*DP-####*" Or strHinban Like "*DU-####*" Or strHinban Like "*DE-####*" _
-                Or strHinban Like "*KC-####*" Or strHinban Like "*KT-####*" Or strHinban Like "*KU-####*" Then
+                Or strHinban Like "*KC-####*" Or strHinban Like "*KT-####*" Or strHinban Like "*KU-####*" Or strHinban Like "*JC-####*" Then
 
                 If dblDH <= 2529 Then
                     dblCupShitaji = 35
@@ -4975,7 +4977,7 @@ Public Function bolFncKidoriData(ByVal varSpec As Variant, ByVal in_strHinban As
                 intCupShitajiH = 8 * intMaisu
                 
             ElseIf strHinban Like "*DC-####*" Or strHinban Like "*DT-####*" Or strHinban Like "*DP-####*" Or strHinban Like "*DU-####*" Or strHinban Like "*DE-####*" _
-                Or strHinban Like "*KC-####*" Or strHinban Like "*KT-####*" Or strHinban Like "*KU-####*" Then
+                Or strHinban Like "*KC-####*" Or strHinban Like "*KT-####*" Or strHinban Like "*KU-####*" Or strHinban Like "*JC-####*" Then
     
                 dblDaboShitaji = 150
                 intDaboShitajiH = 2 * intMaisu
@@ -5145,7 +5147,7 @@ Public Function bolFncKidoriData(ByVal varSpec As Variant, ByVal in_strHinban As
                 End If
                 
             ElseIf strHinban Like "*DC-####*" Or strHinban Like "*DT-####*" Or strHinban Like "*DP-####*" Or strHinban Like "*DU-####*" Or strHinban Like "*DE-####*" _
-                Or strHinban Like "*KC-####*" Or strHinban Like "*KT-####*" Or strHinban Like "*KU-####*" Then
+                Or strHinban Like "*KC-####*" Or strHinban Like "*KT-####*" Or strHinban Like "*KU-####*" Or strHinban Like "*JC-####*" Then
 
                 dblDaboShitaji = 150
                 intDaboShitajiH = 2 * intMaisu
@@ -5241,7 +5243,7 @@ Public Function bolFncKidoriData(ByVal varSpec As Variant, ByVal in_strHinban As
             End Select
             
             If strHinban Like "*DC-####*" Or strHinban Like "*DT-####*" Or strHinban Like "*DU-####*" _
-                Or strHinban Like "*KC-####*" Or strHinban Like "*KT-####*" Or strHinban Like "*KU-####*" Then
+                Or strHinban Like "*KC-####*" Or strHinban Like "*KT-####*" Or strHinban Like "*KU-####*" Or strHinban Like "*JC-####*" Then
                 '20151211 K.Asayama Change 1601仕様追加
                 dblDaboShitaji = 150
                 intDaboShitajiH = 1
@@ -5304,7 +5306,7 @@ Public Function bolFncKidoriData(ByVal varSpec As Variant, ByVal in_strHinban As
             End Select
             
             If strHinban Like "*DC-####*" Or strHinban Like "*DT-####*" Or strHinban Like "*DU-####*" _
-                Or strHinban Like "*KC-####*" Or strHinban Like "*KT-####*" Or strHinban Like "*KU-####*" Then
+                Or strHinban Like "*KC-####*" Or strHinban Like "*KT-####*" Or strHinban Like "*KU-####*" Or strHinban Like "*JC-####*" Then
                 
                 '20151211 K.Asayama Change 1601仕様追加
                 dblDaboShitaji = 150
@@ -5475,7 +5477,7 @@ Public Function bolFncKidoriData(ByVal varSpec As Variant, ByVal in_strHinban As
         End Select
         
         If strHinban Like "*DC-####*" Or strHinban Like "*DT-####*" Or strHinban Like "*DU-####*" _
-            Or strHinban Like "*KC-####*" Or strHinban Like "*KT-####*" Or strHinban Like "*KU-####*" Then
+            Or strHinban Like "*KC-####*" Or strHinban Like "*KT-####*" Or strHinban Like "*KU-####*" Or strHinban Like "*JC-####*" Then
             
             dblCupShitaji = 35
             intCupShitajiH = 2 * intMaisu
@@ -5531,7 +5533,7 @@ Public Function bolFncKidoriData(ByVal varSpec As Variant, ByVal in_strHinban As
         End Select
         
         If strHinban Like "*DC-####*" Or strHinban Like "*DT-####*" Or strHinban Like "*DU-####*" _
-            Or strHinban Like "*KC-####*" Or strHinban Like "*KT-####*" Or strHinban Like "*KU-####*" Then
+            Or strHinban Like "*KC-####*" Or strHinban Like "*KT-####*" Or strHinban Like "*KU-####*" Or strHinban Like "*JC-####*" Then
             
             dblCupShitaji = 35
             intCupShitajiH = 2 * intMaisu
@@ -5588,7 +5590,7 @@ Public Function bolFncKidoriData(ByVal varSpec As Variant, ByVal in_strHinban As
         End Select
         
         If strHinban Like "*DC-####*" Or strHinban Like "*DT-####*" Or strHinban Like "*DU-####*" _
-            Or strHinban Like "*KC-####*" Or strHinban Like "*KT-####*" Or strHinban Like "*KU-####*" Then
+            Or strHinban Like "*KC-####*" Or strHinban Like "*KT-####*" Or strHinban Like "*KU-####*" Or strHinban Like "*JC-####*" Then
             
             dblCupShitaji = 35
             intCupShitajiH = 2 * intMaisu
@@ -5687,7 +5689,7 @@ Public Function bolFncKidoriData(ByVal varSpec As Variant, ByVal in_strHinban As
                 intCupShitajiH = 6 * intMaisu
             
             ElseIf strHinban Like "*DC-####*" Or strHinban Like "*DT-####*" Or strHinban Like "*DP-####*" Or strHinban Like "*DU-####*" Or strHinban Like "*DE-####*" Or strHinban Like "*DH-####*" Or strHinban Like "*DF-####*" Or strHinban Like "*DJ-####*" Or strHinban Like "*DQ-####*" _
-                Or strHinban Like "*KC-####*" Or strHinban Like "*KT-####*" Or strHinban Like "*KU-####*" Or strHinban Like "*VF-####*" Or strHinban Like "*VQ-####*" Then
+                Or strHinban Like "*KC-####*" Or strHinban Like "*KT-####*" Or strHinban Like "*KU-####*" Or strHinban Like "*VF-####*" Or strHinban Like "*VQ-####*" Or strHinban Like "*JC-####*" Then
             '20170105 K.Asayama Change END
                 
                 If dblDH <= 2529 Then
@@ -5772,7 +5774,7 @@ Public Function bolFncKidoriData(ByVal varSpec As Variant, ByVal in_strHinban As
             'エラー
         End If
         
-        If strHinban Like "*DC-####*" Or strHinban Like "*KC-####*" Then
+        If strHinban Like "*DC-####*" Or strHinban Like "*KC-####*" Or strHinban Like "*JC-####*" Then
         
             If dblDH <= 2529 Then
                 dblCupShitaji = 35
@@ -5869,7 +5871,7 @@ Public Function bolFncKidoriData(ByVal varSpec As Variant, ByVal in_strHinban As
 '        If strHinban Like "*DC-####*" Or strHinban Like "*DT-####*" Or strHinban Like "*DP-####*" Or strHinban Like "*DU-####*" Or strHinban Like "*DE-####*" Or strHinban Like "*DH-####*" Or strHinban Like "*DF-####*" Or strHinban Like "*DJ-####*" Or strHinban Like "*DQ-####*" _
 '                Or strHinban Like "*KC-####*" Or strHinban Like "*KT-####*" Or strHinban Like "*KU-####*" Then
         ElseIf strHinban Like "*DC-####*" Or strHinban Like "*DT-####*" Or strHinban Like "*DP-####*" Or strHinban Like "*DU-####*" Or strHinban Like "*DE-####*" Or strHinban Like "*DH-####*" Or strHinban Like "*DF-####*" Or strHinban Like "*DJ-####*" Or strHinban Like "*DQ-####*" _
-                Or strHinban Like "*KC-####*" Or strHinban Like "*KT-####*" Or strHinban Like "*KU-####*" Or strHinban Like "*VF-####*" Or strHinban Like "*VQ-####*" Then
+                Or strHinban Like "*KC-####*" Or strHinban Like "*KT-####*" Or strHinban Like "*KU-####*" Or strHinban Like "*VF-####*" Or strHinban Like "*VQ-####*" Or strHinban Like "*JC-####*" Then
         '20170105 K.Asayama Change END
         
             '20160524 K.Asayama Change 2530~2589カップ下地無し
@@ -5972,7 +5974,7 @@ Public Function bolFncKidoriData(ByVal varSpec As Variant, ByVal in_strHinban As
 '        If strHinban Like "*DC-####*" Or strHinban Like "*DT-####*" Or strHinban Like "*DP-####*" Or strHinban Like "*DU-####*" Or strHinban Like "*DE-####*" Or strHinban Like "*DH-####*" Or strHinban Like "*DF-####*" Or strHinban Like "*DJ-####*" Or strHinban Like "*DQ-####*" _
 '                Or strHinban Like "*KC-####*" Or strHinban Like "*KT-####*" Or strHinban Like "*KU-####*" Then
         ElseIf strHinban Like "*DC-####*" Or strHinban Like "*DT-####*" Or strHinban Like "*DP-####*" Or strHinban Like "*DU-####*" Or strHinban Like "*DE-####*" Or strHinban Like "*DH-####*" Or strHinban Like "*DF-####*" Or strHinban Like "*DJ-####*" Or strHinban Like "*DQ-####*" _
-                Or strHinban Like "*KC-####*" Or strHinban Like "*KT-####*" Or strHinban Like "*KU-####*" Or strHinban Like "*VF-####*" Or strHinban Like "*VQ-####*" Then
+                Or strHinban Like "*KC-####*" Or strHinban Like "*KT-####*" Or strHinban Like "*KU-####*" Or strHinban Like "*VF-####*" Or strHinban Like "*VQ-####*" Or strHinban Like "*JC-####*" Then
         '20170105 K.Asayama Change END
         
             '20160524 K.Asayama Change 2530~2589カップ下地無し
@@ -6030,7 +6032,7 @@ Public Function bolFncKidoriData(ByVal varSpec As Variant, ByVal in_strHinban As
         End Select
         
         If strHinban Like "*DC-####*" Or strHinban Like "*DT-####*" Or strHinban Like "*DU-####*" _
-            Or strHinban Like "*KC-####*" Or strHinban Like "*KT-####*" Or strHinban Like "*KU-####*" Then
+            Or strHinban Like "*KC-####*" Or strHinban Like "*KT-####*" Or strHinban Like "*KU-####*" Or strHinban Like "*JC-####*" Then
             
             dblCupShitaji = 35
             intCupShitajiH = 2 * intMaisu
@@ -6088,7 +6090,7 @@ Public Function bolFncKidoriData(ByVal varSpec As Variant, ByVal in_strHinban As
         End Select
         
         If strHinban Like "*DC-####*" Or strHinban Like "*DT-####*" Or strHinban Like "*DU-####*" _
-            Or strHinban Like "*KC-####*" Or strHinban Like "*KT-####*" Or strHinban Like "*KU-####*" Then
+            Or strHinban Like "*KC-####*" Or strHinban Like "*KT-####*" Or strHinban Like "*KU-####*" Or strHinban Like "*JC-####*" Then
             
             dblCupShitaji = 35
             intCupShitajiH = 2 * intMaisu
@@ -6146,7 +6148,7 @@ Public Function bolFncKidoriData(ByVal varSpec As Variant, ByVal in_strHinban As
         End Select
         
         If strHinban Like "*DC-####*" Or strHinban Like "*DT-####*" Or strHinban Like "*DU-####*" _
-            Or strHinban Like "*KC-####*" Or strHinban Like "*KT-####*" Or strHinban Like "*KU-####*" Then
+            Or strHinban Like "*KC-####*" Or strHinban Like "*KT-####*" Or strHinban Like "*KU-####*" Or strHinban Like "*JC-####*" Then
             
             dblCupShitaji = 35
             intCupShitajiH = 2 * intMaisu
@@ -6201,7 +6203,7 @@ Public Function bolFncKidoriData(ByVal varSpec As Variant, ByVal in_strHinban As
         If strHinban Like "*DC-####*" Or strHinban Like "*DT-####*" Or strHinban Like "*DP-####*" Or strHinban Like "*DU-####*" Or strHinban Like "*DE-####*" _
         Or strHinban Like "*DH-####*" Or strHinban Like "*KC-####*" Or strHinban Like "*KT-####*" Or strHinban Like "*KU-####*" _
         Or strHinban Like "*DF-####*" Or strHinban Like "*DJ-####*" Or strHinban Like "*DQ-####*" _
-        Or strHinban Like "*VF-####*" Or strHinban Like "*VQ-####*" Then
+        Or strHinban Like "*VF-####*" Or strHinban Like "*VQ-####*" Or strHinban Like "*JC-####*" Then
         
             If dblDH <= 2529 Then
                 dblCupShitaji = 35
@@ -6250,7 +6252,7 @@ Public Function bolFncKidoriData(ByVal varSpec As Variant, ByVal in_strHinban As
         If strHinban Like "*DC-####*" Or strHinban Like "*DT-####*" Or strHinban Like "*DP-####*" Or strHinban Like "*DU-####*" Or strHinban Like "*DE-####*" _
         Or strHinban Like "*DH-####*" Or strHinban Like "*KC-####*" Or strHinban Like "*KT-####*" Or strHinban Like "*KU-####*" _
         Or strHinban Like "*DF-####*" Or strHinban Like "*DJ-####*" Or strHinban Like "*DQ-####*" _
-        Or strHinban Like "*VF-####*" Or strHinban Like "*VQ-####*" Then
+        Or strHinban Like "*VF-####*" Or strHinban Like "*VQ-####*" Or strHinban Like "*JC-####*" Then
         
             If dblDH <= 2529 Then
                 dblCupShitaji = 35
@@ -6316,7 +6318,7 @@ Public Function bolFncKidoriData(ByVal varSpec As Variant, ByVal in_strHinban As
         If strHinban Like "*DC-####*" Or strHinban Like "*DT-####*" Or strHinban Like "*DP-####*" Or strHinban Like "*DU-####*" Or strHinban Like "*DE-####*" _
         Or strHinban Like "*DH-####*" Or strHinban Like "*KC-####*" Or strHinban Like "*KT-####*" Or strHinban Like "*KU-####*" _
         Or strHinban Like "*DF-####*" Or strHinban Like "*DJ-####*" Or strHinban Like "*DQ-####*" _
-        Or strHinban Like "*VF-####*" Or strHinban Like "*VQ-####*" Then
+        Or strHinban Like "*VF-####*" Or strHinban Like "*VQ-####*" Or strHinban Like "*JC-####*" Then
         
             If dblDH <= 2529 Then
                 dblCupShitaji = 35

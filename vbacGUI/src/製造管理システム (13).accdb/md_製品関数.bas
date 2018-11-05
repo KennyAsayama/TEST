@@ -1196,6 +1196,8 @@ Public Function IsStealth_Seizo_TEMP(in_strHinban As Variant) As Boolean
 '       →エスパ下地品番はインセット下地
 '1.11.4 K.Asayama
 '       →1701新品番追加(VM)
+'2.9.0
+'       →1808新品番追加(GU)
 '   *************************************************************
     '
     IsStealth_Seizo_TEMP = False
@@ -1207,7 +1209,7 @@ Public Function IsStealth_Seizo_TEMP(in_strHinban As Variant) As Boolean
     End If
     
     If (in_strHinban Like "*SG*-####*" Or in_strHinban Like "*NG*-####*" Or in_strHinban Like "*AG*-####*" Or in_strHinban Like "*BG*-####*") _
-        And Not in_strHinban Like "*ML-####*" And Not in_strHinban Like "*MK-####*" And Not in_strHinban Like "*MT-####*" And Not in_strHinban Like "*DU-####*" And Not in_strHinban Like "*DN-####*" And Not in_strHinban Like "*VN-####*" And Not in_strHinban Like "*CTSG*MK-####*" And Not in_strHinban Like "*CTSG*ML-####*" And Not in_strHinban Like "*CTSG*MT-####*" And Not in_strHinban Like "*KU-####*" And Not in_strHinban Like "*KN-####*" And Not in_strHinban Like "*DV-####*" Then
+        And Not in_strHinban Like "*ML-####*" And Not in_strHinban Like "*MK-####*" And Not in_strHinban Like "*MT-####*" And Not in_strHinban Like "*DU-####*" And Not in_strHinban Like "*DN-####*" And Not in_strHinban Like "*VN-####*" And Not in_strHinban Like "*CTSG*MK-####*" And Not in_strHinban Like "*CTSG*ML-####*" And Not in_strHinban Like "*CTSG*MT-####*" And Not in_strHinban Like "*KU-####*" And Not in_strHinban Like "*KN-####*" And Not in_strHinban Like "*DV-####*" And Not in_strHinban Like "*GU-####*" Then
         IsStealth_Seizo_TEMP = True
     End If
     

@@ -33,11 +33,18 @@ Public Function SetOrderData(ByVal inDate As Date, ByVal inDateKbn As Byte, inSe
 '       →F框の塗装集計対応
 '2.8.0
 '       →アラジンオフィス納期情報データ取り込み
+'2.9.0
+'       →リモートとの接続時間短縮化のためワークテーブル作成
+'       →リードタイムから出荷日計算をサーバサイド化（パフォーマンス改善）
+'       →DoEvents追加
 '--------------------------------------------------------------------------------------------------------------------
     Dim objREMOTEDB As New cls_BRAND_MASTER
     Dim objLOCALDB As New cls_LOCALDB
+    Dim objLOCALDB_2 As New cls_LOCALDB
     
     Dim strSQL As String
+    Dim strSQLWK As String
+    
     Dim boltran As Boolean
     Dim strKeiyakuNo As String
     Dim varCalcShukkaBi As Variant
@@ -46,6 +53,7 @@ Public Function SetOrderData(ByVal inDate As Date, ByVal inDateKbn As Byte, inSe
     Dim bolFormOpen As Boolean
     Dim strKubun As String
     Dim strLT As String
+    Dim i As Integer
     
     bolFormOpen = False
     
@@ -79,6 +87,10 @@ Public Function SetOrderData(ByVal inDate As Date, ByVal inDateKbn As Byte, inSe
     End Select
     
     strSQL = ""
+    strSQL = strSQL & "select * "
+    strSQL = strSQL & ",case when 出荷日 is null then dbo.fnc出荷日取得_LTのみ(確定日," & strLT & ") "
+    strSQL = strSQL & " else null end 計算出荷日 "
+    strSQL = strSQL & "from ( "
     strSQL = strSQL & "select s.契約番号,s.棟番号,s.部屋番号 "
     strSQL = strSQL & ",s.契約番号 + '-' + s.棟番号 + '-' + s.部屋番号 AS 契約No "
     strSQL = strSQL & ",s.確定日 "
@@ -190,12 +202,77 @@ Public Function SetOrderData(ByVal inDate As Date, ByVal inDateKbn As Byte, inSe
         strSQL = strSQL & " and s.登録時品番 not like 'WS%' "
     End If
     
+    strSQL = strSQL & " ) WKTABLE "
     
     If Not objLOCALDB.ExecSQL("delete from WK_札データ") Then
         Err.Raise 9999, , "製造指示データワーク（ローカル）初期化エラー"
     End If
     
+    '最初はないのでエラーは無視
+    objLOCALDB.ExecSQL ("drop table TMP_製造指示データ")
+    
+    strSQLWK = ""
+    strSQLWK = strSQLWK & "CREATE TABLE TMP_製造指示データ( "
+    strSQLWK = strSQLWK & " 契約番号            TEXT(10) "
+    strSQLWK = strSQLWK & ",棟番号              TEXT(10) "
+    strSQLWK = strSQLWK & ",部屋番号            TEXT(10) "
+    strSQLWK = strSQLWK & ",契約No              TEXT(30) "
+    strSQLWK = strSQLWK & ",確定日              DATE "
+    strSQLWK = strSQLWK & ",出荷日              DATE "
+    strSQLWK = strSQLWK & ",納品住所            TEXT(255) "
+    strSQLWK = strSQLWK & ",製造日              DATE "
+    strSQLWK = strSQLWK & ",項                  INT "
+    strSQLWK = strSQLWK & ",製造区分            INT "
+    strSQLWK = strSQLWK & ",特注                INT "
+    strSQLWK = strSQLWK & ",物件名              TEXT(255) "
+    strSQLWK = strSQLWK & ",施工店              TEXT(255) "
+    strSQLWK = strSQLWK & ",Flush数             INT "
+    strSQLWK = strSQLWK & ",F框数               INT "
+    strSQLWK = strSQLWK & ",框数                INT "
+    strSQLWK = strSQLWK & ",枠数                INT "
+    strSQLWK = strSQLWK & ",三方枠数            INT "
+    strSQLWK = strSQLWK & ",下地枠数            INT "
+    strSQLWK = strSQLWK & ",ステルス枠数        INT "
+    strSQLWK = strSQLWK & ",登録時品番          TEXT(50) "
+    strSQLWK = strSQLWK & ",数量                INT "
+    strSQLWK = strSQLWK & ",確定                INT "
+    strSQLWK = strSQLWK & ",備考                TEXT(255) "
+    strSQLWK = strSQLWK & ",出荷方法            TEXT(50) "
+    strSQLWK = strSQLWK & ",建具LT              INT "
+    strSQLWK = strSQLWK & ",枠LT                INT "
+    strSQLWK = strSQLWK & ",下地材LT            INT "
+    strSQLWK = strSQLWK & ",WTLT                INT "
+    strSQLWK = strSQLWK & ",金物LT              INT "
+    strSQLWK = strSQLWK & ",玄関収納LT          INT "
+    strSQLWK = strSQLWK & ",造作材LT            INT "
+    strSQLWK = strSQLWK & ",ガラス入荷日        DATE "
+    strSQLWK = strSQLWK & ",ルーバー入荷日      DATE "
+    strSQLWK = strSQLWK & ",その他入荷日        DATE "
+    strSQLWK = strSQLWK & ",出荷金物入荷日      DATE "
+    strSQLWK = strSQLWK & ",計算出荷日          DATE "
+    strSQLWK = strSQLWK & ") "
+        
+    If Not objLOCALDB.ExecSQL(strSQLWK) Then
+        Err.Raise 9999, , "製造指示データワーク（ローカル）作成エラー"
+    End If
+    
+    
     With objREMOTEDB
+        If .ExecSelect(strSQL) Then
+            If Not bolfncTableCopyToLocal(.GetRS, "TMP_製造指示データ", False) Then
+                Err.Raise 9999, , "TMP_製造指示データローカルコピーエラー。管理者に連絡してください"
+            End If
+        Else
+            Err.Raise 9999, , ""
+        End If
+    End With
+    
+    strSQL = ""
+    strSQL = strSQL & "select * from TMP_製造指示データ "
+    
+    i = 0
+    
+    With objLOCALDB_2
         If .ExecSelect(strSQL) Then
             If objLOCALDB.ExecSelect_Writable("select * from WK_札データ") Then
             
@@ -214,22 +291,34 @@ Public Function SetOrderData(ByVal inDate As Date, ByVal inDateKbn As Byte, inSe
                         objLOCALDB.GetRS![項] = .GetRS![項]
                         objLOCALDB.GetRS![製造区分] = .GetRS![製造区分]
                         objLOCALDB.GetRS![確定日] = .GetRS![確定日]
+'                        If IsNull(.GetRS![出荷日]) Then
+'                            objLOCALDB.GetRS![出荷日登録] = False
+'                            'If fncbolSyukkaBiFromAddress(.GetRS![納品住所], .GetRS![確定日], varCalcShukkaBi, intMinusDays) Then
+'                            If fncbolSyukkaBiFromLeadTime(.GetRS(strLT), .GetRS![確定日], varCalcShukkaBi, intMinusDays) Then
+'                                '1.10.14
+'                                If Not IsNull(varCalcShukkaBi) Then
+'                                    objLOCALDB.GetRS![出荷日] = CDate(varCalcShukkaBi)
+'                                End If
+'                            Else
+'                                objLOCALDB.GetRS![出荷日] = .GetRS![出荷日]
+'                            End If
+'                        Else
+'                            objLOCALDB.GetRS![出荷日登録] = True
+'                            objLOCALDB.GetRS![出荷日] = .GetRS![出荷日]
+'                        End If
+                        
                         If IsNull(.GetRS![出荷日]) Then
                             objLOCALDB.GetRS![出荷日登録] = False
-                            'If fncbolSyukkaBiFromAddress(.GetRS![納品住所], .GetRS![確定日], varCalcShukkaBi, intMinusDays) Then
-                            If fncbolSyukkaBiFromLeadTime(.GetRS(strLT), .GetRS![確定日], varCalcShukkaBi, intMinusDays) Then
-                                '1.10.14
-                                If Not IsNull(varCalcShukkaBi) Then
-                                    objLOCALDB.GetRS![出荷日] = CDate(varCalcShukkaBi)
-                                End If
+                            If Not IsNull(.GetRS![計算出荷日]) Then
+                                objLOCALDB.GetRS![出荷日] = CDate(.GetRS![計算出荷日])
                             Else
-                                objLOCALDB.GetRS![出荷日] = .GetRS![出荷日]
+                                objLOCALDB.GetRS![出荷日] = Null
                             End If
                         Else
                             objLOCALDB.GetRS![出荷日登録] = True
-                            objLOCALDB.GetRS![出荷日] = .GetRS![出荷日]
+                           objLOCALDB.GetRS![出荷日] = .GetRS![出荷日]
                         End If
-                        
+
                         objLOCALDB.GetRS![製造日] = .GetRS![製造日]
                         objLOCALDB.GetRS![納品住所] = .GetRS![納品住所]
                         
@@ -325,6 +414,12 @@ Public Function SetOrderData(ByVal inDate As Date, ByVal inDateKbn As Byte, inSe
                     
                     objLOCALDB.GetRS.Update
                                         
+                    i = i + 1
+                    
+                    If i Mod 100 = 0 Then
+                        DoEvents
+                    End If
+                    
                     .GetRS.MoveNext
                 Loop
                 
@@ -363,6 +458,9 @@ Public Function SetOrderData(ByVal inDate As Date, ByVal inDateKbn As Byte, inSe
         End If
     End If
     
+    If bolFormOpen = True Then
+        DoCmd.SelectObject acForm, "F_邸別_数量"
+    End If
     
     DoCmd.SetWarnings True
     
@@ -377,7 +475,8 @@ Err_SetOrderData:
 Exit_SetOrderData:
     Set objREMOTEDB = Nothing
     Set objLOCALDB = Nothing
-
+    Set objLOCALDB_2 = Nothing
+    
     Application.Echo True
     'Me.Painting = True
     
