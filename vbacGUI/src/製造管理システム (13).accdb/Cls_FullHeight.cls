@@ -18,6 +18,8 @@ Private Sub Class_Initialize()
 
 '2.7.0
 '   →品番で対象外にする関数追加
+'2.10.0
+'   →作業工数取得
 '--------------------------------------------------------------------------------------------------------------------
 
     Set objREMOTEDB = New cls_BRAND_MASTER
@@ -30,6 +32,7 @@ Private Sub Class_Initialize()
     conSQL_FullHeight = conSQL_FullHeight & ",dbo.fncGetHinban(品番1,特注建具品番) 製造品番 "
     conSQL_FullHeight = conSQL_FullHeight & ",s.工場CD,s.確定日,s.製造日 ,s.数量 製造数 "
     conSQL_FullHeight = conSQL_FullHeight & ",[dbo].[fncGetKaiheiYoshiki](x.建具品番,1) 開閉様式 "
+    conSQL_FullHeight = conSQL_FullHeight & ",[dbo].[FullHeightTateguSeizoKeisu_Kou](x.契約番号,x.棟番号,x.部屋番号,x.項) 作業工数 "
     conSQL_FullHeight = conSQL_FullHeight & "from BRAND_NEWLINE.dbo.T_新ﾗｲﾝ製造ﾃﾞｰﾀ x "
     conSQL_FullHeight = conSQL_FullHeight & "inner join T_受注明細 y "
     conSQL_FullHeight = conSQL_FullHeight & "on x.契約番号 = y.契約番号 and x.棟番号 = y.棟番号 and x.部屋番号 = y.部屋番号 and x.項 = y.項 "
@@ -139,6 +142,8 @@ Public Property Get 製造可能データ(ByVal 製造日 As Date) As ADODB.Recordset
 '   →DH追加
 '2.7.0
 '   →DW追加
+'2.10.0
+'   →作業工数追加
 '--------------------------------------------------------------------------------------------------------------------
     Dim strSQL As String
     Dim strDate As String
@@ -162,6 +167,7 @@ Public Property Get 製造可能データ(ByVal 製造日 As Date) As ADODB.Recordset
     strSQL = strSQL & ",case 製造確定 when 1 then '仮' when 2 then '確' else '未' end 確定 "
     strSQL = strSQL & ",DH "
     strSQL = strSQL & ",DW "
+    strSQL = strSQL & ",作業工数 "
     strSQL = strSQL & Replace(conSQL_FullHeight, "@@SeizoDate@@", strDate)
     strSQL = strSQL & "group by "
     strSQL = strSQL & "契約番号,棟番号,部屋番号,物件名,施工店 "
@@ -173,6 +179,7 @@ Public Property Get 製造可能データ(ByVal 製造日 As Date) As ADODB.Recordset
     strSQL = strSQL & ",case 製造確定 when 1 then '仮' when 2 then '確' else '未' end "
     strSQL = strSQL & ",DH "
     strSQL = strSQL & ",DW "
+    strSQL = strSQL & ",作業工数 "
     
     With objREMOTEDB
         If .ExecSelect(strSQL) Then
@@ -412,13 +419,17 @@ Public Property Get Rs建具種類(契約番号 As String, 棟番号 As String, 部屋番号 As
 '   戻り値
 '       レコードセット(ADO)
 
+'2.10.0
+'   →レコードセットに作業工数を追加
 '--------------------------------------------------------------------------------------------------------------------
     Dim strSQL As String
         
     On Error GoTo Err_Rs建具種類
     
     strSQL = ""
-    strSQL = strSQL & "select 建具種類 from [BRAND_NEWLINE].[dbo].T_新ﾗｲﾝ製造ﾃﾞｰﾀ "
+    strSQL = strSQL & "select 建具種類 "
+    strSQL = strSQL & ",dbo.FullHeightTateguSeizoKeisu_Mai(契約番号,棟番号,部屋番号,項,建具種類) 作業工数 "
+    strSQL = strSQL & "from [BRAND_NEWLINE].[dbo].T_新ﾗｲﾝ製造ﾃﾞｰﾀ "
     strSQL = strSQL & "where 契約番号 = @契約番号@ and 棟番号 = @棟番号@ and 部屋番号 = @部屋番号@ and 項 = @項@ and [親子（扉種類）] = @親子@ "
     strSQL = strSQL & "order by 建具種類 "
     
