@@ -234,14 +234,14 @@ Public Function strfncGetVersion() As String
 '   →バージョンを取得し文字列で戻す
 '   →取得できない場合は空文字で返す
 '--------------------------------------------------------------------------------------------------------------------
-    Dim objLOCALDB As New cls_LOCALDB
+    Dim objLOCALdb As New cls_LOCALDB
 
     On Error GoTo Err_strfncGetVersion
     
-    If objLOCALDB.ExecSelect("select Version from T_Version管理 order by 更新日時 desc ") Then
+    If objLOCALdb.ExecSelect("select Version from T_Version管理 order by 更新日時 desc ") Then
         
-        If Not objLOCALDB.GetRS.EOF Then
-            strfncGetVersion = objLOCALDB.GetRS![Version]
+        If Not objLOCALdb.GetRS.EOF Then
+            strfncGetVersion = objLOCALdb.GetRS![Version]
         Else
             Err.Raise 9999, , "バージョン取得エラー。メニューを開くことができません"
         End If
@@ -260,7 +260,7 @@ Err_strfncGetVersion:
     
 Exit_strfncGetVersion:
 'クラスのインスタンスを破棄
-    Set objLOCALDB = Nothing
+    Set objLOCALdb = Nothing
     
 End Function
 
@@ -304,16 +304,16 @@ Public Function bolfncEnableSystem() As Boolean
 '       True            :システム使用可能
 '       False           :日時処理未終了
 '--------------------------------------------------------------------------------------------------------------------
-    Dim objREMOTEDB As New cls_BRAND_MASTER
+    Dim objREMOTEdb As New cls_BRAND_MASTER
     
     bolfncEnableSystem = False
     
     On Error GoTo Err_bolfncEnableSystem
     
-    If objREMOTEDB.ExecSelect("select 値 from T_Control where [key] = 4") Then
+    If objREMOTEdb.ExecSelect("select 値 from T_Control where [key] = 4") Then
         
-        If Not objREMOTEDB.GetRS.EOF Then
-            If objREMOTEDB.GetRS![値] <> Format(Date, "yyyymmdd") Then
+        If Not objREMOTEdb.GetRS.EOF Then
+            If objREMOTEdb.GetRS![値] <> Format(Date, "yyyymmdd") Then
                 Err.Raise 9999, , "AM0:00～日時処理終了までシステムは使用できません"
             End If
         Else
@@ -334,7 +334,7 @@ Err_bolfncEnableSystem:
     
 Exit_bolfncEnableSystem:
 
-    Set objREMOTEDB = Nothing
+    Set objREMOTEdb = Nothing
 End Function
 
 Public Function bolfncTextCompare(in_BeforeUpdate As Variant, in_AfterUpdate As Variant, Optional in_CompareMode As Variant) As Boolean
@@ -544,24 +544,24 @@ Public Function bolfncinputDate(ByVal in_MidashiText As String, ByRef out_Date A
 '   :戻り値
 '                           :日付入力済み（True）/キャンセル（False）
 '--------------------------------------------------------------------------------------------------------------------
-Dim objLOCALDB As New cls_LOCALDB
+Dim objLOCALdb As New cls_LOCALDB
 Dim strErrMsg As String
 
 On Error GoTo Err_bolfncinputDate
 
 out_Date = Null
 
-If Not objLOCALDB.ExecSQL("delete from WK_対象日付", strErrMsg) Then
+If Not objLOCALdb.ExecSQL("delete from WK_対象日付", strErrMsg) Then
     Err.Raise 9999, , strErrMsg
 End If
 
 DoCmd.OpenForm "F_汎用日付入力", acNormal, , , , acDialog, in_MidashiText
 
-If Not objLOCALDB.ExecSelect("select date1 from WK_対象日付") Then
+If Not objLOCALdb.ExecSelect("select date1 from WK_対象日付") Then
     Err.Raise 9999, , "日付読み込みエラー"
 Else
-    If Not objLOCALDB.GetRS.EOF Then
-        out_Date = objLOCALDB.GetRS!Date1
+    If Not objLOCALdb.GetRS.EOF Then
+        out_Date = objLOCALdb.GetRS!Date1
     End If
 End If
 
@@ -578,7 +578,7 @@ Err_bolfncinputDate:
     MsgBox Err.Description
     
 Exit_bolfncinputDate:
-    Set objLOCALDB = Nothing
+    Set objLOCALdb = Nothing
     
 End Function
 
@@ -659,7 +659,7 @@ Public Function bolfncinputDate_FromTo(ByVal in_MidashiText As String, ByVal in_
 '                           :日付入力済み（True）/キャンセル（False）
 '1.10.15 ADD
 '--------------------------------------------------------------------------------------------------------------------
-Dim objLOCALDB As New cls_LOCALDB
+Dim objLOCALdb As New cls_LOCALDB
 Dim strErrMsg As String
 
 On Error GoTo Err_bolfncinputDate_FromTo
@@ -667,18 +667,18 @@ On Error GoTo Err_bolfncinputDate_FromTo
 out_DateFrom = Null
 out_DateTo = Null
 
-If Not objLOCALDB.ExecSQL("delete from WK_対象日付", strErrMsg) Then
+If Not objLOCALdb.ExecSQL("delete from WK_対象日付", strErrMsg) Then
     Err.Raise 9999, , strErrMsg
 End If
 
 DoCmd.OpenForm "F_汎用日付入力_FromTo", acNormal, , , , acDialog, in_MidashiText & vbTab & in_DateDetail
 
-If Not objLOCALDB.ExecSelect("select date1,date2 from WK_対象日付") Then
+If Not objLOCALdb.ExecSelect("select date1,date2 from WK_対象日付") Then
     Err.Raise 9999, , "日付読み込みエラー"
 Else
-    If Not objLOCALDB.GetRS.EOF Then
-        out_DateFrom = objLOCALDB.GetRS!Date1
-        out_DateTo = objLOCALDB.GetRS!Date2
+    If Not objLOCALdb.GetRS.EOF Then
+        out_DateFrom = objLOCALdb.GetRS!Date1
+        out_DateTo = objLOCALdb.GetRS!Date2
     End If
 End If
 
@@ -695,7 +695,7 @@ Err_bolfncinputDate_FromTo:
     MsgBox Err.Description
     
 Exit_bolfncinputDate_FromTo:
-    Set objLOCALDB = Nothing
+    Set objLOCALdb = Nothing
     
 End Function
 

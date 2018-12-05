@@ -6,7 +6,7 @@ Option Compare Database
 Option Explicit
 '2.0.0 ADD
 
-Private objREMOTEDB As cls_BRAND_MASTER
+Private objREMOTEdb As cls_BRAND_MASTER
 Private rsADO As ADODB.Recordset
 
 Private intSeiZoKanoSu(2) As Integer
@@ -22,7 +22,7 @@ Private Sub Class_Initialize()
 '   →作業工数取得
 '--------------------------------------------------------------------------------------------------------------------
 
-    Set objREMOTEDB = New cls_BRAND_MASTER
+    Set objREMOTEdb = New cls_BRAND_MASTER
     
     conSQL_FullHeight = conSQL_FullHeight & "from BRAND_NEWLINE.dbo.T_FullHeightLineデータ作成対象マスタ a "
     conSQL_FullHeight = conSQL_FullHeight & "inner join "
@@ -60,7 +60,7 @@ Private Sub Class_Terminate()
     On Error Resume Next
     rsADO.Close
     Set rsADO = Nothing
-    Set objREMOTEDB = Nothing
+    Set objREMOTEdb = Nothing
     
 End Sub
 
@@ -110,7 +110,7 @@ Public Function 製造可能数集計(ByVal 製造日 As Date) As Boolean
     strSQL = strSQL & "group by 製造確定 "
     
 
-    With objREMOTEDB
+    With objREMOTEdb
         If .ExecSelect(strSQL) Then
             Do Until .GetRS.EOF
                 intSeiZoKanoSu(.GetRS![製造確定]) = .GetRS![製造可能枚数]
@@ -150,7 +150,7 @@ Public Property Get 製造可能データ(ByVal 製造日 As Date) As ADODB.Recordset
     
     On Error GoTo Err_製造可能データ
     
-    objREMOTEDB.RecordSetClose
+    objREMOTEdb.RecordSetClose
     strDate = Format(製造日, "yyyy-mm-dd")
     
     strSQL = ""
@@ -181,7 +181,7 @@ Public Property Get 製造可能データ(ByVal 製造日 As Date) As ADODB.Recordset
     strSQL = strSQL & ",DW "
     strSQL = strSQL & ",作業工数 "
     
-    With objREMOTEDB
+    With objREMOTEdb
         If .ExecSelect(strSQL) Then
             Set 製造可能データ = .GetRS
         Else
@@ -209,7 +209,7 @@ Public Function フルハイトライン製造数(ByVal 製造日 As Date) As Integer
     
     On Error GoTo Err_フルハイトライン製造数
     
-    objREMOTEDB.RecordSetClose
+    objREMOTEdb.RecordSetClose
     strDate = Format(製造日, "yyyy-mm-dd")
     
     strSQL = ""
@@ -220,7 +220,7 @@ Public Function フルハイトライン製造数(ByVal 製造日 As Date) As Integer
     strSQL = strSQL & "and 確定 > 0 "
     strSQL = strSQL & "and 工場CD = 10 "
     
-    With objREMOTEDB
+    With objREMOTEdb
         If .ExecSelect(strSQL) Then
             フルハイトライン製造数 = Nz(.GetRS![枚数], 0)
         Else
@@ -234,7 +234,7 @@ Err_フルハイトライン製造数:
     MsgBox Err.Description
    
 Exit_フルハイトライン製造数:
-    objREMOTEDB.RecordSetClose
+    objREMOTEdb.RecordSetClose
     
 End Function
 
@@ -244,15 +244,15 @@ Public Function fnc契約番号別製造可能数集計(ByVal in区分 As Byte, ByVal 日付 As 
 '
 '      in区分 : 1→確定日 2→製造日
 '--------------------------------------------------------------------------------------------------------------------
-    Dim objLOCALDB As New cls_LOCALDB
+    Dim objLOCALdb As New cls_LOCALDB
     Dim strSQL As String
     Dim strDate As String
     
     'Nullの場合はワークファイルを消してそのまま終了
     If IsNull(日付) Then
-        objLOCALDB.ExecSQL ("delete * from WK_フルハイトライン製造数邸別")
+        objLOCALdb.ExecSQL ("delete * from WK_フルハイトライン製造数邸別")
         fnc契約番号別製造可能数集計 = True
-        Set objLOCALDB = Nothing
+        Set objLOCALdb = Nothing
         Exit Function
     End If
     
@@ -277,10 +277,10 @@ Public Function fnc契約番号別製造可能数集計(ByVal in区分 As Byte, ByVal 日付 As 
     
 '    Debug.Print strSQL
     
-    If objLOCALDB.ExecSQL("delete * from WK_フルハイトライン製造数邸別") Then
+    If objLOCALdb.ExecSQL("delete * from WK_フルハイトライン製造数邸別") Then
     
     
-        With objREMOTEDB
+        With objREMOTEdb
             If .ExecSelect(strSQL) Then
                 If Not .GetRS.EOF Then
                     Do Until .GetRS.EOF
@@ -294,7 +294,7 @@ Public Function fnc契約番号別製造可能数集計(ByVal in区分 As Byte, ByVal 日付 As 
                         strSQL = strSQL & "," & varNullChk(.GetRS![製造可能枚数], 1) & " "
                         strSQL = strSQL & "," & varNullChk(.GetRS![指示済枚数], 1) & " "
                         strSQL = strSQL & ") "
-                        If Not objLOCALDB.ExecSQL(strSQL) Then
+                        If Not objLOCALdb.ExecSQL(strSQL) Then
                            Err.Raise 9999, , "製造可能数集計 ローカルファイル追加エラー "
                         End If
                         
@@ -319,7 +319,7 @@ Err_fnc契約番号別製造可能数集計:
     Debug.Print Err.Description
     fnc契約番号別製造可能数集計 = False
 Exit_fnc契約番号別製造可能数集計:
-    Set objLOCALDB = Nothing
+    Set objLOCALdb = Nothing
 End Function
 
 Public Function fnc契約番号別製造可能数集計_期間(ByVal in区分 As Byte, ByVal from日付 As Variant, ByVal to日付 As Variant) As Boolean
@@ -328,16 +328,16 @@ Public Function fnc契約番号別製造可能数集計_期間(ByVal in区分 As Byte, ByVal fro
 '
 '      in区分 : 1→確定日 2→製造日
 '--------------------------------------------------------------------------------------------------------------------
-    Dim objLOCALDB As New cls_LOCALDB
+    Dim objLOCALdb As New cls_LOCALDB
     Dim strSQL As String
     Dim strDateF As String
     Dim strDateT As String
     
     'Nullの場合はワークファイルを消してそのまま終了
     If IsNull(from日付) Or IsNull(to日付) Then
-        objLOCALDB.ExecSQL ("delete * from WK_フルハイトライン製造数邸別")
+        objLOCALdb.ExecSQL ("delete * from WK_フルハイトライン製造数邸別")
         fnc契約番号別製造可能数集計_期間 = True
-        Set objLOCALDB = Nothing
+        Set objLOCALdb = Nothing
         Exit Function
     End If
     
@@ -361,10 +361,10 @@ Public Function fnc契約番号別製造可能数集計_期間(ByVal in区分 As Byte, ByVal fro
     
 '    Debug.Print strSQL
     
-    If objLOCALDB.ExecSQL("delete * from WK_フルハイトライン製造数邸別") Then
+    If objLOCALdb.ExecSQL("delete * from WK_フルハイトライン製造数邸別") Then
     
     
-        With objREMOTEDB
+        With objREMOTEdb
             If .ExecSelect(strSQL) Then
                 If Not .GetRS.EOF Then
                     Do Until .GetRS.EOF
@@ -378,7 +378,7 @@ Public Function fnc契約番号別製造可能数集計_期間(ByVal in区分 As Byte, ByVal fro
                         strSQL = strSQL & "," & varNullChk(.GetRS![製造可能枚数], 1) & " "
                         strSQL = strSQL & "," & varNullChk(.GetRS![指示済枚数], 1) & " "
                         strSQL = strSQL & ") "
-                        If Not objLOCALDB.ExecSQL(strSQL) Then
+                        If Not objLOCALdb.ExecSQL(strSQL) Then
                            Err.Raise 9999, , "製造可能数集計 ローカルファイル追加エラー "
                         End If
                         
@@ -403,7 +403,7 @@ Err_fnc契約番号別製造可能数集計_期間:
     Debug.Print Err.Description
     fnc契約番号別製造可能数集計_期間 = False
 Exit_fnc契約番号別製造可能数集計_期間:
-    Set objLOCALDB = Nothing
+    Set objLOCALdb = Nothing
 End Function
 
 Public Property Get Rs建具種類(契約番号 As String, 棟番号 As String, 部屋番号 As String, 項 As String, 親子 As Integer) As ADODB.Recordset
@@ -439,9 +439,9 @@ Public Property Get Rs建具種類(契約番号 As String, 棟番号 As String, 部屋番号 As
     strSQL = Replace(strSQL, "@項@", varNullChk(項, 2))
     strSQL = Replace(strSQL, "@親子@", varNullChk(親子, 2))
     
-    objREMOTEDB.RecordSetClose
+    objREMOTEdb.RecordSetClose
     
-    With objREMOTEDB
+    With objREMOTEdb
         If .ExecSelect(strSQL) Then
             Set Rs建具種類 = .GetRS
         Else

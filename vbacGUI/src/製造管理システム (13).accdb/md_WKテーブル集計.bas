@@ -38,8 +38,8 @@ Public Function SetOrderData(ByVal inDate As Date, ByVal inDateKbn As Byte, inSe
 '       →リードタイムから出荷日計算をサーバサイド化（パフォーマンス改善）
 '       →DoEvents追加
 '--------------------------------------------------------------------------------------------------------------------
-    Dim objREMOTEDB As New cls_BRAND_MASTER
-    Dim objLOCALDB As New cls_LOCALDB
+    Dim objREMOTEdb As New cls_BRAND_MASTER
+    Dim objLOCALdb As New cls_LOCALDB
     Dim objLOCALDB_2 As New cls_LOCALDB
     
     Dim strSQL As String
@@ -204,12 +204,12 @@ Public Function SetOrderData(ByVal inDate As Date, ByVal inDateKbn As Byte, inSe
     
     strSQL = strSQL & " ) WKTABLE "
     
-    If Not objLOCALDB.ExecSQL("delete from WK_札データ") Then
+    If Not objLOCALdb.ExecSQL("delete from WK_札データ") Then
         Err.Raise 9999, , "製造指示データワーク（ローカル）初期化エラー"
     End If
     
     '最初はないのでエラーは無視
-    objLOCALDB.ExecSQL ("drop table TMP_製造指示データ")
+    objLOCALdb.ExecSQL ("drop table TMP_製造指示データ")
     
     strSQLWK = ""
     strSQLWK = strSQLWK & "CREATE TABLE TMP_製造指示データ( "
@@ -252,12 +252,12 @@ Public Function SetOrderData(ByVal inDate As Date, ByVal inDateKbn As Byte, inSe
     strSQLWK = strSQLWK & ",計算出荷日          DATE "
     strSQLWK = strSQLWK & ") "
         
-    If Not objLOCALDB.ExecSQL(strSQLWK) Then
+    If Not objLOCALdb.ExecSQL(strSQLWK) Then
         Err.Raise 9999, , "製造指示データワーク（ローカル）作成エラー"
     End If
     
     
-    With objREMOTEDB
+    With objREMOTEdb
         If .ExecSelect(strSQL) Then
             If Not bolfncTableCopyToLocal(.GetRS, "TMP_製造指示データ", False) Then
                 Err.Raise 9999, , "TMP_製造指示データローカルコピーエラー。管理者に連絡してください"
@@ -274,23 +274,23 @@ Public Function SetOrderData(ByVal inDate As Date, ByVal inDateKbn As Byte, inSe
     
     With objLOCALDB_2
         If .ExecSelect(strSQL) Then
-            If objLOCALDB.ExecSelect_Writable("select * from WK_札データ") Then
+            If objLOCALdb.ExecSelect_Writable("select * from WK_札データ") Then
             
-                objLOCALDB.BeginTrans
+                objLOCALdb.BeginTrans
                 boltran = True
                 
                 Do While Not .GetRS.EOF
-                        objLOCALDB.GetRS.AddNew
+                        objLOCALdb.GetRS.AddNew
 
-                        objLOCALDB.GetRS![契約番号] = .GetRS![契約番号]
-                        objLOCALDB.GetRS![棟番号] = .GetRS![棟番号]
-                        objLOCALDB.GetRS![部屋番号] = .GetRS![部屋番号]
-                        objLOCALDB.GetRS![物件名] = .GetRS![物件名]
-                        objLOCALDB.GetRS![施工店] = .GetRS![施工店]
-                        objLOCALDB.GetRS![契約No] = .GetRS![契約No]
-                        objLOCALDB.GetRS![項] = .GetRS![項]
-                        objLOCALDB.GetRS![製造区分] = .GetRS![製造区分]
-                        objLOCALDB.GetRS![確定日] = .GetRS![確定日]
+                        objLOCALdb.GetRS![契約番号] = .GetRS![契約番号]
+                        objLOCALdb.GetRS![棟番号] = .GetRS![棟番号]
+                        objLOCALdb.GetRS![部屋番号] = .GetRS![部屋番号]
+                        objLOCALdb.GetRS![物件名] = .GetRS![物件名]
+                        objLOCALdb.GetRS![施工店] = .GetRS![施工店]
+                        objLOCALdb.GetRS![契約No] = .GetRS![契約No]
+                        objLOCALdb.GetRS![項] = .GetRS![項]
+                        objLOCALdb.GetRS![製造区分] = .GetRS![製造区分]
+                        objLOCALdb.GetRS![確定日] = .GetRS![確定日]
 '                        If IsNull(.GetRS![出荷日]) Then
 '                            objLOCALDB.GetRS![出荷日登録] = False
 '                            'If fncbolSyukkaBiFromAddress(.GetRS![納品住所], .GetRS![確定日], varCalcShukkaBi, intMinusDays) Then
@@ -308,19 +308,19 @@ Public Function SetOrderData(ByVal inDate As Date, ByVal inDateKbn As Byte, inSe
 '                        End If
                         
                         If IsNull(.GetRS![出荷日]) Then
-                            objLOCALDB.GetRS![出荷日登録] = False
+                            objLOCALdb.GetRS![出荷日登録] = False
                             If Not IsNull(.GetRS![計算出荷日]) Then
-                                objLOCALDB.GetRS![出荷日] = CDate(.GetRS![計算出荷日])
+                                objLOCALdb.GetRS![出荷日] = CDate(.GetRS![計算出荷日])
                             Else
-                                objLOCALDB.GetRS![出荷日] = Null
+                                objLOCALdb.GetRS![出荷日] = Null
                             End If
                         Else
-                            objLOCALDB.GetRS![出荷日登録] = True
-                           objLOCALDB.GetRS![出荷日] = .GetRS![出荷日]
+                            objLOCALdb.GetRS![出荷日登録] = True
+                           objLOCALdb.GetRS![出荷日] = .GetRS![出荷日]
                         End If
 
-                        objLOCALDB.GetRS![製造日] = .GetRS![製造日]
-                        objLOCALDB.GetRS![納品住所] = .GetRS![納品住所]
+                        objLOCALdb.GetRS![製造日] = .GetRS![製造日]
+                        objLOCALdb.GetRS![納品住所] = .GetRS![納品住所]
                         
                         'If IsNull(.GetRS![確定]) Or .GetRS![確定] = 0 Then
                         '    objLocalDB.GetRS![確定] = 0
@@ -328,91 +328,91 @@ Public Function SetOrderData(ByVal inDate As Date, ByVal inDateKbn As Byte, inSe
                         '    objLocalDB.GetRS![確定] = -1
                         'End If
                         
-                        objLOCALDB.GetRS![確定] = .GetRS![確定]
+                        objLOCALdb.GetRS![確定] = .GetRS![確定]
                         
                         '1.10.7 ADD
-                        objLOCALDB.GetRS![出荷方法] = .GetRS![出荷方法]
+                        objLOCALdb.GetRS![出荷方法] = .GetRS![出荷方法]
                         '1.10.7 ADD End
                         
-                        objLOCALDB.GetRS![Flush数] = .GetRS![Flush数] + .GetRS![F框数]
-                        objLOCALDB.GetRS![F框数] = .GetRS![F框数]
-                        objLOCALDB.GetRS![框数] = .GetRS![框数]
-                        objLOCALDB.GetRS![枠数] = .GetRS![枠数]
-                        objLOCALDB.GetRS![三方枠数] = .GetRS![三方枠数]
+                        objLOCALdb.GetRS![Flush数] = .GetRS![Flush数] + .GetRS![F框数]
+                        objLOCALdb.GetRS![F框数] = .GetRS![F框数]
+                        objLOCALdb.GetRS![框数] = .GetRS![框数]
+                        objLOCALdb.GetRS![枠数] = .GetRS![枠数]
+                        objLOCALdb.GetRS![三方枠数] = .GetRS![三方枠数]
                                                 
                         If IsStealth_Seizo_TEMP(Nz(.GetRS![登録時品番], "nz")) Then
-                            objLOCALDB.GetRS![下地枠数] = 0
+                            objLOCALdb.GetRS![下地枠数] = 0
                             '1.10.16 change
                             'objLOCALDB.GetRS![ステルス枠数] = .GetRS![下地枠数]
                             If .GetRS![製造区分] = 7 Then
-                                objLOCALDB.GetRS![ステルス枠数] = .GetRS![ステルス枠数]
+                                objLOCALdb.GetRS![ステルス枠数] = .GetRS![ステルス枠数]
                             Else
-                                objLOCALDB.GetRS![ステルス枠数] = .GetRS![下地枠数]
+                                objLOCALdb.GetRS![ステルス枠数] = .GetRS![下地枠数]
                             End If
                         Else
-                            objLOCALDB.GetRS![ステルス枠数] = 0
-                            objLOCALDB.GetRS![下地枠数] = .GetRS![下地枠数]
+                            objLOCALdb.GetRS![ステルス枠数] = 0
+                            objLOCALdb.GetRS![下地枠数] = .GetRS![下地枠数]
                         End If
                         
                         If .GetRS![製造区分] >= 1 And .GetRS![製造区分] <= 3 Then
                             If IsThruGlass(.GetRS![登録時品番]) Then
                                 '1.10.10 K.Asayama Change
                                 'objLOCALDB.GetRS![スルーガラス数] = .GetRS![Flush数]
-                                objLOCALDB.GetRS![スルーガラス数] = fncIntHalfGlassMirror_Maisu(.GetRS![登録時品番], .GetRS![Flush数])
+                                objLOCALdb.GetRS![スルーガラス数] = fncIntHalfGlassMirror_Maisu(.GetRS![登録時品番], .GetRS![Flush数])
                                 '1.10.10 K.Asayama Change End
                             Else
-                                objLOCALDB.GetRS![スルーガラス数] = 0
+                                objLOCALdb.GetRS![スルーガラス数] = 0
                             End If
                             
                             If IsAir(.GetRS![登録時品番]) Then
-                                objLOCALDB.GetRS![ルーバー扉数] = .GetRS![Flush数]
+                                objLOCALdb.GetRS![ルーバー扉数] = .GetRS![Flush数]
                             Else
-                                objLOCALDB.GetRS![ルーバー扉数] = 0
+                                objLOCALdb.GetRS![ルーバー扉数] = 0
                             End If
                             
                             If IsPainted(.GetRS![登録時品番]) Then
                                 If .GetRS![F框数] > 0 Then
-                                    objLOCALDB.GetRS![塗装扉数] = .GetRS![F框数]
+                                    objLOCALdb.GetRS![塗装扉数] = .GetRS![F框数]
                                 Else
-                                    objLOCALDB.GetRS![塗装扉数] = .GetRS![Flush数]
+                                    objLOCALdb.GetRS![塗装扉数] = .GetRS![Flush数]
                                 End If
                                 '1.10.7 ADD
-                                objLOCALDB.GetRS![色] = fncvalDoorColor(.GetRS![登録時品番])
+                                objLOCALdb.GetRS![色] = fncvalDoorColor(.GetRS![登録時品番])
                                 '1.10.7 ADD End
                             Else
-                                objLOCALDB.GetRS![塗装扉数] = 0
+                                objLOCALdb.GetRS![塗装扉数] = 0
                             End If
                             
                             If IsMonster(.GetRS![登録時品番]) Then
-                                objLOCALDB.GetRS![モンスター数] = .GetRS![F框数]
+                                objLOCALdb.GetRS![モンスター数] = .GetRS![F框数]
                             Else
-                                objLOCALDB.GetRS![モンスター数] = 0
+                                objLOCALdb.GetRS![モンスター数] = 0
                             End If
                             '1.10.8 ADD
                             If IsVertica(.GetRS![登録時品番]) Then
-                                objLOCALDB.GetRS![ヴェルチカ数] = .GetRS![Flush数]
+                                objLOCALdb.GetRS![ヴェルチカ数] = .GetRS![Flush数]
                             Else
-                                objLOCALDB.GetRS![ヴェルチカ数] = 0
+                                objLOCALdb.GetRS![ヴェルチカ数] = 0
                             End If
                             '1.10.8 ADD End
                         Else
-                            objLOCALDB.GetRS![スルーガラス数] = 0
-                            objLOCALDB.GetRS![ルーバー扉数] = 0
-                            objLOCALDB.GetRS![塗装扉数] = 0
-                            objLOCALDB.GetRS![モンスター数] = 0
+                            objLOCALdb.GetRS![スルーガラス数] = 0
+                            objLOCALdb.GetRS![ルーバー扉数] = 0
+                            objLOCALdb.GetRS![塗装扉数] = 0
+                            objLOCALdb.GetRS![モンスター数] = 0
                             '1.10.8 ADD
-                            objLOCALDB.GetRS![ヴェルチカ数] = 0
+                            objLOCALdb.GetRS![ヴェルチカ数] = 0
                             '1.10.8 ADD End
                         End If
                         
-                        objLOCALDB.GetRS![備考] = .GetRS![備考]
+                        objLOCALdb.GetRS![備考] = .GetRS![備考]
                     
-                    objLOCALDB.GetRS![ガラス入荷日] = .GetRS![ガラス入荷日]
-                    objLOCALDB.GetRS![ルーバー入荷日] = .GetRS![ルーバー入荷日]
-                    objLOCALDB.GetRS![その他入荷日] = .GetRS![その他入荷日]
-                    objLOCALDB.GetRS![出荷金物入荷日] = .GetRS![出荷金物入荷日]
+                    objLOCALdb.GetRS![ガラス入荷日] = .GetRS![ガラス入荷日]
+                    objLOCALdb.GetRS![ルーバー入荷日] = .GetRS![ルーバー入荷日]
+                    objLOCALdb.GetRS![その他入荷日] = .GetRS![その他入荷日]
+                    objLOCALdb.GetRS![出荷金物入荷日] = .GetRS![出荷金物入荷日]
                     
-                    objLOCALDB.GetRS.Update
+                    objLOCALdb.GetRS.Update
                                         
                     i = i + 1
                     
@@ -423,7 +423,7 @@ Public Function SetOrderData(ByVal inDate As Date, ByVal inDateKbn As Byte, inSe
                     .GetRS.MoveNext
                 Loop
                 
-                If boltran Then objLOCALDB.Commit
+                If boltran Then objLOCALdb.Commit
                 boltran = False
             Else
                 Err.Raise 9999, , "チェックリストワーク（ローカル）オープンエラー"
@@ -468,13 +468,13 @@ Public Function SetOrderData(ByVal inDate As Date, ByVal inDateKbn As Byte, inSe
     GoTo Exit_SetOrderData
     
 Err_SetOrderData:
-    If boltran Then objLOCALDB.Rollback
+    If boltran Then objLOCALdb.Rollback
     boltran = False
     MsgBox Err.Description
 
 Exit_SetOrderData:
-    Set objREMOTEDB = Nothing
-    Set objLOCALDB = Nothing
+    Set objREMOTEdb = Nothing
+    Set objLOCALdb = Nothing
     Set objLOCALDB_2 = Nothing
     
     Application.Echo True
@@ -512,7 +512,7 @@ Public Function SetOrderCount(ByVal inDateKbn As Byte, ByRef Captionctl() As cls
 '       2.0.0
 '                       →工場CDを使用しない
 '--------------------------------------------------------------------------------------------------------------------
-    Dim objREMOTEDB As New cls_BRAND_MASTER
+    Dim objREMOTEdb As New cls_BRAND_MASTER
     Dim strSQL_C As String
     Dim strSQL As String
     Dim strKubun As String
@@ -601,7 +601,7 @@ Public Function SetOrderCount(ByVal inDateKbn As Byte, ByRef Captionctl() As cls
 '        strSQL = strSQL & " and s.工場CD = " & in_KojoCD
         strSQL = strSQL & " "
         
-        With objREMOTEDB
+        With objREMOTEdb
            If .ExecSelect(strSQL) Then
                 intFlushM = 0
                 intFkamachiM = 0
@@ -726,7 +726,7 @@ Err_SetOrderCount:
     MsgBox Err.Description
 
 Exit_SetOrderCount:
-    Set objREMOTEDB = Nothing
+    Set objREMOTEdb = Nothing
 
 
 End Function
@@ -785,7 +785,7 @@ Public Function SetBikouData() As Boolean
 '1.10.8 K.Asayama Change 20160114
 '       →バグ修正 Firstだとうまくデータが出ないのでMaxに変更
 '--------------------------------------------------------------------------------------------------------------------
-    Dim objLOCALDB As New cls_LOCALDB
+    Dim objLOCALdb As New cls_LOCALDB
     
     Dim strSQL As String
     Dim strErrMsg As String
@@ -817,11 +817,11 @@ Public Function SetBikouData() As Boolean
     strSQL = strSQL & "where 備考 is not null "
     strSQL = strSQL & "group by 契約番号,棟番号,部屋番号 "
     
-    If Not objLOCALDB.ExecSQL("delete from WK_札データ_備考") Then
+    If Not objLOCALdb.ExecSQL("delete from WK_札データ_備考") Then
         Err.Raise 9999, , "備考データワーク（ローカル）初期化エラー"
     End If
     
-    With objLOCALDB
+    With objLOCALdb
         If .ExecSelect(strSQL) Then
             
             Do While Not .GetRS.EOF
@@ -860,7 +860,7 @@ Err_SetBikouData:
     MsgBox Err.Description
     
 Exit_SetBikouData:
-     Set objLOCALDB = Nothing
+     Set objLOCALdb = Nothing
      
 End Function
 
@@ -956,7 +956,7 @@ Public Function bolfncTableCopyToLocal(in_RS As ADODB.Recordset, out_LocalTableN
 '1.11.2 ADD
 '--------------------------------------------------------------------------------------------------------------------
 
-    Dim objLOCALDB As New cls_LOCALDB
+    Dim objLOCALdb As New cls_LOCALDB
     Dim i As Integer
     Dim strErrMsg As String
     Dim varAutoNumber As Variant
@@ -987,7 +987,7 @@ Public Function bolfncTableCopyToLocal(in_RS As ADODB.Recordset, out_LocalTableN
     DAORs.Close
     DAODB.Close
     
-    With objLOCALDB
+    With objLOCALdb
     
         If Not in_ADDMode Then
             If Not .ExecSQL("delete * from " & out_LocalTableName & " ", strErrMsg) Then
@@ -1027,7 +1027,7 @@ Err_bolfncTableCopyToLocal:
     MsgBox Err.Description
     
 Exit_bolfncTableCopyToLocal:
-    Set objLOCALDB = Nothing
+    Set objLOCALdb = Nothing
     Set DAORs = Nothing
     Set DAODB = Nothing
 End Function
@@ -1050,7 +1050,7 @@ Public Function bolfncMiseizoToExcel() As Boolean
 '--------------------------------------------------------------------------------------------------------------------
 
     Dim objApp As New cls_Excel
-    Dim objREMOTEDB As New cls_BRAND_MASTER
+    Dim objREMOTEdb As New cls_BRAND_MASTER
     
     Dim xlsBookName As String
     Dim i As Integer
@@ -1085,13 +1085,13 @@ Public Function bolfncMiseizoToExcel() As Boolean
         
         strMidashiVal = "建具未生産残 " & Format(Now, "yyyy-MM-dd")
         
-        If Not objREMOTEDB.ExecSelect(strSQL) Then
+        If Not objREMOTEdb.ExecSelect(strSQL) Then
             Err.Raise 9999, , "台帳集計データ異常終了"
         End If
         
         objApp.WorkSheetADD strKBName(i)
                 
-        If Not bolfncexp_EXCELOBJECT(objREMOTEDB.GetRS, objApp.getExcel, True, strMidashiVal) Then
+        If Not bolfncexp_EXCELOBJECT(objREMOTEdb.GetRS, objApp.getExcel, True, strMidashiVal) Then
             Err.Raise 9999, , "Excelエクスポート異常終了"
         End If
         
@@ -1112,11 +1112,11 @@ Public Function bolfncMiseizoToExcel() As Boolean
             strMidashiVal = strMidashiVal & " " & Format(Now, "yyyy-MM-dd")
             
             objApp.WorkSheetADD strKBName(i)
-            If Not objREMOTEDB.ExecSelect(strSQLJ) Then
+            If Not objREMOTEdb.ExecSelect(strSQLJ) Then
                 Err.Raise 9999, , "台帳集計データ異常終了"
             End If
             
-            If Not bolfncexp_EXCELOBJECT(objREMOTEDB.GetRS, objApp.getExcel, True, strMidashiVal) Then
+            If Not bolfncexp_EXCELOBJECT(objREMOTEdb.GetRS, objApp.getExcel, True, strMidashiVal) Then
                 Err.Raise 9999, , "Excelエクスポート異常終了"
             End If
 
@@ -1133,13 +1133,13 @@ Public Function bolfncMiseizoToExcel() As Boolean
         
         strMidashiVal = "ウォールスルー未出荷残 " & Format(Now, "yyyy-MM-dd")
         
-        If Not objREMOTEDB.ExecSelect(strSQL) Then
+        If Not objREMOTEdb.ExecSelect(strSQL) Then
             Err.Raise 9999, , "台帳集計データ異常終了"
         End If
         
         objApp.WorkSheetADD strKBName(i)
                 
-        If Not bolfncexp_EXCELOBJECT(objREMOTEDB.GetRS, objApp.getExcel, True, strMidashiVal) Then
+        If Not bolfncexp_EXCELOBJECT(objREMOTEdb.GetRS, objApp.getExcel, True, strMidashiVal) Then
             Err.Raise 9999, , "Excelエクスポート異常終了"
         End If
         
@@ -1154,13 +1154,13 @@ Public Function bolfncMiseizoToExcel() As Boolean
         
         strMidashiVal = "クロゼット未出荷残 " & Format(Now, "yyyy-MM-dd")
         
-        If Not objREMOTEDB.ExecSelect(strSQL) Then
+        If Not objREMOTEdb.ExecSelect(strSQL) Then
             Err.Raise 9999, , "台帳集計データ異常終了"
         End If
         
         objApp.WorkSheetADD strKBName(i)
                 
-        If Not bolfncexp_EXCELOBJECT(objREMOTEDB.GetRS, objApp.getExcel, True, strMidashiVal) Then
+        If Not bolfncexp_EXCELOBJECT(objREMOTEdb.GetRS, objApp.getExcel, True, strMidashiVal) Then
             Err.Raise 9999, , "Excelエクスポート異常終了"
         End If
         
@@ -1191,7 +1191,7 @@ Err_bolfncMiseizoToExcel:
 Exit_bolfncMiseizoToExcel:
     Screen.MousePointer = 0
     Set objApp = Nothing
-    Set objREMOTEDB = Nothing
+    Set objREMOTEdb = Nothing
     
     
 End Function

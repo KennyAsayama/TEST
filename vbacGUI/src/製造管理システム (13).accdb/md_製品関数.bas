@@ -535,7 +535,7 @@ Public Function IsSxL(in_strHinban As Variant, out_strKamiyahinban As Variant) A
 '   1.10.6 K.Asayama SxLコピー初回のみ実行に変更したため本処理に追加
 '   *************************************************************
     
-    Dim objLOCALDB As New cls_LOCALDB
+    Dim objLOCALdb As New cls_LOCALDB
     Dim strHinban As String
     Dim bolMentori As Boolean
     
@@ -562,9 +562,9 @@ Public Function IsSxL(in_strHinban As Variant, out_strKamiyahinban As Variant) A
         bolMentori = False
     End If
     '1.10.3 K.Asayama 20151119 SxL品番読替表ローカルテーブル名変更
-    If objLOCALDB.ExecSelect("select ブランド品番 from WK_SxL品番読替表 where S×L品番 = '" & Trim(strHinban) & "'") Then
-        If Not objLOCALDB.GetRS.EOF Then
-            out_strKamiyahinban = objLOCALDB.GetRS![ブランド品番]
+    If objLOCALdb.ExecSelect("select ブランド品番 from WK_SxL品番読替表 where S×L品番 = '" & Trim(strHinban) & "'") Then
+        If Not objLOCALdb.GetRS.EOF Then
+            out_strKamiyahinban = objLOCALdb.GetRS![ブランド品番]
             If bolMentori Then
                 out_strKamiyahinban = out_strKamiyahinban & right(in_strHinban, 10)
             End If
@@ -579,7 +579,7 @@ Err_IsSxL:
     
 Exit_IsSxL:
 'クラスのインスタンスを破棄
-    Set objLOCALDB = Nothing
+    Set objLOCALdb = Nothing
 End Function
 
 Public Function valfncHinmei(in_objRemoteDB As cls_BRAND_MASTER, in_RS As ADODB.Recordset, in_strHinban As Variant, in_intSeihinkubun As Integer, in_strSpec As Variant) As Variant
@@ -1236,8 +1236,8 @@ Public Function fncbolSxL_Replace() As Boolean
         Exit Function
     End If
     
-    Dim objREMOTEDB As New cls_BRAND_MASTER
-    Dim objLOCALDB As New cls_LOCALDB
+    Dim objREMOTEdb As New cls_BRAND_MASTER
+    Dim objLOCALdb As New cls_LOCALDB
     
     On Error GoTo Err_fncbolSxL_Replace
     
@@ -1246,14 +1246,14 @@ Public Function fncbolSxL_Replace() As Boolean
     strSQL_Insert = "Insert into WK_SxL品番読替表(S×L品番,ブランド品番,DH,DW,CH) values ("
     
     '工場用コピー（T_Calendar_工場)
-    If objLOCALDB.ExecSQL("delete from WK_SxL品番読替表") Then
+    If objLOCALdb.ExecSQL("delete from WK_SxL品番読替表") Then
         strSQL = "select distinct [S×L品番],ブランド品番,DW,DH,CH from SxL品番読替表 "
-        If objREMOTEDB.ExecSelect(strSQL) Then
-            Do While Not objREMOTEDB.GetRS.EOF
-                If Not objLOCALDB.ExecSQL(strSQL_Insert & "'" & objREMOTEDB.GetRS![S×L品番] & "','" & objREMOTEDB.GetRS![ブランド品番] & "'," & objREMOTEDB.GetRS![DW] & "," & objREMOTEDB.GetRS![DH] & "," & objREMOTEDB.GetRS![CH] & ")") Then
+        If objREMOTEdb.ExecSelect(strSQL) Then
+            Do While Not objREMOTEdb.GetRS.EOF
+                If Not objLOCALdb.ExecSQL(strSQL_Insert & "'" & objREMOTEdb.GetRS![S×L品番] & "','" & objREMOTEdb.GetRS![ブランド品番] & "'," & objREMOTEdb.GetRS![DW] & "," & objREMOTEdb.GetRS![DH] & "," & objREMOTEdb.GetRS![CH] & ")") Then
                     Err.Raise 9999, , "SxL品番読替表 ローカルコピーエラー"
                 End If
-                objREMOTEDB.GetRS.MoveNext
+                objREMOTEdb.GetRS.MoveNext
             Loop
         End If
     End If
@@ -1270,8 +1270,8 @@ Err_fncbolSxL_Replace:
     
 Exit_fncbolSxL_Replace:
 
-    Set objREMOTEDB = Nothing
-    Set objLOCALDB = Nothing
+    Set objREMOTEdb = Nothing
+    Set objLOCALdb = Nothing
     
 End Function
 
@@ -2510,7 +2510,7 @@ Public Function valfncHinmei_Local(in_strHinban As Variant, in_intSeihinkubun As
 '       in_intSeihinkubun   品番区分
 '       in_strSpec          個別Spec
 '   *************************************************************
-    Dim objREMOTEDB As cls_BRAND_MASTER
+    Dim objREMOTEdb As cls_BRAND_MASTER
     
     Dim strSQL As String
     Dim strHinban As String
@@ -2559,7 +2559,7 @@ Public Function valfncHinmei_Local(in_strHinban As Variant, in_intSeihinkubun As
 
     End If
     
-    With objREMOTEDB
+    With objREMOTEdb
         If .ExecSelect(strSQL) Then
             If Not .GetRS.EOF Then
                 valfncHinmei_Local = .GetRS![品名]
@@ -2572,7 +2572,7 @@ Public Function valfncHinmei_Local(in_strHinban As Variant, in_intSeihinkubun As
 Err_valfncHinmei_Local:
     'MsgBox Err.Description
 Exit_valfncHinmei_Local:
-    Set objREMOTEDB = Nothing
+    Set objREMOTEdb = Nothing
 End Function
 
 Public Function IsTerraceKamachi(in_varHinban As Variant) As Boolean

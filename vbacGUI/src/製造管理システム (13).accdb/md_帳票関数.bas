@@ -6750,14 +6750,14 @@ Public Function fncstrGetKihonzu(in_strKensakuHinban As String, in_spec As Varia
 '    Input項目
 '       in_strHinban        建具品番
 '   *************************************************************
-    Dim objREMOTEDB As New cls_BRAND_MASTER
+    Dim objREMOTEdb As New cls_BRAND_MASTER
     Dim strSQL As String
     
     fncstrGetKihonzu = ""
     
     On Error GoTo Err_fncstrGetKihonzu
     
-    With objREMOTEDB
+    With objREMOTEdb
         If in_spec Like "*1007" Or in_spec Like "*1011" Or in_spec Like "*1111" Or in_spec Like "*1103" Or in_spec Like "*1105" Or in_spec Like "*1010" Or in_spec Like "*1009" Or right(in_spec, 4) >= "1304" Then
            strSQL = "select 基本図 from T_建具関数ﾏｽﾀ_1007仕様 where 建具品番 = '" & fncstrTateguSearchKey(in_strKensakuHinban) & "'"
         Else
@@ -6777,7 +6777,7 @@ Public Function fncstrGetKihonzu(in_strKensakuHinban As String, in_spec As Varia
 Err_fncstrGetKihonzu:
 
 Exit_fncstrGetKihonzu:
-    Set objREMOTEDB = Nothing
+    Set objREMOTEdb = Nothing
 
 End Function
 
