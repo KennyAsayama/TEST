@@ -45,7 +45,7 @@ Public Function SetOrderData(ByVal inDate As Date, ByVal inDateKbn As Byte, inSe
     Dim strSQL As String
     Dim strSQLWK As String
     
-    Dim boltran As Boolean
+    Dim bolTRAN As Boolean
     Dim strKeiyakuNo As String
     Dim varCalcShukkaBi As Variant
     Dim intMinusDays As Integer
@@ -63,7 +63,7 @@ Public Function SetOrderData(ByVal inDate As Date, ByVal inDateKbn As Byte, inSe
     Application.Echo False
     
     SetOrderData = False
-    boltran = False
+    bolTRAN = False
     strKeiyakuNo = ""
     
     Select Case inSeizoKbn
@@ -277,7 +277,7 @@ Public Function SetOrderData(ByVal inDate As Date, ByVal inDateKbn As Byte, inSe
             If objLOCALdb.ExecSelect_Writable("select * from WK_札データ") Then
             
                 objLOCALdb.BeginTrans
-                boltran = True
+                bolTRAN = True
                 
                 Do While Not .GetRS.EOF
                         objLOCALdb.GetRS.AddNew
@@ -423,8 +423,8 @@ Public Function SetOrderData(ByVal inDate As Date, ByVal inDateKbn As Byte, inSe
                     .GetRS.MoveNext
                 Loop
                 
-                If boltran Then objLOCALdb.Commit
-                boltran = False
+                If bolTRAN Then objLOCALdb.Commit
+                bolTRAN = False
             Else
                 Err.Raise 9999, , "チェックリストワーク（ローカル）オープンエラー"
             
@@ -468,8 +468,8 @@ Public Function SetOrderData(ByVal inDate As Date, ByVal inDateKbn As Byte, inSe
     GoTo Exit_SetOrderData
     
 Err_SetOrderData:
-    If boltran Then objLOCALdb.Rollback
-    boltran = False
+    If bolTRAN Then objLOCALdb.Rollback
+    bolTRAN = False
     MsgBox Err.Description
 
 Exit_SetOrderData:
