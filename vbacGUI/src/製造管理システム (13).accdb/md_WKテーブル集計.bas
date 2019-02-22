@@ -37,6 +37,8 @@ Public Function SetOrderData(ByVal inDate As Date, ByVal inDateKbn As Byte, inSe
 '       →リモートとの接続時間短縮化のためワークテーブル作成
 '       →リードタイムから出荷日計算をサーバサイド化（パフォーマンス改善）
 '       →DoEvents追加
+'2.13.0
+'       →Verticaシンクロ枚数対応
 '--------------------------------------------------------------------------------------------------------------------
     Dim objREMOTEdb As New cls_BRAND_MASTER
     Dim objLOCALdb As New cls_LOCALDB
@@ -356,10 +358,14 @@ Public Function SetOrderData(ByVal inDate As Date, ByVal inDateKbn As Byte, inSe
                         
                         If .GetRS![製造区分] >= 1 And .GetRS![製造区分] <= 3 Then
                             If IsThruGlass(.GetRS![登録時品番]) Then
-                                '1.10.10 K.Asayama Change
-                                'objLOCALDB.GetRS![スルーガラス数] = .GetRS![Flush数]
-                                objLOCALdb.GetRS![スルーガラス数] = fncIntHalfGlassMirror_Maisu(.GetRS![登録時品番], .GetRS![Flush数])
-                                '1.10.10 K.Asayama Change End
+                                If IsVertica(.GetRS![登録時品番]) Then
+                                    objLOCALdb.GetRS![スルーガラス数] = IsVertica_Maisu(.GetRS![登録時品番], .GetRS![Flush数])
+                                Else
+                                    '1.10.10 K.Asayama Change
+                                    'objLOCALDB.GetRS![スルーガラス数] = .GetRS![Flush数]
+                                    objLOCALdb.GetRS![スルーガラス数] = fncIntHalfGlassMirror_Maisu(.GetRS![登録時品番], .GetRS![Flush数])
+                                    '1.10.10 K.Asayama Change End
+                                End If
                             Else
                                 objLOCALdb.GetRS![スルーガラス数] = 0
                             End If
@@ -390,7 +396,8 @@ Public Function SetOrderData(ByVal inDate As Date, ByVal inDateKbn As Byte, inSe
                             End If
                             '1.10.8 ADD
                             If IsVertica(.GetRS![登録時品番]) Then
-                                objLOCALdb.GetRS![ヴェルチカ数] = .GetRS![Flush数]
+                                'objLOCALdb.GetRS![ヴェルチカ数] = .GetRS![Flush数]
+                                objLOCALdb.GetRS![ヴェルチカ数] = IsVertica_Maisu(.GetRS![登録時品番], .GetRS![Flush数])
                             Else
                                 objLOCALdb.GetRS![ヴェルチカ数] = 0
                             End If
@@ -511,6 +518,9 @@ Public Function SetOrderCount(ByVal inDateKbn As Byte, ByRef Captionctl() As cls
 '                       →物入れ引き違い片側ミラーオプション追加
 '       2.0.0
 '                       →工場CDを使用しない
+
+'       2.13.0
+'                       →Verticaシンクロ枚数対応
 '--------------------------------------------------------------------------------------------------------------------
     Dim objREMOTEdb As New cls_BRAND_MASTER
     Dim strSQL_C As String
@@ -633,13 +643,20 @@ Public Function SetOrderCount(ByVal inDateKbn As Byte, ByRef Captionctl() As cls
                                 If .GetRS("製造区分") = 3 Then intKamachiM = intKamachiM + .GetRS("枚数")
                                 '1.10.10 K.Asayama Change
                                 'If IsThruGlass(.GetRS("登録時品番")) Then intThruM = intThruM + .GetRS("枚数")
-                                If IsThruGlass(.GetRS("登録時品番")) Then intThruM = intThruM + fncIntHalfGlassMirror_Maisu(.GetRS("登録時品番"), .GetRS("枚数"))
+                                If IsThruGlass(.GetRS("登録時品番")) Then
+                                    If IsVertica(.GetRS("登録時品番")) Then
+                                        intThruM = intThruM + IsVertica_Maisu(.GetRS("登録時品番"), .GetRS("枚数"))
+                                    Else
+                                        intThruM = intThruM + fncIntHalfGlassMirror_Maisu(.GetRS("登録時品番"), .GetRS("枚数"))
+                                    End If
+                                End If
                                 '1.10.10 K.Asayama Change End
                                 If IsPainted(.GetRS("登録時品番")) Then intPaintM = intPaintM + .GetRS("枚数")
                                 If IsAir(.GetRS("登録時品番")) Then intAirM = intAirM + .GetRS("枚数")
                                 If IsMonster(.GetRS("登録時品番")) Then intMonsterM = intMonsterM + .GetRS("枚数")
                                 '1.10.8 K.Asayama ADD
-                                If IsVertica(.GetRS("登録時品番")) Then intVerticaM = intVerticaM + .GetRS("枚数")
+                                'If IsVertica(.GetRS("登録時品番")) Then intVerticaM = intVerticaM + .GetRS("枚数")
+                                If IsVertica(.GetRS("登録時品番")) Then intVerticaM = intVerticaM + IsVertica_Maisu(.GetRS("登録時品番"), .GetRS("枚数"))
                                 '1.10.8 K.Asayama ADD End
                             Case 6
                                 If IsStealth_Seizo_TEMP(.GetRS("登録時品番")) Then
@@ -1047,6 +1064,8 @@ Public Function bolfncMiseizoToExcel() As Boolean
 '   →ウォールスルー未製造追加
 '2.8.0
 '   →クロゼット未出荷追加
+'2.13.0
+'   →サーバパスを共通変数に変更
 '--------------------------------------------------------------------------------------------------------------------
 
     Dim objApp As New cls_Excel
@@ -1076,7 +1095,8 @@ Public Function bolfncMiseizoToExcel() As Boolean
         strKBName(4) = "クロゼット未出荷"
         
         strSQL = ""
-        strSQL = strfncTextFileToString("\\db\prog\製造管理システム\SQL\subMISEIZO.sql")
+        strSQL = strfncTextFileToString(conServerPath & "\SQL\subMISEIZO.sql")
+        'strSQL = strfncTextFileToString("\\db\prog\製造管理システム\SQL\subMISEIZO.sql")
         If strSQL <> "" Then
             strSQL = Replace(strSQL, vbCrLf, " ")
         Else
@@ -1096,8 +1116,8 @@ Public Function bolfncMiseizoToExcel() As Boolean
         End If
         
         strSQL = ""
-        strSQL = strfncTextFileToString("\\db\prog\製造管理システム\SQL\subMISEIZOWaku.sql")
-        
+        'strSQL = strfncTextFileToString("\\db\prog\製造管理システム\SQL\subMISEIZOWaku.sql")
+        strSQL = strfncTextFileToString(conServerPath & "\SQL\subMISEIZOWaku.sql")
         If strSQL <> "" Then
             strSQL = Replace(strSQL, vbCrLf, " ")
         Else
@@ -1124,7 +1144,8 @@ Public Function bolfncMiseizoToExcel() As Boolean
         
         i = 3
         strSQL = ""
-        strSQL = strfncTextFileToString("\\db\prog\製造管理システム\SQL\subMISHUKKA_Wallthru.sql")
+        'strSQL = strfncTextFileToString("\\db\prog\製造管理システム\SQL\subMISHUKKA_Wallthru.sql")
+        strSQL = strfncTextFileToString(conServerPath & "\SQL\subMISHUKKA_Wallthru.sql")
         If strSQL <> "" Then
             strSQL = Replace(strSQL, vbCrLf, " ")
         Else
@@ -1146,6 +1167,7 @@ Public Function bolfncMiseizoToExcel() As Boolean
         i = 4
         strSQL = ""
         strSQL = strfncTextFileToString("\\db\prog\製造管理システム\SQL\subMISHUKKA_Oredo.sql")
+        strSQL = strfncTextFileToString(conServerPath & "\SQL\subMISHUKKA_Oredo.sql")
         If strSQL <> "" Then
             strSQL = Replace(strSQL, vbCrLf, " ")
         Else

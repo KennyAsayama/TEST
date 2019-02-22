@@ -903,6 +903,8 @@ Public Function bolfncinFlieGet(ByVal in_KeyName As String, ByRef out_iniData As
 '   1.11.3  Change テスト環境識別追加（ローカル(C:\kamiya_Brandにiniファイルがある場合はそちらを優先する
 '   1.12.3
 '           →サーバパス共通化
+'2.13.0
+'   →ローカル（テスト用）を使用する場合はメッセージを表示する
 '--------------------------------------------------------------------------------------------------------------------
        
     Const strIniPath As String = conServerPath & "\製造管理システム.ini"
@@ -925,6 +927,7 @@ Public Function bolfncinFlieGet(ByVal in_KeyName As String, ByRef out_iniData As
     
     'iniファイルがローカルにある場合はそちらを優先
     If Dir(strTestPath) <> "" Then
+        MsgBox "テスト用のIniファイルを使用しています", vbInformation
         strInputPath = strTestPath
     Else
         strInputPath = strIniPath

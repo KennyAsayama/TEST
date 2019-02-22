@@ -152,6 +152,8 @@ End Property
 Public Property Get ハンドル引手センター(ByVal 建具品番 As String, ByVal 施錠 As Variant, ByVal 個別Spec As Variant) As Variant
 
 '2.7.0 1808ハンドル追加
+'2.13.0
+'   →1901ハンドル追加
 
     Dim strHinban As String
     Dim strHandle As String
@@ -192,7 +194,7 @@ Public Property Get ハンドル引手センター(ByVal 建具品番 As String, ByVal 施錠 As
                 Case "CN", "CO", "DN", "DO", "CP", "CQ", "CR"
                     ハンドル引手センター = 1030
                 
-                Case "HA", "HB", "HC", "HD", "HP", "HQ", "HR"
+                Case "HA", "HB", "HC", "HD", "HE", "HF", "HG", "HH", "HI", "HP", "HQ", "HR"
                     ハンドル引手センター = 1039
                     
                 Case Else
@@ -414,6 +416,8 @@ End Property
 Public Property Get 溝(ByVal 建具品番 As String, ByVal 施錠 As Variant, ByVal 個別Spec As Variant, 扉位置 As Variant) As Variant
 
 '2.4.0 TSC（トヨタシンセ）1801仕様溝共通化
+'2.13.0
+'   →1901仕様
 
     Dim strHinban As String
     
@@ -438,7 +442,11 @@ Public Property Get 溝(ByVal 建具品番 As String, ByVal 施錠 As Variant, ByVal 個
     ElseIf strHinban Like "???DH-*" Or strHinban Like "???DJ-*" Then
 
         溝 = "下4"
+        
+    ElseIf strHinban Like "???SH-*" Or strHinban Like "???SJ-*" Then
 
+        溝 = "下20"
+        
     ElseIf strHinban Like "???DF-*" And Not Nz(扉位置, 0) = 3 Then
 
         溝 = "下4"
@@ -447,6 +455,13 @@ Public Property Get 溝(ByVal 建具品番 As String, ByVal 施錠 As Variant, ByVal 個
 
         溝 = "下4"
     
+    ElseIf strHinban Like "???SF-*" And Not Nz(扉位置, 0) = 3 Then
+
+        溝 = "下20"
+
+    ElseIf strHinban Like "???TF-*" And Not Nz(扉位置, 0) = 3 Then
+
+        溝 = "下20"
     
     ElseIf IsVertica(strHinban) Then
 

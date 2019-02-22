@@ -68,7 +68,7 @@ Type KidoriData
 '20160825 K.Asayama ADD
 End Type
 
-Public Function bolFncKidoriData(ByVal varSpec As Variant, ByVal in_strHinban As String, intMaisu As Integer, ByVal dblDW As Double, ByVal dblDH As Double, ByVal strAkarimado As Variant, ByVal varHandle As Variant _
+Public Function bolFncKidoriData(ByVal varSpec As Variant, ByVal in_strHinban As String, intMaisu As Integer, ByVal dblDW As Double, ByVal dblDH As Double, ByVal strAkariMado As Variant, ByVal varHandle As Variant _
                             , ByRef KidoriSunpo As KidoriData) As Boolean
                             
 '   *************************************************************
@@ -80,10 +80,10 @@ Public Function bolFncKidoriData(ByVal varSpec As Variant, ByVal in_strHinban As
 '       →1608仕様対応
 '   '20170517 K.Asayama Change
 '       →Terrace用柱追加
-'   '20180201 K.Asayama Change
-'       →1801仕様対応
-'   '2.9.0 K.Asayama Change
-'       →1808(JC)仕様対応
+'   '20181004 K.Asayama Change
+'       →1808仕様対応（JC）
+    '20190219 K.Asayama Change
+'       →1901仕様対応（シンクロ,カルロジュリア）
 
 '   戻り値:Boolean
 '       →True              照合OK　数値戻し
@@ -325,6 +325,11 @@ Public Function bolFncKidoriData(ByVal varSpec As Variant, ByVal in_strHinban As
     ElseIf strHinban Like "*DH-####*-*" Or strHinban Like "*DF-####*-*" Or strHinban Like "*DJ-####*-*" Or strHinban Like "*DQ-####*-*" Or strHinban Like "*VF-####*-*" Or strHinban Like "*VQ-####*-*" Then
     '20170105 K.Asayama Change END
         intTegakeH = 2 * intMaisu
+    
+    '20190219 K.Asayama ADD
+    ElseIf strHinban Like "*SH-####*-*" Or strHinban Like "*SF-####*-*" Or strHinban Like "*SJ-####*-*" Or strHinban Like "*SQ-####*-*" Or strHinban Like "*TF-####*-*" Or strHinban Like "*TQ-####*-*" Then
+        intTegakeH = 2 * intMaisu
+    '20190219 K.Asayama ADD END
     
     Else
     
@@ -665,9 +670,9 @@ Public Function bolFncKidoriData(ByVal varSpec As Variant, ByVal in_strHinban As
 '            dblCupShitaji = 35
 '            intCupShitajiH = 2 * intMaisu
 '        End If
-'   *CF1/EF1/ZF1*************************************************
+'   *CF1/EF1/ZF1/QF1*********************************************
     
-    ElseIf strHinban Like "F?C??*-####F*-*" Then
+    ElseIf strHinban Like "F?C??*-####F*-*" Or strHinban Like "Q?C??*-####F*-*" Then
         
         dblShinAtsu = 30.2
         dblSan = dblDW + 2
@@ -699,7 +704,7 @@ Public Function bolFncKidoriData(ByVal varSpec As Variant, ByVal in_strHinban As
 '            intSode1H = 5 * intMaisu
 '        End If
         
-        intSode1H = intFncSode1Honsu_Group1(strHinban, intMaisu)
+        intSode1H = intFncSode1Honsu_Group1(strHinban, intMaisu, dblDH)
 '20161121 K.Asayama Change END
         
         '20170105 K.Asayama Change
@@ -758,7 +763,9 @@ Public Function bolFncKidoriData(ByVal varSpec As Variant, ByVal in_strHinban As
         ElseIf strHinban Like "*DC-####*" Or strHinban Like "*DT-####*" Or strHinban Like "*DP-####*" Or strHinban Like "*DU-####*" Or strHinban Like "*DE-####*" _
         Or strHinban Like "*KC-####*" Or strHinban Like "*KT-####*" Or strHinban Like "*KU-####*" _
         Or strHinban Like "*DF-####*" Or strHinban Like "*DJ-####*" Or strHinban Like "*DQ-####*" _
-        Or strHinban Like "*VF-####*" Or strHinban Like "*VQ-####*" Or strHinban Like "*JC-####*" Or strHinban Like "*JC-####*" Then
+        Or strHinban Like "*SF-####*" Or strHinban Like "*SJ-####*" Or strHinban Like "*SQ-####*" _
+        Or strHinban Like "*TF-####*" Or strHinban Like "*TQ-####*" _
+        Or strHinban Like "*VF-####*" Or strHinban Like "*VQ-####*" Or strHinban Like "*JC-####*" Then
         '20170105 K.Asayama Change END
         
             If dblDH <= 2529 Then
@@ -786,9 +793,9 @@ Public Function bolFncKidoriData(ByVal varSpec As Variant, ByVal in_strHinban As
         '20151211 K.Asayama Change End
         End If
         
-'   *CG2/EG2/ZG2*************************************************
+'   *CG2/EG2/ZG2/QG2*********************************************
 
-    ElseIf strHinban Like "F?C??*-####C*-*" Then
+    ElseIf strHinban Like "F?C??*-####C*-*" Or strHinban Like "Q?C??*-####C*-*" Then
     
         dblShinAtsu = 30.2
         dblSan = dblDW - 80
@@ -809,7 +816,7 @@ Public Function bolFncKidoriData(ByVal varSpec As Variant, ByVal in_strHinban As
 '            intSode1H = 5 * intMaisu
 '        End If
         
-        intSode1H = intFncSode1Honsu_Group1(strHinban, intMaisu)
+        intSode1H = intFncSode1Honsu_Group1(strHinban, intMaisu, dblDH)
         '20161121 K.Asayama Change END
 
         '20170105 K.Asayama Change
@@ -1017,7 +1024,9 @@ Public Function bolFncKidoriData(ByVal varSpec As Variant, ByVal in_strHinban As
 '            intSode2H = 6 * intMaisu
         End If
         
-        intSode2H = intFncSode2Honsu_Group1(strHinban, intMaisu)
+        intSode1H = intFncSode1Honsu_Group2(strHinban, intMaisu, dblDH)
+        
+        intSode2H = intFncSode2Honsu_Group1(strHinban, intMaisu, dblDH)
         '20161121 K.Asayama Change END
         
         '20170105 K.Asayama Change
@@ -1185,7 +1194,7 @@ Public Function bolFncKidoriData(ByVal varSpec As Variant, ByVal in_strHinban As
 '            intSode1H = 5 * intMaisu
 '        End If
 
-        intSode1H = intFncSode1Honsu_Group1(strHinban, intMaisu)
+        intSode1H = intFncSode1Honsu_Group1(strHinban, intMaisu, dblDH)
         '20161121 K.Asayama Change END
         
         '20170105 K.Asayama Change
@@ -1387,7 +1396,7 @@ Public Function bolFncKidoriData(ByVal varSpec As Variant, ByVal in_strHinban As
 '            intSode1H = 5 * intMaisu
 '        End If
 
-        intSode1H = intFncSode1Honsu_Group1(strHinban, intMaisu)
+        intSode1H = intFncSode1Honsu_Group1(strHinban, intMaisu, dblDH)
         '20161121 K.Asayama Change END
     
         '20170105 K.Asayama Change
@@ -1455,7 +1464,8 @@ Public Function bolFncKidoriData(ByVal varSpec As Variant, ByVal in_strHinban As
             
         '20170105 K.Asayama Change
 '        ElseIf strHinban Like "*DF-####*" Or strHinban Like "*DJ-####*" Or strHinban Like "*DQ-####*" Then
-        ElseIf strHinban Like "*DF-####*" Or strHinban Like "*DJ-####*" Or strHinban Like "*DQ-####*" Or strHinban Like "*VF-####*" Or strHinban Like "*VQ-####*" Then
+        ElseIf strHinban Like "*DF-####*" Or strHinban Like "*DJ-####*" Or strHinban Like "*DQ-####*" Or strHinban Like "*VF-####*" Or strHinban Like "*VQ-####*" _
+            Or strHinban Like "*SF-####*" Or strHinban Like "*SJ-####*" Or strHinban Like "*SQ-####*" Or strHinban Like "*TF-####*" Or strHinban Like "*TQ-####*" Then
         '20170105 K.Asayama Change END
         
             If dblDH <= 2529 Then
@@ -1515,7 +1525,7 @@ Public Function bolFncKidoriData(ByVal varSpec As Variant, ByVal in_strHinban As
 '            intSode1H = 5 * intMaisu
 '        End If
 
-        intSode1H = intFncSode1Honsu_Group1(strHinban, intMaisu)
+        intSode1H = intFncSode1Honsu_Group1(strHinban, intMaisu, dblDH)
         '20161121 K.Asayama Change END
         
         '20170105 K.Asayama Change
@@ -1641,9 +1651,9 @@ Public Function bolFncKidoriData(ByVal varSpec As Variant, ByVal in_strHinban As
         End If
         '20151211 K.Asayama Change End
 
-'   *CG8/EG8/ZG8*************************************************
+'   *CG8/EG8/ZG8/QG8*********************************************
     
-    ElseIf strHinban Like "F?C??*-####D*-*" Then
+    ElseIf strHinban Like "F?C??*-####D*-*" Or strHinban Like "Q?C??*-####D*-*" Then
         
         dblShinAtsu = 30.2
         dblSan = dblDW - 290
@@ -1664,7 +1674,7 @@ Public Function bolFncKidoriData(ByVal varSpec As Variant, ByVal in_strHinban As
 '            intSode1H = 5 * intMaisu
 '        End If
 
-        intSode1H = intFncSode1Honsu_Group1(strHinban, intMaisu)
+        intSode1H = intFncSode1Honsu_Group1(strHinban, intMaisu, dblDH)
         '20161121 K.Asayama Change END
         
         '20160825 K.Asayama Change END
@@ -1749,9 +1759,9 @@ Public Function bolFncKidoriData(ByVal varSpec As Variant, ByVal in_strHinban As
         End If
         '20151211 K.Asayama Change End
 
-'   *CG1/EG1/ZG1*************************************************
+'   *CG1/EG1/ZG1/QG1*********************************************
 
-    ElseIf strHinban Like "F?C??*-####S*-*" Then
+    ElseIf strHinban Like "F?C??*-####S*-*" Or strHinban Like "Q?C??*-####S*-*" Then
         
         dblShinAtsu = 30.2
         dblSan = dblDW - 64
@@ -1763,21 +1773,25 @@ Public Function bolFncKidoriData(ByVal varSpec As Variant, ByVal in_strHinban As
         '20160825 K.Asayama Change
 '        intSode1H = 2 * intMaisu
 '        intSode2H = 6 * intMaisu
-
+    
+    '20190219 K.Asayama Change
         '20161121 K.Asayama Change
-        If IsHikido(strHinban) Then
-            intSode1H = 4 * intMaisu
-'            If strHinban Like "*DN-####*-*" Then
-'                intSode2H = 3 * intMaisu
-'            Else
-'                intSode2H = 5 * intMaisu
-'            End If
-        Else
-            intSode1H = 2 * intMaisu
-'            intSode2H = 6 * intMaisu
-        End If
+'        If IsHikido(strHinban) Then
+'            intSode1H = 4 * intMaisu
+''            If strHinban Like "*DN-####*-*" Then
+''                intSode2H = 3 * intMaisu
+''            Else
+''                intSode2H = 5 * intMaisu
+''            End If
+'        Else
+'            intSode1H = 2 * intMaisu
+''            intSode2H = 6 * intMaisu
+'        End If
         
-        intSode2H = intFncSode2Honsu_Group1(strHinban, intMaisu)
+        intSode1H = intFncSode1Honsu_Group2(strHinban, intMaisu, dblDH)
+    '20190219 K.Asayama Change END
+    
+        intSode2H = intFncSode2Honsu_Group1(strHinban, intMaisu, dblDH)
         '20161121 K.Asayama Change END
         
         '20170105 K.Asayama Change
@@ -1958,7 +1972,7 @@ Public Function bolFncKidoriData(ByVal varSpec As Variant, ByVal in_strHinban As
 '            intSode1H = 5 * intMaisu
 '        End If
         
-        intSode1H = intFncSode1Honsu_Group1(strHinban, intMaisu)
+        intSode1H = intFncSode1Honsu_Group1(strHinban, intMaisu, dblDH)
         '20161121 K.Asayama Change END
         
         '20170105 K.Asayama Change
@@ -2033,6 +2047,7 @@ Public Function bolFncKidoriData(ByVal varSpec As Variant, ByVal in_strHinban As
 '            Or strHinban Like "*KC-####*" Or strHinban Like "*KT-####*" Or strHinban Like "*KU-####*" Then
         ElseIf strHinban Like "*DC-####*" Or strHinban Like "*DT-####*" Or strHinban Like "*DP-####*" Or strHinban Like "*DU-####*" Or strHinban Like "*DE-####*" _
             Or strHinban Like "*DH-####*" Or strHinban Like "*DF-####*" Or strHinban Like "*DJ-####*" Or strHinban Like "*DQ-####*" _
+            Or strHinban Like "*SH-####*" Or strHinban Like "*SF-####*" Or strHinban Like "*SJ-####*" Or strHinban Like "*SQ-####*" Or strHinban Like "*TF-####*" Or strHinban Like "*TQ-####*" _
             Or strHinban Like "*KC-####*" Or strHinban Like "*KT-####*" Or strHinban Like "*KU-####*" _
             Or strHinban Like "*VF-####*" Or strHinban Like "*VQ-####*" Or strHinban Like "*JC-####*" Then
         '20170105 K.Asayama Change
@@ -2151,7 +2166,7 @@ Public Function bolFncKidoriData(ByVal varSpec As Variant, ByVal in_strHinban As
         End If
         '20160825 K.Asayama Change END
         
-        intSode2H = intFncSode2Honsu_Group1(strHinban, intMaisu)
+        intSode2H = intFncSode2Honsu_Group1(strHinban, intMaisu, dblDH)
         '20161121 K.Asayama Change END
         
         Select Case dblDH
@@ -2215,7 +2230,7 @@ Public Function bolFncKidoriData(ByVal varSpec As Variant, ByVal in_strHinban As
 '            intSode1H = 5
 '        End If
 
-        intSode1H = intFncSode1Honsu_Group1(strHinban, intMaisu)
+        intSode1H = intFncSode1Honsu_Group1(strHinban, intMaisu, dblDH)
         '20161121 K.Asayama Change END
         
         '20160825 K.Asayama Change END
@@ -2360,7 +2375,7 @@ Public Function bolFncKidoriData(ByVal varSpec As Variant, ByVal in_strHinban As
 '            intSode1H = 5 * intMaisu
 '        End If
         
-        intSode1H = intFncSode1Honsu_Group1(strHinban, intMaisu)
+        intSode1H = intFncSode1Honsu_Group1(strHinban, intMaisu, dblDH)
         '20161121 K.Asayama Change END
         
         '20170105 K.Asayama Change
@@ -2437,6 +2452,8 @@ Public Function bolFncKidoriData(ByVal varSpec As Variant, ByVal in_strHinban As
         Or strHinban Like "*VM-####*" Or strHinban Like "*VL-####*" Or strHinban Like "*VN-####*" _
         Or strHinban Like "*DF-####*" Or strHinban Like "*DJ-####*" Or strHinban Like "*DQ-####*" _
         Or strHinban Like "*VF-####*" Or strHinban Like "*VQ-####*" _
+        Or strHinban Like "*SF-####*" Or strHinban Like "*SJ-####*" Or strHinban Like "*SQ-####*" _
+        Or strHinban Like "*TF-####*" Or strHinban Like "*TQ-####*" _
         Or strHinban Like "*KC-####*" Or strHinban Like "*KT-####*" Or strHinban Like "*KU-####*" Or strHinban Like "*JC-####*" Then
         '20170105 K.Asayama Change END
             If dblDH <= 2529 Then
@@ -2502,7 +2519,7 @@ Public Function bolFncKidoriData(ByVal varSpec As Variant, ByVal in_strHinban As
 '            intSode1H = 5 * intMaisu
 '        End If
 
-        intSode1H = intFncSode1Honsu_Group1(strHinban, intMaisu)
+        intSode1H = intFncSode1Honsu_Group1(strHinban, intMaisu, dblDH)
         '20161121 K.Asayama Change END
         
         '20170105 K.Asayama Change
@@ -2568,7 +2585,9 @@ Public Function bolFncKidoriData(ByVal varSpec As Variant, ByVal in_strHinban As
             
         '20170105 K.Asayama Change
 '        ElseIf strHinban Like "*DF-####*" Or strHinban Like "*DJ-####*" Or strHinban Like "*DQ-####*" Then
-        ElseIf strHinban Like "*DF-####*" Or strHinban Like "*DJ-####*" Or strHinban Like "*DQ-####*" Or strHinban Like "*VF-####*" Or strHinban Like "*VQ-####*" Then
+        ElseIf strHinban Like "*DF-####*" Or strHinban Like "*DJ-####*" Or strHinban Like "*DQ-####*" Or strHinban Like "*VF-####*" Or strHinban Like "*VQ-####*" _
+            Or strHinban Like "*SF-####*" Or strHinban Like "*SJ-####*" Or strHinban Like "*SQ-####*" Or strHinban Like "*TF-####*" Or strHinban Like "*TQ-####*" _
+        Then
         '20170105 K.Asayama Change END
         
             If dblDH <= 2529 Then
@@ -2611,31 +2630,33 @@ Public Function bolFncKidoriData(ByVal varSpec As Variant, ByVal in_strHinban As
         
         '20160825 K.Asayama Change
         '20161121 K.Asayama Change
-        If IsHikido(strHinban) Then
-            '20170105 K.Asayama Change
-    '        If strHinban Like "*DN-####*" Then
-            If strHinban Like "*DN-####*" Or strHinban Like "*VN-####*" Then
-            '20170105 K.Asayama Change END
-
-                intSode1H = 4 * intMaisu
-                'intSode2H = 3 * intMaisu
-            Else
-                intSode1H = 4 * intMaisu
-                'intSode2H = 5 * intMaisu
-            End If
-        Else
-            intSode1H = 2 * intMaisu
-            'intSode2H = 6 * intMaisu
-        End If
-
-        intSode2H = intFncSode2Honsu_Group1(strHinban, intMaisu)
+'        If IsHikido(strHinban) Then
+'            '20170105 K.Asayama Change
+'    '        If strHinban Like "*DN-####*" Then
+'            If strHinban Like "*DN-####*" Or strHinban Like "*VN-####*" Then
+'            '20170105 K.Asayama Change END
+'
+'                intSode1H = 4 * intMaisu
+'                'intSode2H = 3 * intMaisu
+'            Else
+'                intSode1H = 4 * intMaisu
+'                'intSode2H = 5 * intMaisu
+'            End If
+'        Else
+'            intSode1H = 2 * intMaisu
+'            'intSode2H = 6 * intMaisu
+'        End If
+        
+        intSode1H = intFncSode1Honsu_Group2(strHinban, intMaisu, dblDH)
+        
+        intSode2H = intFncSode2Honsu_Group1(strHinban, intMaisu, dblDH)
         '20161121 K.Asayama Change END
         
         '20170105 K.Asayama Change
 '        If strHinban Like "*DN-####*" Then
         If strHinban Like "*DN-####*" Or strHinban Like "*VN-####*" Then
         '20170105 K.Asayama Change END
-        '2.5.3関数修正
+            '20180605関数修正
             'dblGakuYoko1 = dblDW - 492.5
             dblGakuYoko1 = dblDW - 432.5
         Else
@@ -2787,7 +2808,7 @@ Public Function bolFncKidoriData(ByVal varSpec As Variant, ByVal in_strHinban As
 '            intSode1H = 5 * intMaisu
 '        End If
 
-        intSode1H = intFncSode1Honsu_Group1(strHinban, intMaisu)
+        intSode1H = intFncSode1Honsu_Group1(strHinban, intMaisu, dblDH)
         '20161121 K.Asayama Change END
         
         '20160825 K.Asayama Change END
@@ -3076,7 +3097,7 @@ Public Function bolFncKidoriData(ByVal varSpec As Variant, ByVal in_strHinban As
                 intGakuYokoH1 = 2 * intMaisu
             End If
             
-            intSode1H = intFncSode1Honsu_Group1(strHinban, intMaisu)
+            intSode1H = intFncSode1Honsu_Group1(strHinban, intMaisu, dblDH)
             '20161121 K.Asayama Change END
         Else
             intSode1H = 2 * intMaisu
@@ -3186,7 +3207,7 @@ Public Function bolFncKidoriData(ByVal varSpec As Variant, ByVal in_strHinban As
 '            intSode1H = 5
 '        End If
 
-        intSode1H = intFncSode1Honsu_Group1(strHinban, intMaisu)
+        intSode1H = intFncSode1Honsu_Group1(strHinban, intMaisu, dblDH)
         '20161121 K.Asayama Change END
         '20160825 K.Asayama Change END
         
@@ -3253,7 +3274,7 @@ Public Function bolFncKidoriData(ByVal varSpec As Variant, ByVal in_strHinban As
             dblSode1 = 100
             '20161121 K.Asayama Change
             'intSode1H = 6 * intMaisu
-            intSode1H = intFncSode1Honsu_Group1(strHinban, intMaisu)
+            intSode1H = intFncSode1Honsu_Group1(strHinban, intMaisu, dblDH)
             '20161121 K.Asayama Change END
             
             dblCupShitaji = 100
@@ -3310,7 +3331,7 @@ Public Function bolFncKidoriData(ByVal varSpec As Variant, ByVal in_strHinban As
             dblSode1 = 100
             '20161121 K.Asayama Change
             'intSode1H = 6 * intMaisu
-            intSode1H = intFncSode1Honsu_Group1(strHinban, intMaisu)
+            intSode1H = intFncSode1Honsu_Group1(strHinban, intMaisu, dblDH)
             '20161121 K.Asayama Change END
             dblCupShitaji = 100
             intCupShitajiH = 20 * intMaisu
@@ -3355,13 +3376,14 @@ Public Function bolFncKidoriData(ByVal varSpec As Variant, ByVal in_strHinban As
             End Select
               
             If strHinban Like "*DC-####*" Or strHinban Like "*DT-####*" Or strHinban Like "*DP-####*" Or strHinban Like "*DU-####*" Or strHinban Like "*DE-####*" Or strHinban Like "*DH-####*" _
-                Or strHinban Like "*KC-####*" Or strHinban Like "*KT-####*" Or strHinban Like "*KU-####*" Or strHinban Like "*JC-####*" Then
+                Or strHinban Like "*KC-####*" Or strHinban Like "*KT-####*" Or strHinban Like "*KU-####*" Or strHinban Like "*JC-####*" Or strHinban Like "*SH-####*" Then
                 
                 dblSan_N = 217
             
             '20170105 K.Asayama Change
 '            ElseIf strHinban Like "*DF-####*" Or strHinban Like "*DJ-####*" Or strHinban Like "*DQ-####*" Or strHinban Like "*DM-####*" Or strHinban Like "*DL-####*" Or strHinban Like "*DN-####*" Then
             ElseIf strHinban Like "*DF-####*" Or strHinban Like "*DJ-####*" Or strHinban Like "*DQ-####*" Or strHinban Like "*DM-####*" Or strHinban Like "*DL-####*" Or strHinban Like "*DN-####*" _
+                Or strHinban Like "*SF-####*" Or strHinban Like "*SJ-####*" Or strHinban Like "*SQ-####*" Or strHinban Like "*TF-####*" Or strHinban Like "*TQ-####*" _
                 Or strHinban Like "*VF-####*" Or strHinban Like "*VQ-####*" Or strHinban Like "*VM-####*" Or strHinban Like "*VL-####*" Or strHinban Like "*VN-####*" _
             Then
             '20170105 K.Asayama Change END
@@ -3396,10 +3418,16 @@ Public Function bolFncKidoriData(ByVal varSpec As Variant, ByVal in_strHinban As
             inthashiraH2_N = 1 * intMaisu
             
             dblSode1 = 100
-            intSode1H = intFncSode1Honsu_Group1(strHinban, intMaisu)
+            intSode1H = intFncSode1Honsu_Group1(strHinban, intMaisu, dblDH)
             
-            dblCupShitaji = 100
-            intCupShitajiH = 20 * intMaisu
+            '20190219 K.Asayama ADD
+            dblSode2 = 140.5
+            '20190219 K.Asayama ADD END
+            
+            '20180925 K.Asayama Change モンスター27追加のため寸法別へ移動
+'            dblCupShitaji = 100
+'            intCupShitajiH = 20 * intMaisu
+            '20180925 K.Asayama Change END
             
             dblSan_N = 215.5
             '20180205 K.Asayama Change
@@ -3409,6 +3437,28 @@ Public Function bolFncKidoriData(ByVal varSpec As Variant, ByVal in_strHinban As
             intHashiraH_N = 3 * intMaisu
             
             Select Case dblDH
+                
+                '20180925 K.Asayama ADD 2700
+                Case 2590 To 2689
+                    intSanH = 4 * intMaisu
+                    intGakuYokoH1 = 9 * intMaisu
+                    dblGakuYoko2 = dblDW - 323.5
+                    intGakuYokoH2 = 2 * intMaisu
+                    
+                    dblHashira = dblDH - 114
+                    
+                    intSanH_N = 4 * intMaisu
+                    intGakuYokoH1_N = 3 * intMaisu
+                    dblHashira_N = dblDH - 114
+                    
+                    dblCupShitaji = 60
+                    intCupShitajiH = 6 * intMaisu
+                '20180925 K.Asayama ADD END
+                    
+                    '20190219 K.Asayama ADD
+                    intSode2H = 2 * intMaisu
+                    '20190219 K.Asayama ADD END
+                    
                 Case 2530 To 2589
                     intSanH = 6 * intMaisu
                     intGakuYokoH1 = 6 * intMaisu
@@ -3418,6 +3468,12 @@ Public Function bolFncKidoriData(ByVal varSpec As Variant, ByVal in_strHinban As
                     intGakuYokoH1_N = 2 * intMaisu
                     dblHashira_N = dblDH - 174
                     
+                    dblCupShitaji = 100
+                    intCupShitajiH = 20 * intMaisu
+                    
+                    '20190219 K.Asayama ADD
+                    intSode2H = 1 * intMaisu
+                    '20190219 K.Asayama ADD END
                     
                 Case 1801 To 2529
                     intSanH = 4 * intMaisu
@@ -3427,7 +3483,13 @@ Public Function bolFncKidoriData(ByVal varSpec As Variant, ByVal in_strHinban As
                     intSanH_N = 4 * intMaisu
                     intGakuYokoH1_N = 2 * intMaisu
                     dblHashira_N = dblDH - 114
-
+                    
+                    dblCupShitaji = 100
+                    intCupShitajiH = 20 * intMaisu
+                    
+                    '20190219 K.Asayama ADD
+                    intSode2H = 2 * intMaisu
+                    '20190219 K.Asayama ADD END
                     
                 Case Is <= 1800
                     intSanH = 4 * intMaisu
@@ -3437,7 +3499,13 @@ Public Function bolFncKidoriData(ByVal varSpec As Variant, ByVal in_strHinban As
                     intSanH_N = 4 * intMaisu
                     intGakuYokoH1_N = 1 * intMaisu
                     dblHashira_N = dblDH - 114
-
+                    
+                    dblCupShitaji = 100
+                    intCupShitajiH = 20 * intMaisu
+                    
+                    '20190219 K.Asayama ADD
+                    intSode2H = 2 * intMaisu
+                    '20190219 K.Asayama ADD END
                     
             End Select
               
@@ -3459,10 +3527,16 @@ Public Function bolFncKidoriData(ByVal varSpec As Variant, ByVal in_strHinban As
             
             dblSode1 = 100
 
-            intSode1H = intFncSode1Honsu_Group1(strHinban, intMaisu)
-
-            dblCupShitaji = 100
-            intCupShitajiH = 20 * intMaisu
+            intSode1H = intFncSode1Honsu_Group1(strHinban, intMaisu, dblDH)
+            
+            '20190219 K.Asayama ADD
+            dblSode2 = 142
+            '20190219 K.Asayama ADD END
+            
+            '20180925 K.Asayama Change モンスター27追加のため寸法別へ移動
+'            dblCupShitaji = 100
+'            intCupShitajiH = 20 * intMaisu
+            '20180925 K.Asayama Change END
             
             '20180205 K.Asayama Change
             'dblGakuYoko1_N = 92
@@ -3471,6 +3545,24 @@ Public Function bolFncKidoriData(ByVal varSpec As Variant, ByVal in_strHinban As
             intHashiraH_N = 3 * intMaisu
             
             Select Case dblDH
+            
+                '20180925 K.Asayama ADD 2700
+                Case 2590 To 2689
+                    intSanH = 4 * intMaisu
+                    intGakuYokoH1 = 9 * intMaisu
+                    dblGakuYoko2 = dblDW - 322
+                    intGakuYokoH2 = 2 * intMaisu
+                    
+                    dblHashira = dblDH - 114
+                    
+                    intSanH_N = 4 * intMaisu
+                    intGakuYokoH1_N = 3 * intMaisu
+                    dblHashira_N = dblDH - 114
+                    
+                    dblCupShitaji = 60
+                    intCupShitajiH = 6 * intMaisu
+                '20180925 K.Asayama ADD END
+                    
                 Case 2530 To 2589
                     intSanH = 6 * intMaisu
                     intGakuYokoH1 = 6 * intMaisu
@@ -3480,6 +3572,8 @@ Public Function bolFncKidoriData(ByVal varSpec As Variant, ByVal in_strHinban As
                     intGakuYokoH1_N = 2 * intMaisu
                     dblHashira_N = dblDH - 174
 
+                    dblCupShitaji = 100
+                    intCupShitajiH = 20 * intMaisu
                     
                 Case 1801 To 2529
                     intSanH = 4 * intMaisu
@@ -3490,7 +3584,9 @@ Public Function bolFncKidoriData(ByVal varSpec As Variant, ByVal in_strHinban As
                     intGakuYokoH1_N = 2 * intMaisu
                     dblHashira_N = dblDH - 114
 
-                    
+                    dblCupShitaji = 100
+                    intCupShitajiH = 20 * intMaisu
+            
                 Case Is <= 1800
                     intSanH = 4 * intMaisu
                     intGakuYokoH1 = 3 * intMaisu
@@ -3500,16 +3596,18 @@ Public Function bolFncKidoriData(ByVal varSpec As Variant, ByVal in_strHinban As
                     intGakuYokoH1_N = 1 * intMaisu
                     dblHashira_N = dblDH - 114
 
-                    
+                    dblCupShitaji = 100
+                    intCupShitajiH = 20 * intMaisu
             End Select
               
             If strHinban Like "*DC-####*" Or strHinban Like "*DT-####*" Or strHinban Like "*DP-####*" Or strHinban Like "*DU-####*" Or strHinban Like "*DE-####*" Or strHinban Like "*DH-####*" _
-                Or strHinban Like "*KC-####*" Or strHinban Like "*KT-####*" Or strHinban Like "*KU-####*" Or strHinban Like "*JC-####*" Then
+                Or strHinban Like "*KC-####*" Or strHinban Like "*KT-####*" Or strHinban Like "*KU-####*" Or strHinban Like "*JC-####*" Or strHinban Like "*SH-####*" Then
                 
                 dblSan_N = 217
             
             
             ElseIf strHinban Like "*DF-####*" Or strHinban Like "*DJ-####*" Or strHinban Like "*DQ-####*" Or strHinban Like "*DM-####*" Or strHinban Like "*DL-####*" Or strHinban Like "*DN-####*" _
+                Or strHinban Like "*SF-####*" Or strHinban Like "*SJ-####*" Or strHinban Like "*SQ-####*" Or strHinban Like "*TF-####*" Or strHinban Like "*TQ-####*" _
                 Or strHinban Like "*VF-####*" Or strHinban Like "*VQ-####*" Or strHinban Like "*VM-####*" Or strHinban Like "*VL-####*" Or strHinban Like "*VN-####*" _
             Then
             
@@ -3565,7 +3663,7 @@ Public Function bolFncKidoriData(ByVal varSpec As Variant, ByVal in_strHinban As
                 dblGakuYoko1 = dblDW - 254
             End If
             
-            intSode1H = intFncSode1Honsu_Group1(strHinban, intMaisu)
+            intSode1H = intFncSode1Honsu_Group1(strHinban, intMaisu, dblDH)
             '20161121 K.Asayama Change END
         
         Else
@@ -3603,6 +3701,7 @@ Public Function bolFncKidoriData(ByVal varSpec As Variant, ByVal in_strHinban As
 '        If strHinban Like "*DC-####*" Or strHinban Like "*DT-####*" Or strHinban Like "*DP-####*" Or strHinban Like "*DU-####*" Or strHinban Like "*DE-####*" Or strHinban Like "*DH-####*" Or strHinban Like "*DF-####*" Or strHinban Like "*DJ-####*" _
 '            Or strHinban Like "*KC-####*" Or strHinban Like "*KT-####*" Or strHinban Like "*KU-####*" Then
         If strHinban Like "*DC-####*" Or strHinban Like "*DT-####*" Or strHinban Like "*DP-####*" Or strHinban Like "*DU-####*" Or strHinban Like "*DE-####*" Or strHinban Like "*DH-####*" Or strHinban Like "*DF-####*" Or strHinban Like "*DJ-####*" _
+            Or strHinban Like "*SH-####*" Or strHinban Like "*SF-####*" Or strHinban Like "*SJ-####*" Or strHinban Like "*TF-####*" _
             Or strHinban Like "*KC-####*" Or strHinban Like "*KT-####*" Or strHinban Like "*KU-####*" Or strHinban Like "*VF-####*" Or strHinban Like "*JC-####*" Then
         '20170105 K.Asayama Change END
             
@@ -3632,7 +3731,7 @@ Public Function bolFncKidoriData(ByVal varSpec As Variant, ByVal in_strHinban As
         dblSode1 = 60
         
         '20160825 K.Asayama Change
-        If strHinban Like "*DH-####*" Then
+        If strHinban Like "*DH-####*" Or strHinban Like "*SH-####*" Then
 '            intSode1H = 8
             intGakutateH1 = 6
         ElseIf strHinban Like "*DE-####*" Then
@@ -3640,7 +3739,9 @@ Public Function bolFncKidoriData(ByVal varSpec As Variant, ByVal in_strHinban As
             intGakutateH1 = 8
         '20170105 K.Asayama Change
 '        ElseIf strHinban Like "*DF-####*" Or strHinban Like "*DJ-####*" Then
-        ElseIf strHinban Like "*DF-####*" Or strHinban Like "*DJ-####*" Or strHinban Like "*VF-####*" Then
+        ElseIf strHinban Like "*DF-####*" Or strHinban Like "*DJ-####*" Or strHinban Like "*VF-####*" _
+            Or strHinban Like "*SF-####*" Or strHinban Like "*SJ-####*" Or strHinban Like "*TF-####*" _
+        Then
         '20170105 K.Asayama Change END
         
 '            intSode1H = 12
@@ -3669,7 +3770,7 @@ Public Function bolFncKidoriData(ByVal varSpec As Variant, ByVal in_strHinban As
                 intGakuYokoH1 = 4 * intMaisu
             End If
             
-            intSode1H = intFncSode1Honsu_Group1(strHinban, intMaisu)
+            intSode1H = intFncSode1Honsu_Group1(strHinban, intMaisu, dblDH)
             '20161121 K.Asayama Change END
         
         Else
@@ -3820,7 +3921,7 @@ Public Function bolFncKidoriData(ByVal varSpec As Variant, ByVal in_strHinban As
                 dblGakuYoko2 = (dblDW / 2) - 254.5
                 intGakutateH1 = 4 * intMaisu
             End If
-            intSode1H = intFncSode1Honsu_Group1(strHinban, intMaisu)
+            intSode1H = intFncSode1Honsu_Group1(strHinban, intMaisu, dblDH)
         '   20161121 K.Asayama Change END
         Else
             intSode1H = 2 * intMaisu
@@ -3946,7 +4047,7 @@ Public Function bolFncKidoriData(ByVal varSpec As Variant, ByVal in_strHinban As
         '20151019 K.Asayama Change End
         intGakuYokoH1 = 1 * intMaisu
         If IsHikido(strHinban) Then
-            intSode1H = 4 * intMaisu
+            'intSode1H = 4 * intMaisu
             
             '20170105 K.Asayama Change
     '        If strHinban Like "*DN-####*" Then
@@ -3971,12 +4072,15 @@ Public Function bolFncKidoriData(ByVal varSpec As Variant, ByVal in_strHinban As
                 End If
             End If
         Else
-            intSode1H = 2 * intMaisu
+            'intSode1H = 2 * intMaisu
             dblGakuYoko1 = dblDW - 423.5
         End If
 
         '20160825 K.Asayama Change END
         
+        '20190219 K.Asayama Change
+        intSode1H = intFncSode1Honsu_Group2(strHinban, intMaisu, dblDH)
+        '20190219 K.Asayama Change END
 
         
         dblGakutate1 = dblDH - 114
@@ -4115,7 +4219,7 @@ Public Function bolFncKidoriData(ByVal varSpec As Variant, ByVal in_strHinban As
                 dblGakuYoko1 = dblDW - 336
             End If
             
-            intSode1H = intFncSode1Honsu_Group1(strHinban, intMaisu)
+            intSode1H = intFncSode1Honsu_Group1(strHinban, intMaisu, dblDH)
             '20161121 K.Asayama Change END
         Else
             intSode1H = 2 * intMaisu
@@ -4139,6 +4243,7 @@ Public Function bolFncKidoriData(ByVal varSpec As Variant, ByVal in_strHinban As
 '        If strHinban Like "*DC-####*" Or strHinban Like "*DT-####*" Or strHinban Like "*DP-####*" Or strHinban Like "*DU-####*" Or strHinban Like "*DE-####*" Or strHinban Like "*DF-####*" Or strHinban Like "*DJ-####*" Or strHinban Like "*DQ-####*" _
 '            Or strHinban Like "*KC-####*" Or strHinban Like "*KT-####*" Or strHinban Like "*KU-####*" Then
         If strHinban Like "*DC-####*" Or strHinban Like "*DT-####*" Or strHinban Like "*DP-####*" Or strHinban Like "*DU-####*" Or strHinban Like "*DE-####*" Or strHinban Like "*DF-####*" Or strHinban Like "*DJ-####*" Or strHinban Like "*DQ-####*" _
+            Or strHinban Like "*SF-####*" Or strHinban Like "*SJ-####*" Or strHinban Like "*SQ-####*" Or strHinban Like "*TF-####*" Or strHinban Like "*TQ-####*" _
             Or strHinban Like "*KC-####*" Or strHinban Like "*KT-####*" Or strHinban Like "*KU-####*" Or strHinban Like "*VF-####*" Or strHinban Like "*VQ-####*" Or strHinban Like "*JC-####*" Then
         '20170105 K.Asayama Change END
         
@@ -4194,7 +4299,7 @@ Public Function bolFncKidoriData(ByVal varSpec As Variant, ByVal in_strHinban As
             End If
             
             
-            intSode2H = intFncSode2Honsu_Group1(strHinban, intMaisu)
+            intSode2H = intFncSode2Honsu_Group1(strHinban, intMaisu, dblDH)
             '20161121 K.Asayama Change END
         
             '20160825 K.Asayama Change End
@@ -4258,7 +4363,7 @@ Public Function bolFncKidoriData(ByVal varSpec As Variant, ByVal in_strHinban As
             End If
             
             
-            intSode2H = intFncSode2Honsu_Group1(strHinban, intMaisu)
+            intSode2H = intFncSode2Honsu_Group1(strHinban, intMaisu, dblDH)
             '20161121 K.Asayama Change END
         
             '20160825 K.Asayama Change End
@@ -4347,7 +4452,7 @@ Public Function bolFncKidoriData(ByVal varSpec As Variant, ByVal in_strHinban As
 '        End If
         
         
-        intSode1H = intFncSode1Honsu_Group1(strHinban, intMaisu)
+        intSode1H = intFncSode1Honsu_Group1(strHinban, intMaisu, dblDH)
         '20161121 K.Asayama Change END
         
         Select Case dblDH
@@ -4694,7 +4799,7 @@ Public Function bolFncKidoriData(ByVal varSpec As Variant, ByVal in_strHinban As
 '        End If
         '20160825 K.Asayama Change END
 
-        intSode1H = intFncSode1Honsu_Group1(strHinban, intMaisu)
+        intSode1H = intFncSode1Honsu_Group1(strHinban, intMaisu, dblDH)
         '20161121 K.Asayama Change END
         
         '20801** K.Asayama ADD
@@ -4901,7 +5006,7 @@ Public Function bolFncKidoriData(ByVal varSpec As Variant, ByVal in_strHinban As
             '20161121 K.Asayama Change
             'intSode1H = 5 * intMaisu
             
-            intSode1H = intFncSode1Honsu_Group1(strHinban, intMaisu)
+            intSode1H = intFncSode1Honsu_Group1(strHinban, intMaisu, dblDH)
             '20161121 K.Asayama Change END
             
             Select Case dblDH
@@ -5038,8 +5143,9 @@ Public Function bolFncKidoriData(ByVal varSpec As Variant, ByVal in_strHinban As
         Else
             dblShinAtsu = 30.2
             dblSan = dblDW - 61
+'            dblGakuYoko1 = dblDW - 492.5
             If strHinban Like "*DN-####*" Or strHinban Like "*VN-####*" Then
-                '関数修正
+                '20180605関数修正
                 'dblGakuYoko1 = dblDW - 492.5
                 dblGakuYoko1 = dblDW - 432.5
             Else
@@ -5053,13 +5159,15 @@ Public Function bolFncKidoriData(ByVal varSpec As Variant, ByVal in_strHinban As
 
             'intSode1H = 2 * intMaisu
             'intSode2H = 6 * intMaisu
-            If IsHikido(strHinban) Then
-                intSode1H = 4 * intMaisu
-            Else
-                intSode1H = 2 * intMaisu
-            End If
+'            If IsHikido(strHinban) Then
+'                intSode1H = 4 * intMaisu
+'            Else
+'                intSode1H = 2 * intMaisu
+'            End If
             
-            intSode2H = intFncSode2Honsu_Group1(strHinban, intMaisu)
+            intSode1H = intFncSode1Honsu_Group2(strHinban, intMaisu, dblDH)
+            
+            intSode2H = intFncSode2Honsu_Group1(strHinban, intMaisu, dblDH)
         
             '20161121 K.Asayama Change END
             
@@ -5213,7 +5321,7 @@ Public Function bolFncKidoriData(ByVal varSpec As Variant, ByVal in_strHinban As
                 'intSode2H = 6 * intMaisu
             End If
             
-            intSode2H = intFncSode2Honsu_Group1(strHinban, intMaisu)
+            intSode2H = intFncSode2Honsu_Group1(strHinban, intMaisu, dblDH)
             '20161121 K.Asayama Change End
             '20160825 K.Asayama Change End
             
@@ -5275,7 +5383,7 @@ Public Function bolFncKidoriData(ByVal varSpec As Variant, ByVal in_strHinban As
                 'intSode2H = 6 * intMaisu
             End If
             
-            intSode2H = intFncSode2Honsu_Group1(strHinban, intMaisu)
+            intSode2H = intFncSode2Honsu_Group1(strHinban, intMaisu, dblDH)
             '20161121 K.Asayama Change END
         
             '20160825 K.Asayama Change End
@@ -5449,7 +5557,7 @@ Public Function bolFncKidoriData(ByVal varSpec As Variant, ByVal in_strHinban As
 '            intSode1H = 5
 '        End If
         
-        intSode1H = intFncSode1Honsu_Group1(strHinban, intMaisu)
+        intSode1H = intFncSode1Honsu_Group1(strHinban, intMaisu, dblDH)
         '20161121 K.Asayama Change END
         
         '20160825 K.Asayama Change END
@@ -5512,7 +5620,7 @@ Public Function bolFncKidoriData(ByVal varSpec As Variant, ByVal in_strHinban As
         '    intSode1H = 5
         'End If
         
-        intSode1H = intFncSode1Honsu_Group1(strHinban, intMaisu)
+        intSode1H = intFncSode1Honsu_Group1(strHinban, intMaisu, dblDH)
         '20161121 K.Asayama Change END
         '20160825 K.Asayama Change END
         
@@ -5569,7 +5677,7 @@ Public Function bolFncKidoriData(ByVal varSpec As Variant, ByVal in_strHinban As
         '    intSode1H = 5
         'End If
         
-        intSode1H = intFncSode1Honsu_Group1(strHinban, intMaisu)
+        intSode1H = intFncSode1Honsu_Group1(strHinban, intMaisu, dblDH)
         '20161121 K.Asayama Change END
         '20160825 K.Asayama Change END
         
@@ -5641,7 +5749,7 @@ Public Function bolFncKidoriData(ByVal varSpec As Variant, ByVal in_strHinban As
 '                intSode1H = 5
 '            End If
             
-            intSode1H = intFncSode1Honsu_Group1(strHinban, intMaisu)
+            intSode1H = intFncSode1Honsu_Group1(strHinban, intMaisu, dblDH)
             '20161121 K.Asayama Change END
         
             Select Case dblDH
@@ -5689,6 +5797,7 @@ Public Function bolFncKidoriData(ByVal varSpec As Variant, ByVal in_strHinban As
                 intCupShitajiH = 6 * intMaisu
             
             ElseIf strHinban Like "*DC-####*" Or strHinban Like "*DT-####*" Or strHinban Like "*DP-####*" Or strHinban Like "*DU-####*" Or strHinban Like "*DE-####*" Or strHinban Like "*DH-####*" Or strHinban Like "*DF-####*" Or strHinban Like "*DJ-####*" Or strHinban Like "*DQ-####*" _
+                Or strHinban Like "*SH-####*" Or strHinban Like "*SF-####*" Or strHinban Like "*SJ-####*" Or strHinban Like "*SQ-####*" Or strHinban Like "*TF-####*" Or strHinban Like "*TQ-####*" _
                 Or strHinban Like "*KC-####*" Or strHinban Like "*KT-####*" Or strHinban Like "*KU-####*" Or strHinban Like "*VF-####*" Or strHinban Like "*VQ-####*" Or strHinban Like "*JC-####*" Then
             '20170105 K.Asayama Change END
                 
@@ -5739,7 +5848,7 @@ Public Function bolFncKidoriData(ByVal varSpec As Variant, ByVal in_strHinban As
 '            intSode1H = 5
 '        End If
 
-        intSode1H = intFncSode1Honsu_Group1(strHinban, intMaisu)
+        intSode1H = intFncSode1Honsu_Group1(strHinban, intMaisu, dblDH)
         '20161121 K.Asayama Change END
         
         '20160825 K.Asayama ADD END
@@ -5805,7 +5914,7 @@ Public Function bolFncKidoriData(ByVal varSpec As Variant, ByVal in_strHinban As
 '            intSode1H = 5 * intMaisu
 '        End If
 
-        intSode1H = intFncSode2Honsu_Group1(strHinban, intMaisu)
+        intSode1H = intFncSode2Honsu_Group1(strHinban, intMaisu, dblDH)
         '20161121 K.Asayama Change END
         
         '20170105 K.Asayama Change
@@ -5871,6 +5980,7 @@ Public Function bolFncKidoriData(ByVal varSpec As Variant, ByVal in_strHinban As
 '        If strHinban Like "*DC-####*" Or strHinban Like "*DT-####*" Or strHinban Like "*DP-####*" Or strHinban Like "*DU-####*" Or strHinban Like "*DE-####*" Or strHinban Like "*DH-####*" Or strHinban Like "*DF-####*" Or strHinban Like "*DJ-####*" Or strHinban Like "*DQ-####*" _
 '                Or strHinban Like "*KC-####*" Or strHinban Like "*KT-####*" Or strHinban Like "*KU-####*" Then
         ElseIf strHinban Like "*DC-####*" Or strHinban Like "*DT-####*" Or strHinban Like "*DP-####*" Or strHinban Like "*DU-####*" Or strHinban Like "*DE-####*" Or strHinban Like "*DH-####*" Or strHinban Like "*DF-####*" Or strHinban Like "*DJ-####*" Or strHinban Like "*DQ-####*" _
+                Or strHinban Like "*SH-####*" Or strHinban Like "*SF-####*" Or strHinban Like "*SJ-####*" Or strHinban Like "*SQ-####*" Or strHinban Like "*TF-####*" Or strHinban Like "*TQ-####*" _
                 Or strHinban Like "*KC-####*" Or strHinban Like "*KT-####*" Or strHinban Like "*KU-####*" Or strHinban Like "*VF-####*" Or strHinban Like "*VQ-####*" Or strHinban Like "*JC-####*" Then
         '20170105 K.Asayama Change END
         
@@ -5908,7 +6018,7 @@ Public Function bolFncKidoriData(ByVal varSpec As Variant, ByVal in_strHinban As
 '            intSode1H = 5 * intMaisu
 '        End If
 
-        intSode1H = intFncSode2Honsu_Group1(strHinban, intMaisu)
+        intSode1H = intFncSode2Honsu_Group1(strHinban, intMaisu, dblDH)
         '20161121 K.Asayama Change END
 
         '20170105 K.Asayama Change
@@ -5974,6 +6084,7 @@ Public Function bolFncKidoriData(ByVal varSpec As Variant, ByVal in_strHinban As
 '        If strHinban Like "*DC-####*" Or strHinban Like "*DT-####*" Or strHinban Like "*DP-####*" Or strHinban Like "*DU-####*" Or strHinban Like "*DE-####*" Or strHinban Like "*DH-####*" Or strHinban Like "*DF-####*" Or strHinban Like "*DJ-####*" Or strHinban Like "*DQ-####*" _
 '                Or strHinban Like "*KC-####*" Or strHinban Like "*KT-####*" Or strHinban Like "*KU-####*" Then
         ElseIf strHinban Like "*DC-####*" Or strHinban Like "*DT-####*" Or strHinban Like "*DP-####*" Or strHinban Like "*DU-####*" Or strHinban Like "*DE-####*" Or strHinban Like "*DH-####*" Or strHinban Like "*DF-####*" Or strHinban Like "*DJ-####*" Or strHinban Like "*DQ-####*" _
+                Or strHinban Like "*SH-####*" Or strHinban Like "*SF-####*" Or strHinban Like "*SJ-####*" Or strHinban Like "*SQ-####*" Or strHinban Like "*TF-####*" Or strHinban Like "*TQ-####*" _
                 Or strHinban Like "*KC-####*" Or strHinban Like "*KT-####*" Or strHinban Like "*KU-####*" Or strHinban Like "*VF-####*" Or strHinban Like "*VQ-####*" Or strHinban Like "*JC-####*" Then
         '20170105 K.Asayama Change END
         
@@ -6014,7 +6125,7 @@ Public Function bolFncKidoriData(ByVal varSpec As Variant, ByVal in_strHinban As
 '            intSode1H = 5
 '        End If
 '
-        intSode1H = intFncSode1Honsu_Group1(strHinban, intMaisu)
+        intSode1H = intFncSode1Honsu_Group1(strHinban, intMaisu, dblDH)
         '20161121 K.Asayama Change END
         '20160825 K.Asayama Change END
         
@@ -6072,7 +6183,7 @@ Public Function bolFncKidoriData(ByVal varSpec As Variant, ByVal in_strHinban As
 '            intSode1H = 5
 '        End If
         
-        intSode1H = intFncSode1Honsu_Group1(strHinban, intMaisu)
+        intSode1H = intFncSode1Honsu_Group1(strHinban, intMaisu, dblDH)
         '20161121 K.Asayama Change END
         '20160825 K.Asayama Change END
         
@@ -6130,7 +6241,7 @@ Public Function bolFncKidoriData(ByVal varSpec As Variant, ByVal in_strHinban As
 '            intSode1H = 5
 '        End If
         
-        intSode1H = intFncSode1Honsu_Group1(strHinban, intMaisu)
+        intSode1H = intFncSode1Honsu_Group1(strHinban, intMaisu, dblDH)
         '20161121 K.Asayama Change END
         '20160825 K.Asayama Change END
         
@@ -6173,7 +6284,7 @@ Public Function bolFncKidoriData(ByVal varSpec As Variant, ByVal in_strHinban As
         dblSode1 = 60
         
         
-        intSode1H = intFncSode1Honsu_Group1(strHinban, intMaisu)
+        intSode1H = intFncSode1Honsu_Group1(strHinban, intMaisu, dblDH)
 
         If strHinban Like "*DN-####*" Or strHinban Like "*VN-####*" Then
         
@@ -6203,6 +6314,8 @@ Public Function bolFncKidoriData(ByVal varSpec As Variant, ByVal in_strHinban As
         If strHinban Like "*DC-####*" Or strHinban Like "*DT-####*" Or strHinban Like "*DP-####*" Or strHinban Like "*DU-####*" Or strHinban Like "*DE-####*" _
         Or strHinban Like "*DH-####*" Or strHinban Like "*KC-####*" Or strHinban Like "*KT-####*" Or strHinban Like "*KU-####*" _
         Or strHinban Like "*DF-####*" Or strHinban Like "*DJ-####*" Or strHinban Like "*DQ-####*" _
+        Or strHinban Like "*SH-####*" Or strHinban Like "*SF-####*" Or strHinban Like "*SJ-####*" Or strHinban Like "*SQ-####*" _
+        Or strHinban Like "*TF-####*" Or strHinban Like "*TQ-####*" _
         Or strHinban Like "*VF-####*" Or strHinban Like "*VQ-####*" Or strHinban Like "*JC-####*" Then
         
             If dblDH <= 2529 Then
@@ -6225,7 +6338,7 @@ Public Function bolFncKidoriData(ByVal varSpec As Variant, ByVal in_strHinban As
         dblSode1 = 60
         intGakuYokoH1 = 3 * intMaisu
         
-        intSode1H = intFncSode1Honsu_Group1(strHinban, intMaisu)
+        intSode1H = intFncSode1Honsu_Group1(strHinban, intMaisu, dblDH)
 
         If strHinban Like "*DN-####*" Or strHinban Like "*VN-####*" Then
         
@@ -6252,6 +6365,8 @@ Public Function bolFncKidoriData(ByVal varSpec As Variant, ByVal in_strHinban As
         If strHinban Like "*DC-####*" Or strHinban Like "*DT-####*" Or strHinban Like "*DP-####*" Or strHinban Like "*DU-####*" Or strHinban Like "*DE-####*" _
         Or strHinban Like "*DH-####*" Or strHinban Like "*KC-####*" Or strHinban Like "*KT-####*" Or strHinban Like "*KU-####*" _
         Or strHinban Like "*DF-####*" Or strHinban Like "*DJ-####*" Or strHinban Like "*DQ-####*" _
+        Or strHinban Like "*SH-####*" Or strHinban Like "*SF-####*" Or strHinban Like "*SJ-####*" Or strHinban Like "*SQ-####*" _
+        Or strHinban Like "*TF-####*" Or strHinban Like "*TQ-####*" _
         Or strHinban Like "*VF-####*" Or strHinban Like "*VQ-####*" Or strHinban Like "*JC-####*" Then
         
             If dblDH <= 2529 Then
@@ -6285,18 +6400,28 @@ Public Function bolFncKidoriData(ByVal varSpec As Variant, ByVal in_strHinban As
             intSode1H = 2 * intMaisu
             dblTegake = 52.5
         Else
-            intSode1H = 3 * intMaisu
+            'intSode1H = 4 * intMaisu
             dblTegake = 50
+
+            If (IsEndWakunashi_Jou(strHinban) And Not (strHinban Like "*DN-####*-*" Or strHinban Like "*VN-####*-*")) _
+                Or (strHinban Like "*DH-####*-*" Or strHinban Like "*DF-####*-*" Or strHinban Like "*DJ-####*-*" Or strHinban Like "*DQ-####*-*" Or strHinban Like "*VF-####*-*" Or strHinban Like "*VQ-####*-*" _
+                    Or strHinban Like "*SH-####*-*" Or strHinban Like "*SF-####*-*" Or strHinban Like "*SJ-####*-*" Or strHinban Like "*SQ-####*-*" Or strHinban Like "*TF-####*-*" Or strHinban Like "*TQ-####*-*" _
+                ) Then
+                
+                Select Case dblDH
+                    Case 2530 To 2589
+                        intSode1H = 5 * intMaisu
+                        intSode2H = 5 * intMaisu
+                    Case Is <= 2529
+                        intSode1H = 6 * intMaisu
+                        intSode2H = 6 * intMaisu
+                End Select
+                
+            Else
+                intSode1H = 4 * intMaisu
+                intSode2H = 3 * intMaisu
+            End If
         End If
-        
-        If (IsEndWakunashi_Jou(strHinban) And Not (strHinban Like "*DN-####*-*" Or strHinban Like "*VN-####*-*")) _
-            Or (strHinban Like "*DH-####*-*" Or strHinban Like "*DF-####*-*" Or strHinban Like "*DJ-####*-*" Or strHinban Like "*DQ-####*-*" Or strHinban Like "*VF-####*-*" Or strHinban Like "*VQ-####*-*") Then
-            
-            intSode2H = 4 * intMaisu
-        Else
-            intSode2H = 3 * intMaisu
-        End If
-                    
         
         Select Case dblDH
             Case 2530 To 2589
@@ -6318,6 +6443,8 @@ Public Function bolFncKidoriData(ByVal varSpec As Variant, ByVal in_strHinban As
         If strHinban Like "*DC-####*" Or strHinban Like "*DT-####*" Or strHinban Like "*DP-####*" Or strHinban Like "*DU-####*" Or strHinban Like "*DE-####*" _
         Or strHinban Like "*DH-####*" Or strHinban Like "*KC-####*" Or strHinban Like "*KT-####*" Or strHinban Like "*KU-####*" _
         Or strHinban Like "*DF-####*" Or strHinban Like "*DJ-####*" Or strHinban Like "*DQ-####*" _
+        Or strHinban Like "*SH-####*" Or strHinban Like "*SF-####*" Or strHinban Like "*SJ-####*" Or strHinban Like "*SQ-####*" _
+        Or strHinban Like "*TF-####*" Or strHinban Like "*TQ-####*" _
         Or strHinban Like "*VF-####*" Or strHinban Like "*VQ-####*" Or strHinban Like "*JC-####*" Then
         
             If dblDH <= 2529 Then
@@ -6332,13 +6459,72 @@ Public Function bolFncKidoriData(ByVal varSpec As Variant, ByVal in_strHinban As
         End If
         
     '20170517 K.Asayama ADD END
+    
+    '20190122 K.Asayama ADD
+    '*RG8*********************************************************
+    ElseIf strHinban Like "R?C??*-####D*-*" Then
+        
+        dblShinAtsu = 30.2
+        dblSan = dblDW - 289
+        dblGakuYoko1 = (dblDW / 2) - 314.5
+        intHashiraH = 5 * intMaisu
+        dblSode1 = 60
+
+        intSode1H = intFncSode1Honsu_Group1(strHinban, intMaisu, dblDH)
+        
+        intSanH = 4 * intMaisu
+        dblHashira = dblDH - 114
+        
+        Select Case dblDH
+ 
+            Case 1801 To 2529
+
+                If strHinban Like "*DN-####*" Or strHinban Like "*VN-####*" Then
+
+                    intGakuYokoH1 = 2 * intMaisu
+                    intGakuYokoH2 = 2 * intMaisu
+                    dblGakuYoko2 = (dblDW / 2) - 149.5
+                Else
+                    intGakuYokoH1 = 4 * intMaisu
+                End If
+              
+            
+            Case Is <= 1800
+                
+                If strHinban Like "*DN-####*" Or strHinban Like "*VN-####*" Then
+
+                    intGakuYokoH1 = 1 * intMaisu
+                    intGakuYokoH2 = 1 * intMaisu
+                    dblGakuYoko2 = (dblDW / 2) - 149.5
+                Else
+                    intGakuYokoH1 = 2 * intMaisu
+                End If
+
+        End Select
+                
+        If strHinban Like "*DC-####*" Or strHinban Like "*DT-####*" Or strHinban Like "*DP-####*" Or strHinban Like "*DU-####*" Or strHinban Like "*DE-####*" _
+            Or strHinban Like "*KC-####*" Or strHinban Like "*KT-####*" Or strHinban Like "*KU-####*" Or strHinban Like "*JC-####*" Then
+
+            dblDaboShitaji = 150
+            intDaboShitajiH = 2 * intMaisu
+            dblCupShitaji = 35
+            intCupShitajiH = 2 * intMaisu
+ 
+        End If
+
+        If IsHidden_Hinge(strHinban) Then
+            dblGakutate1 = 210
+            intGakutateH1 = 2
+        End If
+    '20190122 K.Asayama ADD END
+    
     End If
 '   *************************************************************
 '   明り窓更新
 '   （明り窓の時は袖に２本プラス）
 '   *************************************************************
     'txt_明り窓 = "有" Or txt_明り窓 = "A" Or txt_明り窓 = "B"
-    If (strAkarimado = "有" Or strAkarimado = "A" Or strAkarimado = "B") And (Nz(intSode1H, 0) > 0) Then
+    If (strAkariMado = "有" Or strAkariMado = "A" Or strAkariMado = "B") And (Nz(intSode1H, 0) > 0) Then
         intSode1H = intSode1H + (2 * intMaisu)
     End If
     
@@ -6430,8 +6616,9 @@ Public Function bolFncKidoriData(ByVal varSpec As Variant, ByVal in_strHinban As
     
     KidoriSunpo.out_strShingumizu = IIf(strShingumizu = "", Null, strShingumizu)
     '20160825 K.Asayama Change END
-
+    
 End Function
+
 
 Public Function bolFncSan_Koteichi(ByVal in_dblDW As Double, ByVal in_dblDH As Double, ByVal in_strHinban As String, ByRef out_dblsan As Double, ByRef out_dblGakuYoko As Double, ByRef out_strShingumizu As String) As Boolean
 '   *************************************************************
@@ -6833,7 +7020,8 @@ Public Function fncstrShingumiShousai2700(in_strHinban As String, dblDH As Doubl
 '   *BF1*********************************************************
 '   *RF1*********************************************************
 '   *TF1*********************************************************
-    ElseIf strHinban Like "F?C??*-####F*-*" Or strHinban Like "B?C??*-####F*-*" Or strHinban Like "R?C??*-####F*-*" Or strHinban Like "T?C??*-####F*-*" Then
+'   *QF1*********************************************************
+    ElseIf strHinban Like "F?C??*-####F*-*" Or strHinban Like "B?C??*-####F*-*" Or strHinban Like "R?C??*-####F*-*" Or strHinban Like "T?C??*-####F*-*" Or strHinban Like "Q?C??*-####F*-*" Then
     
         If IsHirakido(strHinban) Or IsOyatobira(strHinban) Then
             strShingumi = "HPA-1"
@@ -6841,7 +7029,9 @@ Public Function fncstrShingumiShousai2700(in_strHinban As String, dblDH As Doubl
             If IsEndWakunashi(strHinban) And strHinban Like "*U-####*" And Not strHandle Like "*N" Then
                 strShingumi = "HPC-2"
                 
-            ElseIf strHinban Like "*DH-####*" Or strHinban Like "*DF-####*" Or strHinban Like "*DJ-####*" Or strHinban Like "*DQ-####*" Or strHinban Like "*VF-####*" Or strHinban Like "*VQ-####*" Then
+            ElseIf strHinban Like "*DH-####*" Or strHinban Like "*DF-####*" Or strHinban Like "*DJ-####*" Or strHinban Like "*DQ-####*" Or strHinban Like "*VF-####*" Or strHinban Like "*VQ-####*" _
+                Or strHinban Like "*SH-####*" Or strHinban Like "*SF-####*" Or strHinban Like "*SJ-####*" Or strHinban Like "*SQ-####*" Or strHinban Like "*TF-####*" Or strHinban Like "*TQ-####*" _
+            Then
                 strShingumi = "HPC-2"
             Else
                 strShingumi = "HPC-1"
@@ -6853,7 +7043,8 @@ Public Function fncstrShingumiShousai2700(in_strHinban As String, dblDH As Doubl
 '   *RG2*********************************************************
 '   *BG2*********************************************************
 '   *TG2*********************************************************
-    ElseIf strHinban Like "F?C??*-####C*-*" Or strHinban Like "R?C??*-####C*-*" Or strHinban Like "B?C??*-####C*-*" Or strHinban Like "T?C??*-####C*-*" Then
+'   *QG2*********************************************************
+    ElseIf strHinban Like "F?C??*-####C*-*" Or strHinban Like "R?C??*-####C*-*" Or strHinban Like "B?C??*-####C*-*" Or strHinban Like "T?C??*-####C*-*" Or strHinban Like "Q?C??*-####C*-*" Then
     
         If IsHirakido(strHinban) Or IsOyatobira(strHinban) Then
             strShingumi = "HGA-2"
@@ -6864,7 +7055,9 @@ Public Function fncstrShingumiShousai2700(in_strHinban As String, dblDH As Doubl
             If IsEndWakunashi(strHinban) And strHinban Like "*U-####*" And Not strHandle Like "*N" Then
                 strShingumi = "HGC-4"
                 
-            ElseIf strHinban Like "*DH-####*" Or strHinban Like "*DF-####*" Or strHinban Like "*DJ-####*" Or strHinban Like "*DQ-####*" Or strHinban Like "*VF-####*" Or strHinban Like "*VQ-####*" Then
+            ElseIf strHinban Like "*DH-####*" Or strHinban Like "*DF-####*" Or strHinban Like "*DJ-####*" Or strHinban Like "*DQ-####*" Or strHinban Like "*VF-####*" Or strHinban Like "*VQ-####*" _
+                Or strHinban Like "*SH-####*" Or strHinban Like "*SF-####*" Or strHinban Like "*SJ-####*" Or strHinban Like "*SQ-####*" Or strHinban Like "*TF-####*" Or strHinban Like "*TQ-####*" _
+            Then
                 strShingumi = "HGC-4"
             Else
                 strShingumi = "HGC-3"
@@ -6875,7 +7068,8 @@ Public Function fncstrShingumiShousai2700(in_strHinban As String, dblDH As Doubl
 '   *BG1*********************************************************
 '   *TG1*********************************************************
 '   *RG1*********************************************************
-    ElseIf strHinban Like "F?C??*-####S*-*" Or strHinban Like "B?C??*-####S*-*" Or strHinban Like "T?C??*-####S*-*" Or strHinban Like "R?C??*-####S*-*" Then
+'   *QG1*********************************************************
+    ElseIf strHinban Like "F?C??*-####S*-*" Or strHinban Like "B?C??*-####S*-*" Or strHinban Like "T?C??*-####S*-*" Or strHinban Like "R?C??*-####S*-*" Or strHinban Like "Q?C??*-####S*-*" Then
       
         If IsHirakido(strHinban) Or IsOyatobira(strHinban) Then
               strShingumi = "HGA-1"
@@ -6886,7 +7080,9 @@ Public Function fncstrShingumiShousai2700(in_strHinban As String, dblDH As Doubl
             If IsEndWakunashi(strHinban) And strHinban Like "*U-####*" And Not strHandle Like "*N" Then
                 strShingumi = "HGC-2"
                 
-            ElseIf strHinban Like "*DH-####*" Or strHinban Like "*DF-####*" Or strHinban Like "*DJ-####*" Or strHinban Like "*DQ-####*" Or strHinban Like "*VF-####*" Or strHinban Like "*VQ-####*" Then
+            ElseIf strHinban Like "*DH-####*" Or strHinban Like "*DF-####*" Or strHinban Like "*DJ-####*" Or strHinban Like "*DQ-####*" Or strHinban Like "*VF-####*" Or strHinban Like "*VQ-####*" _
+                Or strHinban Like "*SH-####*" Or strHinban Like "*SF-####*" Or strHinban Like "*SJ-####*" Or strHinban Like "*SQ-####*" Or strHinban Like "*TF-####*" Or strHinban Like "*TQ-####*" _
+            Then
                 strShingumi = "HGC-2"
             Else
                 strShingumi = "HGC-1"
@@ -6905,7 +7101,9 @@ Public Function fncstrShingumiShousai2700(in_strHinban As String, dblDH As Doubl
             If IsEndWakunashi(strHinban) And strHinban Like "*U-####*" And Not strHandle Like "*N" Then
                 strShingumi = "HGC-6"
                 
-            ElseIf strHinban Like "*DH-####*" Or strHinban Like "*DF-####*" Or strHinban Like "*DJ-####*" Or strHinban Like "*DQ-####*" Or strHinban Like "*VF-####*" Or strHinban Like "*VQ-####*" Then
+            ElseIf strHinban Like "*DH-####*" Or strHinban Like "*DF-####*" Or strHinban Like "*DJ-####*" Or strHinban Like "*DQ-####*" Or strHinban Like "*VF-####*" Or strHinban Like "*VQ-####*" _
+                Or strHinban Like "*SH-####*" Or strHinban Like "*SF-####*" Or strHinban Like "*SJ-####*" Or strHinban Like "*SQ-####*" Or strHinban Like "*TF-####*" Or strHinban Like "*TQ-####*" _
+            Then
                 strShingumi = "HGC-6"
             Else
                 strShingumi = "HGC-5"
@@ -6922,7 +7120,9 @@ Public Function fncstrShingumiShousai2700(in_strHinban As String, dblDH As Doubl
             If IsEndWakunashi(strHinban) And strHinban Like "*U-####*" And Not strHandle Like "*N" Then
                 strShingumi = "HGC-8"
                 
-            ElseIf strHinban Like "*DH-####*" Or strHinban Like "*DF-####*" Or strHinban Like "*DJ-####*" Or strHinban Like "*DQ-####*" Or strHinban Like "*VF-####*" Or strHinban Like "*VQ-####*" Then
+            ElseIf strHinban Like "*DH-####*" Or strHinban Like "*DF-####*" Or strHinban Like "*DJ-####*" Or strHinban Like "*DQ-####*" Or strHinban Like "*VF-####*" Or strHinban Like "*VQ-####*" _
+                Or strHinban Like "*SH-####*" Or strHinban Like "*SF-####*" Or strHinban Like "*SJ-####*" Or strHinban Like "*SQ-####*" Or strHinban Like "*TF-####*" Or strHinban Like "*TQ-####*" _
+            Then
                 strShingumi = "HGC-8"
             Else
                 strShingumi = "HGC-7"
@@ -6939,7 +7139,9 @@ Public Function fncstrShingumiShousai2700(in_strHinban As String, dblDH As Doubl
             If IsEndWakunashi(strHinban) And strHinban Like "*U-####*" And Not strHandle Like "*N" Then
                 strShingumi = "HPC-6"
                 
-            ElseIf strHinban Like "*DH-####*" Or strHinban Like "*DF-####*" Or strHinban Like "*DJ-####*" Or strHinban Like "*DQ-####*" Or strHinban Like "*VF-####*" Or strHinban Like "*VQ-####*" Then
+            ElseIf strHinban Like "*DH-####*" Or strHinban Like "*DF-####*" Or strHinban Like "*DJ-####*" Or strHinban Like "*DQ-####*" Or strHinban Like "*VF-####*" Or strHinban Like "*VQ-####*" _
+                Or strHinban Like "*SH-####*" Or strHinban Like "*SF-####*" Or strHinban Like "*SJ-####*" Or strHinban Like "*SQ-####*" Or strHinban Like "*TF-####*" Or strHinban Like "*TQ-####*" _
+            Then
                 strShingumi = "HPC-6"
             Else
                 strShingumi = "HPC-5"
@@ -6956,7 +7158,9 @@ Public Function fncstrShingumiShousai2700(in_strHinban As String, dblDH As Doubl
             If IsEndWakunashi(strHinban) And strHinban Like "*U-####*" And Not strHandle Like "*N" Then
                 strShingumi = "HPC-4"
                 
-            ElseIf strHinban Like "*DH-####*" Or strHinban Like "*DF-####*" Or strHinban Like "*DJ-####*" Or strHinban Like "*DQ-####*" Or strHinban Like "*VF-####*" Or strHinban Like "*VQ-####*" Then
+            ElseIf strHinban Like "*DH-####*" Or strHinban Like "*DF-####*" Or strHinban Like "*DJ-####*" Or strHinban Like "*DQ-####*" Or strHinban Like "*VF-####*" Or strHinban Like "*VQ-####*" _
+                Or strHinban Like "*SH-####*" Or strHinban Like "*SF-####*" Or strHinban Like "*SJ-####*" Or strHinban Like "*SQ-####*" Or strHinban Like "*TF-####*" Or strHinban Like "*TQ-####*" _
+            Then
                 strShingumi = "HPC-4"
             Else
                 strShingumi = "HPC-3"
@@ -6969,7 +7173,9 @@ Public Function fncstrShingumiShousai2700(in_strHinban As String, dblDH As Doubl
         If IsEndWakunashi(strHinban) And strHinban Like "*U-####*" And Not strHandle Like "*N" Then
                 strShingumi = "HPC-8"
                 
-            ElseIf strHinban Like "*DH-####*" Or strHinban Like "*DF-####*" Or strHinban Like "*DJ-####*" Or strHinban Like "*DQ-####*" Or strHinban Like "*VF-####*" Or strHinban Like "*VQ-####*" Then
+            ElseIf strHinban Like "*DH-####*" Or strHinban Like "*DF-####*" Or strHinban Like "*DJ-####*" Or strHinban Like "*DQ-####*" Or strHinban Like "*VF-####*" Or strHinban Like "*VQ-####*" _
+                Or strHinban Like "*SH-####*" Or strHinban Like "*SF-####*" Or strHinban Like "*SJ-####*" Or strHinban Like "*SQ-####*" Or strHinban Like "*TF-####*" Or strHinban Like "*TQ-####*" _
+            Then
                 strShingumi = "HPC-8"
             Else
                 strShingumi = "HPC-7"
@@ -7063,7 +7269,8 @@ Public Function fncstrShingumiShousai(in_strHinban As String, dblDH As Double) A
 '   *RF1*********************************************************
 '   *XF1*********************************************************
 '   *TF1*********************************************************
-    ElseIf in_strHinban Like "*F?C??*-####F*-*" Or in_strHinban Like "*B?C??*-####F*-*" Or in_strHinban Like "*R?C??*-####F*-*" Or in_strHinban Like "*X?C??*-####F*-*" Or in_strHinban Like "*T?C??*-####F*-*" Then
+'   *QF1*********************************************************
+    ElseIf in_strHinban Like "*F?C??*-####F*-*" Or in_strHinban Like "*B?C??*-####F*-*" Or in_strHinban Like "*R?C??*-####F*-*" Or in_strHinban Like "*X?C??*-####F*-*" Or in_strHinban Like "*T?C??*-####F*-*" Or in_strHinban Like "*Q?C??*-####F*-*" Then
     
         If IsHirakido(in_strHinban) Or IsOyatobira(in_strHinban) Or IsKotobira(in_strHinban) Then
             strShingumi = "PAS"
@@ -7085,7 +7292,8 @@ Public Function fncstrShingumiShousai(in_strHinban As String, dblDH As Double) A
 '   *AG2*********************************************************
 '   *XG2*********************************************************
 '   *TG2*********************************************************
-    ElseIf in_strHinban Like "*F?C??*-####C*-*" Or in_strHinban Like "*R?C??*-####C*-*" Or in_strHinban Like "*B?C??*-####C*-*" Or in_strHinban Like "*F?C??*-####A*-*" Or in_strHinban Like "*F?C??*-####B*-*" Or in_strHinban Like "*X?C??*-####C*-*" Or in_strHinban Like "*T?C??*-####C*-*" Then
+'   *QG2*********************************************************
+    ElseIf in_strHinban Like "*F?C??*-####C*-*" Or in_strHinban Like "*R?C??*-####C*-*" Or in_strHinban Like "*B?C??*-####C*-*" Or in_strHinban Like "*F?C??*-####A*-*" Or in_strHinban Like "*F?C??*-####B*-*" Or in_strHinban Like "*X?C??*-####C*-*" Or in_strHinban Like "*T?C??*-####C*-*" Or in_strHinban Like "*Q?C??*-####C*-*" Then
     
         If IsHirakido(in_strHinban) Or IsOyatobira(in_strHinban) Or IsKotobira(in_strHinban) Then
             strShingumi = "GAS"
@@ -7124,8 +7332,8 @@ Public Function fncstrShingumiShousai(in_strHinban As String, dblDH As Double) A
                 strShingumi = strShingumi & "-3"
         End Select
         
-'   *CG8/EG8/ZG8*************************************************
-    ElseIf in_strHinban Like "*F?C??*-####D*-*" Then
+'   *CG8/EG8/ZG8/QG8*********************************************
+    ElseIf in_strHinban Like "*F?C??*-####D*-*" Or in_strHinban Like "*Q?C??*-####D*-*" Then
     
         If IsHirakido(in_strHinban) Or IsOyatobira(in_strHinban) Or IsKotobira(in_strHinban) Then
             strShingumi = "GAS"
@@ -7150,7 +7358,8 @@ Public Function fncstrShingumiShousai(in_strHinban As String, dblDH As Double) A
 '   *XG1*********************************************************
 '   *TG1*********************************************************
 '   *RG1*********************************************************
-    ElseIf in_strHinban Like "*F?C??*-####S*-*" Or in_strHinban Like "*B?C??*-####S*-*" Or in_strHinban Like "*X?C??*-####S*-*" Or in_strHinban Like "*T?C??*-####S*-*" Or in_strHinban Like "*R?C??*-####S*-*" Then
+'   *QG1*********************************************************
+    ElseIf in_strHinban Like "*F?C??*-####S*-*" Or in_strHinban Like "*B?C??*-####S*-*" Or in_strHinban Like "*X?C??*-####S*-*" Or in_strHinban Like "*T?C??*-####S*-*" Or in_strHinban Like "*R?C??*-####S*-*" Or in_strHinban Like "*Q?C??*-####S*-*" Then
     
         If IsHirakido(in_strHinban) Or IsOyatobira(in_strHinban) Or IsKotobira(in_strHinban) Then
             strShingumi = "GAS"
@@ -7617,7 +7826,9 @@ Public Function fncstrShingumiShousai(in_strHinban As String, dblDH As Double) A
                     End If
                 Else
                     If (IsEndWakunashi_Jou(in_strHinban) And Not (in_strHinban Like "*DN-####*-*" Or in_strHinban Like "*VN-####*-*")) _
-                     Or (in_strHinban Like "*DH-####*-*" Or in_strHinban Like "*DF-####*-*" Or in_strHinban Like "*DJ-####*-*" Or in_strHinban Like "*DQ-####*-*" Or in_strHinban Like "*VF-####*-*" Or in_strHinban Like "*VQ-####*-*") Then
+                     Or (in_strHinban Like "*DH-####*-*" Or in_strHinban Like "*DF-####*-*" Or in_strHinban Like "*DJ-####*-*" Or in_strHinban Like "*DQ-####*-*" Or in_strHinban Like "*VF-####*-*" Or in_strHinban Like "*VQ-####*-*" _
+                        Or in_strHinban Like "*SH-####*-*" Or in_strHinban Like "*SF-####*" Or in_strHinban Like "*SJ-####*-*" Or in_strHinban Like "*SQ-####*-*" Or in_strHinban Like "*TF-####*-*" Or in_strHinban Like "*TQ-####*-*" _
+                     ) Then
                         strShingumi = strShingumi & "-29"
                     Else
                         strShingumi = strShingumi & "-28"
@@ -7633,7 +7844,9 @@ Public Function fncstrShingumiShousai(in_strHinban As String, dblDH As Double) A
                     End If
                 Else
                     If (IsEndWakunashi_Jou(in_strHinban) And Not (in_strHinban Like "*DN-####*-*" Or in_strHinban Like "*VN-####*-*")) _
-                     Or (in_strHinban Like "*DH-####*-*" Or in_strHinban Like "*DF-####*-*" Or in_strHinban Like "*DJ-####*-*" Or in_strHinban Like "*DQ-####*-*" Or in_strHinban Like "*VF-####*-*" Or in_strHinban Like "*VQ-####*-*") Then
+                     Or (in_strHinban Like "*DH-####*-*" Or in_strHinban Like "*DF-####*-*" Or in_strHinban Like "*DJ-####*-*" Or in_strHinban Like "*DQ-####*-*" Or in_strHinban Like "*VF-####*-*" Or in_strHinban Like "*VQ-####*-*" _
+                        Or in_strHinban Like "*SH-####*-*" Or in_strHinban Like "*SF-####*-*" Or in_strHinban Like "*SJ-####*-*" Or in_strHinban Like "*SQ-####*-*" Or in_strHinban Like "*TF-####*-*" Or in_strHinban Like "*TQ-####*-*" _
+                     ) Then
                         strShingumi = strShingumi & "-27"
                     Else
                         strShingumi = strShingumi & "-26"
@@ -7665,6 +7878,21 @@ Public Function fncstrShingumiShousai(in_strHinban As String, dblDH As Double) A
                 End If
         End Select
 '20170517 K.Asayama ADD END
+'20190219 K.Asayama ADD
+'   *RG8*********************************************************
+    ElseIf in_strHinban Like "R?C??*-####D*-*" Then
+    
+        If IsHirakido(in_strHinban) Then
+            strShingumi = "GAS"
+        Else
+            strShingumi = "GCS"
+        End If
+        
+        Select Case dblDH
+            Case Is <= 2529
+                strShingumi = strShingumi & "-3"
+        End Select
+'20190219 K.Asayama ADD END
     End If
     
     '20161121 K.Asayama ADD
@@ -7681,7 +7909,9 @@ Public Function fncstrShingumiShousai(in_strHinban As String, dblDH As Double) A
         '20170105 K.Asayama Change
         'If (IsEndWakunashi_Jou(in_strHinban) And Not in_strHinban Like "*DN-####*-*") Or (in_strHinban Like "*DH-####*-*" Or in_strHinban Like "*DF-####*-*" Or in_strHinban Like "*DJ-####*-*" Or in_strHinban Like "*DQ-####*-*") Then
         '   strShingumi = strShingumi & "A"
-        If IsEndWakunashi_Jou(in_strHinban) Or (in_strHinban Like "*DH-####*-*" Or in_strHinban Like "*DF-####*-*" Or in_strHinban Like "*DJ-####*-*" Or in_strHinban Like "*DQ-####*-*" Or in_strHinban Like "*VF-####*-*" Or in_strHinban Like "*VQ-####*-*") Then
+        If IsEndWakunashi_Jou(in_strHinban) Or (in_strHinban Like "*DH-####*-*" Or in_strHinban Like "*DF-####*-*" Or in_strHinban Like "*DJ-####*-*" Or in_strHinban Like "*DQ-####*-*" Or in_strHinban Like "*VF-####*-*" Or in_strHinban Like "*VQ-####*-*" _
+            Or in_strHinban Like "*SH-####*-*" Or in_strHinban Like "*SF-####*-*" Or in_strHinban Like "*SJ-####*-*" Or in_strHinban Like "*SQ-####*-*" Or in_strHinban Like "*TF-####*-*" Or in_strHinban Like "*TQ-####*-*" _
+        ) Then
         
             If in_strHinban Like "*DN-####*-*" Or in_strHinban Like "*VN-####*-*" Then
                 '何もしない
@@ -7838,7 +8068,7 @@ Err_IsEndWakunashi_Jou:
 
 End Function
 
-Private Function intFncSode1Honsu_Group1(in_varHinban As Variant, in_Maisu As Integer) As Integer
+Private Function intFncSode1Honsu_Group1(in_varHinban As Variant, in_Maisu As Integer, in_DH As Double) As Integer
 '   *************************************************************
 '   袖1本数集計グループ1
 '   'ADD by Asayama 20161121
@@ -7852,6 +8082,7 @@ Private Function intFncSode1Honsu_Group1(in_varHinban As Variant, in_Maisu As In
 '    Input項目
 '       in_strHinban        建具品番
 '       in_Maisu            建具枚数
+'       in_DH               DH(20190219 ADD)
 '
 '****************************************************************
 
@@ -7884,18 +8115,32 @@ Private Function intFncSode1Honsu_Group1(in_varHinban As Variant, in_Maisu As In
             intHonsu = 2 * in_Maisu
         End If
         
-    'アウトセットエンド枠なし錠付例外(DU,KU)
-    ElseIf IsEndWakunashi_Jou(strHinban) Then
-        intHonsu = 4 * in_Maisu
+'    'アウトセットエンド枠なし錠付例外(DU,KU)
+'    ElseIf IsEndWakunashi_Jou(strHinban) Then
+'        intHonsu = 4 * in_Maisu
     
     'DHと3枚扉例外
     '20170105 K.Asayama Change
 '    ElseIf strHinban Like "*DH-####*-*" Or strHinban Like "*DF-####*-*" Or strHinban Like "*DJ-####*-*" Or strHinban Like "*DQ-####*-*" Then
-    ElseIf strHinban Like "*DH-####*-*" Or strHinban Like "*DF-####*-*" Or strHinban Like "*DJ-####*-*" Or strHinban Like "*DQ-####*-*" Or strHinban Like "*VF-####*-*" Or strHinban Like "*VQ-####*-*" Then
-    '20170105 K.Asayama Change END
-    
-        intHonsu = 4 * in_Maisu
-    
+'20190219 K.Asayama Change 1901仕様
+'    ElseIf strHinban Like "*DH-####*-*" Or strHinban Like "*DF-####*-*" Or strHinban Like "*DJ-####*-*" Or strHinban Like "*DQ-####*-*" Or strHinban Like "*VF-####*-*" Or strHinban Like "*VQ-####*-*" Then
+'    '20170105 K.Asayama Change END
+'
+'        intHonsu = 4 * in_Maisu
+        
+    ElseIf IsEndWakunashi_Jou(strHinban) Or strHinban Like "*DH-####*-*" Or strHinban Like "*DF-####*-*" Or strHinban Like "*DJ-####*-*" Or strHinban Like "*DQ-####*-*" Or strHinban Like "*VF-####*-*" Or strHinban Like "*VQ-####*-*" _
+         Or strHinban Like "*SH-####*-*" Or strHinban Like "*SF-####*-*" Or strHinban Like "*SJ-####*-*" Or strHinban Like "*SQ-####*-*" Or strHinban Like "*TF-####*-*" Or strHinban Like "*TQ-####*-*" _
+    Then
+        Select Case in_DH
+
+            Case 2530 To 2689
+                intHonsu = 6 * in_Maisu
+                
+            Case Else
+                intHonsu = 8 * in_Maisu
+                
+        End Select
+
     Else
         intHonsu = 5 * in_Maisu
     End If
@@ -7909,11 +8154,77 @@ Err_intFncSode1Honsu_Group1:
     
 End Function
 
-Private Function intFncSode2Honsu_Group1(in_varHinban As Variant, in_Maisu As Integer) As Integer
+Private Function intFncSode1Honsu_Group2(in_varHinban As Variant, in_Maisu As Integer, in_DH As Double) As Integer
+'   *************************************************************
+'   袖1本数集計グループ2
+'   'ADD by Asayama 20190219
+    
+'   対象グループ
+        '[CETRB]G1 長さ90
+'
+'   戻り値:Integer
+'       →                  袖1本数
+'
+'    Input項目
+'       in_strHinban        建具品番
+'       in_Maisu            建具枚数
+'       in_DH               DH
+'
+'****************************************************************
+
+    Dim strHinban As String
+    Dim intHonsu As Integer
+    
+    On Error GoTo Err_intFncSode1Honsu_Group2
+        
+    intFncSode1Honsu_Group2 = 0
+    
+    If IsNull(in_varHinban) Then Exit Function
+    
+    strHinban = Replace(in_varHinban, "特 ", "")
+    
+    'Monster
+'    If IsMonster(strHinban) Then
+'        intHonsu = X * in_Maisu
+'
+    If IsHikido(strHinban) Then
+        'DN例外
+        If strHinban Like "*DN-####*-*" Or strHinban Like "*VN-####*-*" Then
+            intHonsu = 4 * in_Maisu
+            
+        ElseIf IsEndWakunashi_Jou(strHinban) Or strHinban Like "*DH-####*-*" Or strHinban Like "*DF-####*-*" Or strHinban Like "*DJ-####*-*" Or strHinban Like "*DQ-####*-*" Or strHinban Like "*VF-####*-*" Or strHinban Like "*VQ-####*-*" _
+         Or strHinban Like "*SH-####*-*" Or strHinban Like "*SF-####*-*" Or strHinban Like "*SJ-####*-*" Or strHinban Like "*SQ-####*-*" Or strHinban Like "*TF-####*-*" Or strHinban Like "*TQ-####*-*" _
+        Then
+            Select Case in_DH
+    
+                Case 2530 To 2689
+                    intHonsu = 5 * in_Maisu
+                    
+                Case Else
+                    intHonsu = 6 * in_Maisu
+                    
+            End Select
+        Else
+            intHonsu = 4 * in_Maisu
+        End If
+    Else
+        intHonsu = 2 * in_Maisu
+    End If
+
+    intFncSode1Honsu_Group2 = intHonsu
+    
+    Exit Function
+    
+Err_intFncSode1Honsu_Group2:
+    intFncSode1Honsu_Group2 = 0
+    
+End Function
+
+Private Function intFncSode2Honsu_Group1(in_varHinban As Variant, in_Maisu As Integer, in_DH As Double) As Integer
 '   *************************************************************
 '   袖2本数集計グループ1
 '   'ADD by Asayama 20161121
-    
+    '[CETRB]G1は長さ60
 
 '
 '   戻り値:Integer
@@ -7945,17 +8256,26 @@ Private Function intFncSode2Honsu_Group1(in_varHinban As Variant, in_Maisu As In
         intHonsu = 3 * in_Maisu
         
     'アウトセットエンド枠なし錠付例外(DU,KU)
-    ElseIf IsEndWakunashi_Jou(strHinban) Then
-        intHonsu = 5 * in_Maisu
+'    ElseIf IsEndWakunashi_Jou(strHinban) Then
+'        intHonsu = 5 * in_Maisu
     
     'DHと3枚扉例外
     '20170105 K.Asayama Change
 '    ElseIf strHinban Like "*DH-####*-*" Or strHinban Like "*DF-####*-*" Or strHinban Like "*DJ-####*-*" Or strHinban Like "*DQ-####*-*" Then
-    ElseIf strHinban Like "*DH-####*-*" Or strHinban Like "*DF-####*-*" Or strHinban Like "*DJ-####*-*" Or strHinban Like "*DQ-####*-*" Or strHinban Like "*VF-####*-*" Or strHinban Like "*VQ-####*-*" Then
+    ElseIf IsEndWakunashi_Jou(strHinban) Or strHinban Like "*DH-####*-*" Or strHinban Like "*DF-####*-*" Or strHinban Like "*DJ-####*-*" Or strHinban Like "*DQ-####*-*" Or strHinban Like "*VF-####*-*" Or strHinban Like "*VQ-####*-*" _
+        Or strHinban Like "*SH-####*-*" Or strHinban Like "*SF-####*-*" Or strHinban Like "*SJ-####*-*" Or strHinban Like "*SQ-####*-*" Or strHinban Like "*TF-####*-*" Or strHinban Like "*TQ-####*-*" _
+    Then
     '20170105 K.Asayama Change END
+
+            Select Case in_DH
     
-        intHonsu = 5 * in_Maisu
-    
+                Case 2530 To 2689
+                    intHonsu = 6 * in_Maisu
+                    
+                Case Else
+                    intHonsu = 7 * in_Maisu
+            End Select
+
     Else
         intHonsu = 6 * in_Maisu
     End If
@@ -7968,6 +8288,7 @@ Err_intFncSode2Honsu_Group1:
     intFncSode2Honsu_Group1 = 0
     
 End Function
+
 
 Private Function intFncSode2Honsu_Group2(in_varHinban As Variant, in_Maisu As Integer) As Integer
 '   *************************************************************

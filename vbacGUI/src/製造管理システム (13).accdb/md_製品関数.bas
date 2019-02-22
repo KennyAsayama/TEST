@@ -1107,6 +1107,8 @@ Public Function IsPainted(in_strHinban As Variant) As Boolean
 '           →リアラート新色追加
 '   2.1.1
 '           →1801新色先行追加
+'   2.13.0
+'       →1901新色追加
 '   *************************************************************
     On Error GoTo Err_IsPainted
     
@@ -1132,6 +1134,10 @@ Public Function IsPainted(in_strHinban As Variant) As Boolean
     End If
     
     If in_strHinban Like "*-####*-*(NT)*" Or in_strHinban Like "*-####*-*(NY)*" Then
+        IsPainted = True
+    End If
+    
+    If in_strHinban Like "*-####*-*(NI)*" Or in_strHinban Like "*-####*-*(NM)*" Then
         IsPainted = True
     End If
     
@@ -2025,6 +2031,8 @@ Public Function IsHikido(ByVal in_varHinban As Variant) As Boolean
 '   →1801仕様追加
 '2.7.0
 '   →1808仕様追加
+'2.13.0
+'   →1901仕様追加
 '   *************************************************************
 
     IsHikido = False
@@ -2044,7 +2052,10 @@ Public Function IsHikido(ByVal in_varHinban As Variant) As Boolean
         in_varHinban Like "*VF-####*" Or in_varHinban Like "*VQ-####*" Or _
         in_varHinban Like "*VI-####*" Or in_varHinban Like "*VG-####*" Or _
         in_varHinban Like "*JC-####*" Or in_varHinban Like "*GU-####*" Or _
-        in_varHinban Like "*DY-####*" _
+        in_varHinban Like "*SH-####*" Or in_varHinban Like "*SJ-####*" Or _
+        in_varHinban Like "*SF-####*" Or in_varHinban Like "*SQ-####*" Or _
+        in_varHinban Like "*TF-####*" Or in_varHinban Like "*TQ-####*" Or _
+        in_varHinban Like "*DY-####*" Or in_varHinban Like "*SY-####*" _
     Then
 
         IsHikido = True
@@ -2692,6 +2703,8 @@ Public Function IsRendouTategu(in_varHinban As Variant) As Boolean
 '       in_varHinban        建具品番
 
 '   2.5.0 ADD
+'   2.13.0
+'   →1901仕様追加
 '   *************************************************************
     Dim strHinban As String
     
@@ -2704,6 +2717,8 @@ Public Function IsRendouTategu(in_varHinban As Variant) As Boolean
     strHinban = Replace(in_varHinban, "特 ", "")
     
     If strHinban Like "*VF-####*-*" Or strHinban Like "*DF-####*-*" Or strHinban Like "*DH-####*-*" Or strHinban Like "*DJ-####*-*" Then
+        IsRendouTategu = True
+    ElseIf strHinban Like "*TF-####*-*" Or strHinban Like "*SF-####*-*" Or strHinban Like "*SH-####*-*" Or strHinban Like "*SJ-####*-*" Then
         IsRendouTategu = True
     End If
     
@@ -2726,6 +2741,8 @@ Public Function IsHiRendouTategu(in_varHinban As Variant) As Boolean
 '       in_varHinban        建具品番
 
 '   2.5.0 ADD
+'   2.13.0
+'   →1901仕様追加
 '   *************************************************************
     Dim strHinban As String
     
@@ -2737,7 +2754,7 @@ Public Function IsHiRendouTategu(in_varHinban As Variant) As Boolean
 
     strHinban = Replace(in_varHinban, "特 ", "")
     
-    If strHinban Like "*DQ-####*-*" Or strHinban Like "*VQ-####*-*" Then
+    If strHinban Like "*DQ-####*-*" Or strHinban Like "*VQ-####*-*" Or strHinban Like "*SQ-####*-*" Or strHinban Like "*TQ-####*-*" Then
         IsHiRendouTategu = True
     End If
     
@@ -2905,4 +2922,220 @@ Public Function IsFullGlass(in_varHinban As Variant) As Boolean
 Err_IsFullglass:
     IsFullGlass = False
     
+End Function
+
+Public Function IsSynchro(in_varHinban As Variant) As Boolean
+'   *************************************************************
+'   シンクロ扉確認
+'
+'   戻り値:Boolean
+'       →True              シンクロ扉
+'       →False             シンクロ扉以外
+'
+'    Input項目
+'       in_varHinban        建具品番/枠品番/下地品番
+
+'   2.13.0 ADD
+'   *************************************************************
+
+    Dim strHinban As String
+    
+    On Error GoTo Err_IsSynchro
+    
+    IsSynchro = False
+    
+    If IsNull(in_varHinban) Then Exit Function
+    
+    strHinban = Replace(in_varHinban, "特 ", "")
+    
+    If strHinban Like "*SH-####*" Or strHinban Like "*SJ-####*" Or strHinban Like "*SY-####*" Or strHinban Like "*SF-####*" Or strHinban Like "*TF-####*" Then
+        IsSynchro = True
+    Else
+        IsSynchro = False
+    End If
+    
+    Exit Function
+
+Err_IsSynchro:
+    IsSynchro = False
+End Function
+
+Public Function IsVertica_Maisu(in_varHinban As Variant, in_Maisu As Variant) As Integer
+'   *************************************************************
+'   ヴェルチカ建具枚数
+'
+'   戻り値:Integer
+'       →                  ヴェルチカ加工建具枚数
+'
+'    Input項目
+'       in_varHinban        建具品番
+'       in_Maisu            建具枚数
+
+'   2.13.0 ADD
+'   *************************************************************
+
+    Dim strHinban As String
+    
+    On Error GoTo Err_IsVertica_Maisu
+    
+    IsVertica_Maisu = 0
+    
+    If IsNull(in_varHinban) Then
+        IsVertica_Maisu = 0
+        Exit Function
+    End If
+    
+    If IsNull(in_Maisu) Then
+        IsVertica_Maisu = 0
+        Exit Function
+    End If
+    
+    If in_Maisu < 1 Then
+        IsVertica_Maisu = 0
+        Exit Function
+    End If
+    
+    If Not IsVertica(in_varHinban) Then
+        IsVertica_Maisu = 0
+        Exit Function
+    End If
+    
+    If Not IsSynchro(in_varHinban) Then
+        IsVertica_Maisu = in_Maisu
+        Exit Function
+    End If
+    
+    strHinban = Replace(in_varHinban, "特 ", "")
+    
+    If strHinban Like "*SH-####*" Or strHinban Like "*SJ-####*" Or strHinban Like "*SY-####*" Then
+        IsVertica_Maisu = 1
+        
+    ElseIf strHinban Like "*SF-####*" Or strHinban Like "*TF-####*" Then
+            
+        If in_Maisu > 1 Then
+            IsVertica_Maisu = 2
+        Else
+            IsVertica_Maisu = 1
+        End If
+    
+    Else
+        IsVertica_Maisu = in_Maisu
+        
+    End If
+    
+    Exit Function
+
+Err_IsVertica_Maisu:
+    IsVertica_Maisu = 0
+End Function
+
+Public Function strFncSynchro_ShitaanaKakou(in_varHinban As Variant, in_varTobiraIchi As Variant, in_varSpec As Variant, Optional in_SekkeiBikou As Variant) As String
+'   *************************************************************
+'   シンクロキャッチ下穴加工確認
+'
+'   戻り値:String
+'       →「7・31」又は「57・81」   加工あり
+'       →空欄                      加工なし
+'
+'    Input項目
+'       in_varHinban        建具品番
+'       in_varTobiraIchi    扉位置（右、中、左）、それ以外は無条件に空欄を返す
+'       in_varSpec          個別Spec        201901**時点では使用しない
+'       in_SekkeiBikou      建具設計備考    201901**時点では使用しない
+        
+'   2.13.0 ADD
+'   *************************************************************
+    
+    Dim objTateguHinban As cls_建具品番
+    Dim strHinban As String
+    Dim strTsurimoto As String
+    
+    strFncSynchro_ShitaanaKakou = ""
+    
+    If IsNull(in_varHinban) Then Exit Function
+    If IsNull(in_varTobiraIchi) Then Exit Function
+    
+    If in_varTobiraIchi <> "右" And in_varTobiraIchi <> "中" And in_varTobiraIchi <> "左" Then Exit Function
+    
+    Set objTateguHinban = New cls_建具品番
+    
+    On Error GoTo Err_strFncSynchro_ShitaanaKakou
+    
+    strHinban = in_varHinban
+    
+    With objTateguHinban
+        If .IsTateguHinban(strHinban) Then
+            
+            strTsurimoto = .吊元(strHinban)
+            
+            Select Case .開閉様式(strHinban)
+            
+                Case "SH"
+                    If strTsurimoto = "L" And in_varTobiraIchi = "左" Then
+                        strFncSynchro_ShitaanaKakou = "7・31"
+                        
+                    ElseIf strTsurimoto = "R" And in_varTobiraIchi = "右" Then
+                        strFncSynchro_ShitaanaKakou = "7・31"
+                        
+                    End If
+                    
+                Case "SJ"
+                
+                    If in_varTobiraIchi = "中" Then
+                        strFncSynchro_ShitaanaKakou = "57・81"
+                        
+                    ElseIf strTsurimoto = "L" Then
+                        If in_varTobiraIchi = "左" Then
+                            strFncSynchro_ShitaanaKakou = "7・31"
+                        Else
+                            strFncSynchro_ShitaanaKakou = "57・81"
+                        End If
+                        
+                    ElseIf strTsurimoto = "R" Then
+                        If in_varTobiraIchi = "右" Then
+                            strFncSynchro_ShitaanaKakou = "7・31"
+                        Else
+                            strFncSynchro_ShitaanaKakou = "57・81"
+                        End If
+                        
+                    End If
+                
+                Case "SF", "TF"
+                
+                    If in_varTobiraIchi <> "中" Then
+                        strFncSynchro_ShitaanaKakou = "7・31"
+                    End If
+                    
+                Case "SY"
+                
+                    If strTsurimoto = "L" Then
+                        If in_varTobiraIchi = "左" Then
+                            strFncSynchro_ShitaanaKakou = "7・31"
+                        Else
+                            strFncSynchro_ShitaanaKakou = "57・81"
+                        End If
+                        
+                    ElseIf strTsurimoto = "R" Then
+                        If in_varTobiraIchi = "右" Then
+                            strFncSynchro_ShitaanaKakou = "7・31"
+                        Else
+                            strFncSynchro_ShitaanaKakou = "57・81"
+                        End If
+                        
+                    End If
+                    
+            End Select
+        
+        End If
+    
+    End With
+
+    GoTo Exit_strFncSynchro_ShitaanaKakou
+    
+Err_strFncSynchro_ShitaanaKakou:
+    MsgBox Err.Description, vbCritical
+
+Exit_strFncSynchro_ShitaanaKakou:
+    Set objTateguHinban = Nothing
+
 End Function

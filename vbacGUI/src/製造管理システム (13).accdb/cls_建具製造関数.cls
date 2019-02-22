@@ -1003,9 +1003,16 @@ Public Property Get •\–ÊŞŒú‚İ2() As Variant
 End Property
 
 Public Property Get c‘gÚ×}() As String
-    
+   
+'2.13.0
+'   ¨H2700‚ª˜R‚ê‚Ä‚¢‚½‚½‚ß’Ç‰Á
+
     With inArgument
-        c‘gÚ×} = fncstrShingumiShousai(.inŒŸõ•i”Ô, .inDH)
+        If .inDH > 2589 Then
+            c‘gÚ×} = fncstrShingumiShousai2700(.inŒŸõ•i”Ô, .inDH, .in{ù)
+        Else
+            c‘gÚ×} = fncstrShingumiShousai(.inŒŸõ•i”Ô, .inDH)
+        End If
     End With
     
 End Property

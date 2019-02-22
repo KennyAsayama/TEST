@@ -8,7 +8,8 @@ Option Explicit
 Private Reg As Object
 '2.3.0 パターンをブランドシステムと統合
 'Const reTateguPattern As String = "^(特 )?(HE)?([A-Z])([A-Z])([A-Z])([A-Z]{2}S?)-(\d{2})(\d{2})([A-Z][A-Z]?[A-Z]?[A-Z]?)-([NMKC])([LR]?)\((.+)\)$"
-Private Const reTateguPattern As String = "^(特 )?(HE|TY)?([A-Z])([A-Z])([A-Z])([A-Z]{2,3})-(\d{2})(\d{2})([A-Z]{1,5})-([NMKC])([LR]?)\((.+)\)$"
+'2.13.0 吊元Z対応
+Private Const reTateguPattern As String = "^(特 )?(HE|TY)?([A-Z])([A-Z])([A-Z])([A-Z]{2,3})-(\d{2})(\d{2})([A-Z]{1,5})-([NMKC])([LRZ]?)\((.+)\)$"
 
 Private Sub Class_Initialize()
     Set Reg = CreateObject("VBScript.RegExp")
