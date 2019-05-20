@@ -430,3 +430,73 @@ Public Function fncstrHikiteColorName(ByVal in_Handle As String, ByVal in_spec A
     End If
     
 End Function
+
+Public Function IsHikiteKako(ByVal in_varHinban As Variant, ByVal in_varTobiraichi As Variant, ByVal in_varTsurimoto As Variant, ByVal in_varSpec As Variant) As Boolean
+'   *************************************************************
+'   引き手加工があるか確認
+'
+'   戻り値:Boolean
+'       True                引手加工あり
+'       False               加工なし（なしの条件以外はすべてありで返す）
+'
+'    Input項目
+'       in_varHinban        建具品番
+'       in_varTobiraichi    位置（1.左、2.右、3.中）
+'       in_Spec             個別SPec(作成時未使用）
+
+'2.14.0 ADD
+'   *************************************************************
+    
+    Dim strHinban As String
+    Dim intTobiraichi As Integer
+    Dim strSPEC As String
+    Dim strTsurimoto As String
+    
+    IsHikiteKako = True
+    
+    '品番なしの場合はTrueで返す
+    If IsNull(in_varHinban) Then
+        Exit Function
+    End If
+    
+    '位置なしの場合はTrueで返す
+
+    If IsNull(in_varTobiraichi) Then
+        Exit Function
+    End If
+    
+    If IsNull(in_varTsurimoto) Then
+        strTsurimoto = "Z"
+    Else
+        strTsurimoto = in_varTsurimoto
+    End If
+    
+    If IsNull(in_varSpec) Then
+        strSPEC = ""
+    Else
+        strSPEC = in_varSpec
+    End If
+    
+    strHinban = Replace(in_varHinban, "特 ", "")
+    intTobiraichi = in_varTobiraichi
+    
+    If IsSynchro(strHinban) Then
+        If IsHikichigai(strHinban) Then
+            If intTobiraichi = 3 Then
+                IsHikiteKako = False
+            End If
+        Else
+            If strTsurimoto = "L" Then 'L吊元
+                If intTobiraichi <> 1 Then
+                    IsHikiteKako = False
+                End If
+            ElseIf strTsurimoto = "R" Then 'R吊元
+                If intTobiraichi <> 2 Then
+                    IsHikiteKako = False
+                End If
+            End If
+        End If
+    
+    End If
+
+End Function

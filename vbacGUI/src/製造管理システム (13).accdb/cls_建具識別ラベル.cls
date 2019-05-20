@@ -55,6 +55,9 @@ Public Property Get 縁張_外(ByVal 契約番号 As String, ByVal 建具品番 As String, 
     
 '2.3.0 Change トヨタ品番識別方法修正
 
+'2.14.0
+'   →カルロ/ジュリア追加
+
     Dim strHinban As String
     
     縁張_外 = Null
@@ -94,7 +97,12 @@ Public Property Get 縁張_外(ByVal 契約番号 As String, ByVal 建具品番 As String, 
     End If
     
     縁張_外 = "ローカン"
-
+    
+    'カルロ/ジュリア
+    If IsCarloGiulia(strHinban) Then
+        縁張_外 = 縁張_外 & "(" & strFncFuchibariColor(strHinban, Nz(色, ""), Null) & ")"
+    End If
+    
 End Property
 
 Public Property Get 縁張_内(ByVal 契約番号 As String, ByVal 建具品番 As String, ByVal 色 As Variant) As Variant
@@ -149,11 +157,13 @@ Public Property Get 縁張_内(ByVal 契約番号 As String, ByVal 建具品番 As String, 
     End If
 End Property
 
-Public Property Get ハンドル引手センター(ByVal 建具品番 As String, ByVal 施錠 As Variant, ByVal 個別Spec As Variant) As Variant
+Public Property Get ハンドル引手センター(ByVal 建具品番 As String, ByVal 施錠 As Variant, ByVal 個別Spec As Variant, ByVal 吊元 As Variant, ByVal 扉位置 As Variant) As Variant
 
 '2.7.0 1808ハンドル追加
 '2.13.0
 '   →1901ハンドル追加
+'2.14.0
+'   →引数に吊元と扉位置追加、シンクロ対応
 
     Dim strHinban As String
     Dim strHandle As String
@@ -168,16 +178,19 @@ Public Property Get ハンドル引手センター(ByVal 建具品番 As String, ByVal 施錠 As
     
     '引き手レス,子扉は除外
     If IsMonster(strHinban) Or IsVertica(strHinban) Or IsKotobira(strHinban) Then Exit Property
-    
+        
     '引戸&物入れ引違い
     If IsHikido(strHinban) Or IsCloset_Hikichigai(strHinban) Then
-
-        If strHinban Like "???VL-*" Or strHinban Like "???VM-*" Or strHinban Like "???VN-*" Then
-            ハンドル引手センター = 1046
-        ElseIf IsKabetsukeGuide(strHinban) Then
-            ハンドル引手センター = 1026
-        Else
-            ハンドル引手センター = 1040
+        
+        'シンクロ引手なし対応
+        If IsHikiteKako(strHinban, 扉位置, 吊元, 個別Spec) Then
+            If strHinban Like "???VL-*" Or strHinban Like "???VM-*" Or strHinban Like "???VN-*" Then
+                ハンドル引手センター = 1046
+            ElseIf IsKabetsukeGuide(strHinban) Then
+                ハンドル引手センター = 1026
+            Else
+                ハンドル引手センター = 1040
+            End If
         End If
         
         Exit Property
@@ -231,12 +244,15 @@ Public Property Get ハンドル引手センター(ByVal 建具品番 As String, ByVal 施錠 As
     
 End Property
 
-Public Property Get ハンドル引手BS(ByVal 建具品番 As String, ByVal 施錠 As Variant, ByVal 個別Spec As Variant) As Variant
+Public Property Get ハンドル引手BS(ByVal 建具品番 As String, ByVal 施錠 As Variant, ByVal 個別Spec As Variant, ByVal 吊元 As Variant, ByVal 扉位置 As Variant) As Variant
 
 '2.1.0 1708仕様ハンドル追加
 '2.3.0 1801仕様ハンドル追加
 '2.5.2 スライド収納金物変更によるBS変更(157→150）
 '2.7.0 エンド枠なしIF分バグ修正
+'2.14.0
+'   →引数に吊元と扉位置追加、シンクロ対応
+'   →開き戸の抽出方法を関数化
 
     Dim strHinban As String
     Dim strHandle As String
@@ -259,10 +275,13 @@ Public Property Get ハンドル引手BS(ByVal 建具品番 As String, ByVal 施錠 As Varia
     
     '引戸&物入れ引違い
     If IsHikido(strHinban) Or IsCloset_Hikichigai(strHinban) Then
-        If IsEndWakunashi(strHinban) Then
-            ハンドル引手BS = 61
-        Else
-            ハンドル引手BS = 51
+        'シンクロ引手なし対応
+        If IsHikiteKako(strHinban, 扉位置, 吊元, 個別Spec) Then
+            If IsEndWakunashi(strHinban) Then
+                ハンドル引手BS = 61
+            Else
+                ハンドル引手BS = 51
+            End If
         End If
         
         Exit Property
@@ -274,17 +293,25 @@ Public Property Get ハンドル引手BS(ByVal 建具品番 As String, ByVal 施錠 As Varia
         
             strHandle = left(施錠, 2)
             
-            Select Case strHandle
-                'KAWAJUN,KURAMAE(OLIVALI含む）
-                Case "CN", "CO", "DN", "DO", "CP", "CQ", "CR", "CL", "CM", "BY", "BZ", "DP", "DQ", "FC", "FD", "FE", "FF", "FG", "FH"
+'            Select Case strHandle
+'                KAWAJUN , KURAMAE(OLIVALI含む)
+'                Case "CN", "CO", "DN", "DO", "CP", "CQ", "CR", "CL", "CM", "BY", "BZ", "DP", "DQ", "FC", "FD", "FE", "FF", "FG", "FH"
+'                    ハンドル引手BS = 51
+'                キーノート仕様
+'                Case "BA", "BC", "BD", "BE", "BF", "BH", "BI", "BJ", "BL", "BM", "BN", "BO", "BP", "BQ", "BR", "BS"
+'                    ハンドル引手BS = 51
+'                Case Else
+'                    ハンドル引手BS = 50
+'            End Select
+            
+            Select Case fncstrHandleKigoFileName(strHinban, strHandle & "N", Nz(個別Spec, ""))
+                Case "KAWAJUN", "KAWAJ_LJ", "KURAMAE", "OLIVARI"
                     ハンドル引手BS = 51
-                'キーノート仕様
-                Case "BA", "BC", "BD", "BE", "BF", "BH", "BI", "BJ", "BL", "BM", "BN", "BO", "BP", "BQ", "BR", "BS"
-                    ハンドル引手BS = 51
-                Case Else
+                Case "SHIBUTANI", "NAGASAWA"
                     ハンドル引手BS = 50
             End Select
-            
+                
+                
             Exit Property
         End If
         
@@ -318,7 +345,10 @@ Public Property Get ハンドル引手BS(ByVal 建具品番 As String, ByVal 施錠 As Varia
 
 End Property
 
-Public Property Get 鎌錠センター(ByVal 建具品番 As String, ByVal 施錠 As Variant, ByVal 個別Spec As Variant) As Variant
+Public Property Get 鎌錠センター(ByVal 建具品番 As String, ByVal 施錠 As Variant, ByVal 個別Spec As Variant, ByVal 吊元 As Variant, ByVal 扉位置 As Variant) As Variant
+'2.14.0
+'   →引数に吊元と扉位置追加
+'   →長沢ハンドルを鎌錠表示
 
     Dim strHinban As String
     Dim strHandle As String
@@ -358,22 +388,44 @@ Public Property Get 鎌錠センター(ByVal 建具品番 As String, ByVal 施錠 As Variant
      
         'TK引き手（長いやつ）
         ElseIf fncbol_Handle_引手_長(CStr(施錠), CStr(個別Spec)) Then
-            鎌錠センター = Nz(Me.ハンドル引手センター(strHinban, 施錠, 個別Spec), 0) - 200
+            鎌錠センター = Nz(Me.ハンドル引手センター(strHinban, 施錠, 個別Spec, 吊元, 扉位置), 0) - 200
             
         '引き手（短いやつ）
         ElseIf fncbol_Handle_引手_長(CStr(施錠), CStr(個別Spec)) Then
-            鎌錠センター = Nz(Me.ハンドル引手センター(strHinban, 施錠, 個別Spec), 0) - 160
+            鎌錠センター = Nz(Me.ハンドル引手センター(strHinban, 施錠, 個別Spec, 吊元, 扉位置), 0) - 160
         End If
         
         '異常データはNullに置換え
         If 鎌錠センター < 0 Then 鎌錠センター = Null
         
         Exit Property
+        
+    'ワンニャンハンドル
+    ElseIf fncbol_Handle_WanNyan(CStr(施錠), CStr(個別Spec)) And right(CStr(施錠), 1) <> "N" Then
+        
+        If right(CStr(個別Spec), 4) < "1808" Then
+            '旧ラッチ受け　川口技研
+            If right(CStr(施錠), 1) = "C" Then
+                鎌錠センター = 926
+            Else
+                鎌錠センター = 906
+            End If
+        Else
+            '現行品
+            If right(CStr(施錠), 1) = "C" Then
+                鎌錠センター = 937
+            Else
+                鎌錠センター = 917
+            End If
+        End If
+    
     End If
     
 End Property
 
 Public Property Get 鎌錠BS(ByVal 建具品番 As String, ByVal 施錠 As Variant, ByVal 個別Spec As Variant) As Variant
+'2.14.0
+'   →長沢ハンドルを鎌錠表示
 
     Dim strHinban As String
     Dim strHandle As String
@@ -409,15 +461,23 @@ Public Property Get 鎌錠BS(ByVal 建具品番 As String, ByVal 施錠 As Variant, ByVa
         End If
        
         Exit Property
+        
+    'ワンニャンハンドル
+    ElseIf fncbol_Handle_WanNyan(CStr(施錠), CStr(個別Spec)) And right(CStr(施錠), 1) <> "N" Then
+        鎌錠BS = 51
+        
     End If
 
 End Property
 
-Public Property Get 溝(ByVal 建具品番 As String, ByVal 施錠 As Variant, ByVal 個別Spec As Variant, 扉位置 As Variant) As Variant
+Public Property Get 溝(ByVal 建具品番 As String, ByVal 施錠 As Variant, ByVal 個別Spec As Variant, ByVal 扉位置 As Variant, ByVal 吊元 As Variant) As Variant
 
 '2.4.0 TSC（トヨタシンセ）1801仕様溝共通化
 '2.13.0
 '   →1901仕様
+'2.14.0
+'   →1901仕様名称変更
+'   →引数に吊元追加
 
     Dim strHinban As String
     
@@ -445,7 +505,16 @@ Public Property Get 溝(ByVal 建具品番 As String, ByVal 施錠 As Variant, ByVal 個
         
     ElseIf strHinban Like "???SH-*" Or strHinban Like "???SJ-*" Then
 
-        溝 = "下20"
+        If Nz(扉位置, 0) = 3 Then
+            溝 = "20.8"
+            
+        ElseIf Nz(吊元, "") = "L" And Nz(扉位置, 0) = 2 Then
+            溝 = "20.8"
+            
+        ElseIf Nz(吊元, "") = "R" And Nz(扉位置, 0) = 1 Then
+            溝 = "20.8"
+            
+        End If
         
     ElseIf strHinban Like "???DF-*" And Not Nz(扉位置, 0) = 3 Then
 
@@ -455,13 +524,13 @@ Public Property Get 溝(ByVal 建具品番 As String, ByVal 施錠 As Variant, ByVal 個
 
         溝 = "下4"
     
-    ElseIf strHinban Like "???SF-*" And Not Nz(扉位置, 0) = 3 Then
+    ElseIf strHinban Like "???SF-*" And Nz(扉位置, 0) = 3 Then
 
-        溝 = "下20"
+        溝 = "20.8"
 
-    ElseIf strHinban Like "???TF-*" And Not Nz(扉位置, 0) = 3 Then
+    ElseIf strHinban Like "???TF-*" And Nz(扉位置, 0) = 3 Then
 
-        溝 = "下20"
+        溝 = "20.8"
     
     ElseIf IsVertica(strHinban) Then
 
@@ -498,7 +567,9 @@ Public Property Get 溝(ByVal 建具品番 As String, ByVal 施錠 As Variant, ByVal 個
 
 End Property
 
-Public Property Get 引込取手センター(ByVal 建具品番 As String, ByVal 施錠 As Variant, ByVal 個別Spec As Variant) As Variant
+Public Property Get 引込取手センター(ByVal 建具品番 As String, ByVal 施錠 As Variant, ByVal 個別Spec As Variant, ByVal 吊元 As Variant, ByVal 扉位置 As Variant) As Variant
+'2.14.0
+'   →引数に吊元と扉位置追加
 
     Dim strHinban As String
     
@@ -516,9 +587,9 @@ Public Property Get 引込取手センター(ByVal 建具品番 As String, ByVal 施錠 As Var
             引込取手センター = 1040
         Else
             If 施錠 Like "W*" Then
-                引込取手センター = Nz(Me.ハンドル引手センター(strHinban, 施錠, 個別Spec), 0) - 100
+                引込取手センター = Nz(Me.ハンドル引手センター(strHinban, 施錠, 個別Spec, 吊元, 扉位置), 0) - 100
             ElseIf 施錠 Like "G*" Or 施錠 Like "H*" Then
-                引込取手センター = Nz(Me.ハンドル引手センター(strHinban, 施錠, 個別Spec), 0) - 60
+                引込取手センター = Nz(Me.ハンドル引手センター(strHinban, 施錠, 個別Spec, 吊元, 扉位置), 0) - 60
             End If
         End If
     End If
@@ -660,8 +731,10 @@ Public Property Get 子扉鎌錠受けセンター(ByVal 建具品番 As String, ByVal 施錠 As
 
 End Property
 
-Public Property Get カセット加工図パス(ByVal 建具品番 As String, ByVal 施錠 As Variant, ByVal 個別Spec As Variant) As Variant
-    
+Public Property Get カセット加工図パス(ByVal 建具品番 As String, ByVal 施錠 As Variant, ByVal 個別Spec As Variant, ByVal 吊元 As Variant, ByVal 扉位置 As Variant) As Variant
+'2.14.0
+'   →引数に吊元と扉位置追加、シンクロ対応
+
     Dim strPictureName As String
     Dim strHinban As String
         
@@ -677,6 +750,9 @@ Public Property Get カセット加工図パス(ByVal 建具品番 As String, ByVal 施錠 As V
     
     If 施錠 Like "*特*" Then Exit Property
     
+    'シンクロ引手なし対応
+    If Not IsHikiteKako(strHinban, 扉位置, 吊元, 個別Spec) Then Exit Property
+        
     strPictureName = fncstrHandleKigoFileName(strHinban, 施錠, 個別Spec)
     
     If strPictureName <> "" Then
@@ -692,7 +768,8 @@ Public Property Get カセット加工図パス(ByVal 建具品番 As String, ByVal 施錠 As V
 End Property
 
 Public Property Get 戸開き図パス(ByVal 建具品番 As String, ByVal 開閉様式 As Variant, ByVal 吊元 As Variant, ByVal 扉位置 As Integer) As Variant
-
+'2.14.0
+'   →モンスターフォルダ追加
 
     Dim strTobiraichi As String
     Dim strPath As String
@@ -702,7 +779,8 @@ Public Property Get 戸開き図パス(ByVal 建具品番 As String, ByVal 開閉様式 As Var
     Const constPicturePathtealth As String = "stealth\"
     Const strPath_Inset As String = "inset\"
     Const strPath_HikiteLess As String = "HikiteLess\"
-
+    Const strPath_Monster As String = "Monster\"
+    
     Const txt_Extension As String = ".png"
     
     戸開き図パス = Null
@@ -716,6 +794,11 @@ Public Property Get 戸開き図パス(ByVal 建具品番 As String, ByVal 開閉様式 As Var
 
     If IsVertica(strHinban) Or IsMonster(strHinban) Then
         strPath = strPath & strPath_HikiteLess
+        
+        If IsMonster(strHinban) And IsSynchro(strHinban) Then
+            strPath = strPath & strPath_Monster
+        End If
+        
     End If
 
     strTobiraichi = ""

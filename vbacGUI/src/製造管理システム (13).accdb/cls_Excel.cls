@@ -202,11 +202,23 @@ Private Function UserAddin()
 '--------------------------------------------------------------------------------------------------------------------
 'ユーザのAddInとスタートアップマクロ起動
 '1.12.2 ADD
+'2.14.0
+'   →起動チェックがない(Installed=False)アドインは起動しないよう変更
 '--------------------------------------------------------------------------------------------------------------------
     Dim strAddinPath As String
     Dim strxlsSTARTPath As String
     Dim strFName As String
     Dim i As Integer
+    
+    Dim dicAddin As Object
+    Dim objAddin As Object
+    
+    Set dicAddin = CreateObject("Scripting.Dictionary")
+    
+    '登録済みのアドインを連想配列に保存(キー:フルパスのファイル名)
+    For Each objAddin In objExcel.Application.AddIns
+        dicAddin.Add objAddin.FullName, objAddin.Installed
+    Next
     
     strAddinPath = objExcel.Application.UserLibraryPath
     strxlsSTARTPath = objExcel.Application.StartupPath
@@ -221,7 +233,13 @@ Private Function UserAddin()
         i = i + 1
         
         'Debug.Print strFName
-        objExcel.Workbooks.Open strAddinPath & "\" & strFName
+        If dicAddin.Exists(strAddinPath & strFName) Then
+            If dicAddin.Item(strAddinPath & strFName) Then
+            'Debug.Print strFName
+                objExcel.Workbooks.Open strAddinPath & strFName
+            End If
+        End If
+        
         strFName = Dir()
         
     Loop
@@ -238,6 +256,10 @@ Private Function UserAddin()
         strFName = Dir()
         
     Loop
+    
+    Set objAddin = Nothing
+    Set dicAddin = Nothing
+    
 End Function
 
 Public Function UnnecessarySheetDel(Optional inSheetName As String = "Sheet*") As Boolean

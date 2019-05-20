@@ -6826,6 +6826,9 @@ Public Function dblfncTekake_Shurui(in_strHinban As String, in_strHandle As Stri
 '   5.その他は100（特注はカワジュン製のみなので100でよい）
 '   *************************************************************
 
+'2.14.0
+'   →物入れ引き違いが抜けていたので追加
+
 '20170419 K.Asayama Change 引き手ではなく引戸は全部500
 '    If fncbol_Handle_引手_長(in_strHandle, in_strSpec) Or fncbol_Handle_引手_短(in_strHandle, in_strSpec) Then
 '
@@ -6847,7 +6850,11 @@ Public Function dblfncTekake_Shurui(in_strHinban As String, in_strHandle As Stri
         Else
             dblfncTekake_Shurui = 500
         End If
-        
+            
+    ElseIf IsCloset_Hikichigai(in_strHinban) Then
+    
+        dblfncTekake_Shurui = 500
+            
 '20170419 K.Asayama Change END
 
     '20151211 K.Asayama Change 1601仕様追加

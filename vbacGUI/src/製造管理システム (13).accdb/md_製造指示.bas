@@ -461,3 +461,79 @@ Public Function strfncFullHeightHinge(in_varHinban As Variant, in_varSpec As Var
     End If
     
 End Function
+
+Public Function bolFncCloset_IseharaToso(in_varHinban As Variant) As Boolean
+'   *************************************************************
+'   伊勢原工場塗装クローゼット確認
+'
+'   戻り値:Boolean
+'       →True              伊勢原工場塗装
+'       →False             伊勢原工場塗装以外
+'
+'    Input項目
+'       in_varHinban        建具（折戸）品番
+
+'   2.14.0 ADD
+'   *************************************************************
+    
+    Dim strHinban As String
+    
+    bolFncCloset_IseharaToso = False
+    
+    If IsNull(in_varHinban) Then Exit Function
+        
+    If IsCloset_Oredo(in_varHinban) Or IsCloset_Hiraki(in_varHinban) Then
+        If in_varHinban Like "*-####*(NI)*" Then
+            bolFncCloset_IseharaToso = True
+        End If
+    End If
+    
+End Function
+
+Public Function strFncFuchibariColor(in_varHinban As Variant, in_strColor As String, in_varSpec As Variant) As String
+
+'   *************************************************************
+'   縁貼り色確認
+
+'   戻り値:Boolean
+'       →縁貼り色
+'
+'    Input項目
+'       in_varHinban        建具品番
+'       in_strColor         色
+'       in_varSpec          個別Spec（現在は使用しない）
+
+'   2.14.0 ADD
+'   *************************************************************
+    
+    Dim strHinban As String
+    
+    strFncFuchibariColor = ""
+    
+    On Error GoTo Err_strFncFuchibariColor
+    
+    If in_strColor = "" Then Exit Function
+    
+    If IsNull(in_varHinban) Then
+        strFncFuchibariColor = in_strColor
+        Exit Function
+    End If
+    
+    strHinban = Replace(in_varHinban, "特 ", "")
+    
+    If IsCarloGiulia(strHinban) Then
+        If in_strColor = "SB" Then
+            strFncFuchibariColor = "EW"
+        ElseIf in_strColor = "SH" Then
+            strFncFuchibariColor = "BA"
+        End If
+    Else
+        strFncFuchibariColor = in_strColor
+    End If
+    
+    Exit Function
+
+Err_strFncFuchibariColor:
+    strFncFuchibariColor = ""
+    
+End Function

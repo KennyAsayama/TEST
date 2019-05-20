@@ -2272,7 +2272,7 @@ Public Function IsTateguInset(in_varHinban As Variant) As Boolean
     
 End Function
 
-Public Function IsGuidePiece_ShitaanaKakou(in_varHinban As Variant, in_varTobiraIchi As Variant, in_varSpec As Variant, Optional in_SekkeiBikou As Variant) As Boolean
+Public Function IsGuidePiece_ShitaanaKakou(in_varHinban As Variant, in_varTobiraichi As Variant, in_varSpec As Variant, Optional in_SekkeiBikou As Variant) As Boolean
 '   *************************************************************
 '   ガイドピース下穴加工確認
 
@@ -2293,7 +2293,7 @@ Public Function IsGuidePiece_ShitaanaKakou(in_varHinban As Variant, in_varTobira
     
     On Error GoTo Err_IsGuidePiece_ShitaanaKakou
     
-    If in_varTobiraIchi <> "右" And in_varTobiraIchi <> "左" And in_varTobiraIchi <> "中" Then
+    If in_varTobiraichi <> "右" And in_varTobiraichi <> "左" And in_varTobiraichi <> "中" Then
         Err.Raise 9999, , "ErrEnd"
     End If
     
@@ -2318,24 +2318,24 @@ Public Function IsGuidePiece_ShitaanaKakou(in_varHinban As Variant, in_varTobira
     If in_varHinban Like "*DF-####*-*" Or in_varHinban Like "*VF-####*-*" Then
 
     
-        If in_varTobiraIchi = "中" Then
+        If in_varTobiraichi = "中" Then
             IsGuidePiece_ShitaanaKakou = True
         End If
     ElseIf in_varHinban Like "*DH-####*-*" Then
         strTsurimoto = Mid(in_varHinban, InStr(1, in_varHinban, "(") - 1, 1)
-        If strTsurimoto = "L" And in_varTobiraIchi = "右" Then
+        If strTsurimoto = "L" And in_varTobiraichi = "右" Then
             IsGuidePiece_ShitaanaKakou = True
-        ElseIf strTsurimoto = "R" And in_varTobiraIchi = "左" Then
+        ElseIf strTsurimoto = "R" And in_varTobiraichi = "左" Then
             IsGuidePiece_ShitaanaKakou = True
         End If
     ElseIf in_varHinban Like "*DJ-####*-*" Then
-        If in_varTobiraIchi = "中" Then
+        If in_varTobiraichi = "中" Then
             IsGuidePiece_ShitaanaKakou = True
         Else
             strTsurimoto = Mid(in_varHinban, InStr(1, in_varHinban, "(") - 1, 1)
-            If strTsurimoto = "L" And in_varTobiraIchi = "右" Then
+            If strTsurimoto = "L" And in_varTobiraichi = "右" Then
                 IsGuidePiece_ShitaanaKakou = True
-            ElseIf strTsurimoto = "R" And in_varTobiraIchi = "左" Then
+            ElseIf strTsurimoto = "R" And in_varTobiraichi = "左" Then
                 IsGuidePiece_ShitaanaKakou = True
             End If
         End If
@@ -3029,7 +3029,7 @@ Err_IsVertica_Maisu:
     IsVertica_Maisu = 0
 End Function
 
-Public Function strFncSynchro_ShitaanaKakou(in_varHinban As Variant, in_varTobiraIchi As Variant, in_varSpec As Variant, Optional in_SekkeiBikou As Variant) As String
+Public Function strFncSynchro_ShitaanaKakou(in_varHinban As Variant, in_varTobiraichi As Variant, in_varSpec As Variant, Optional in_SekkeiBikou As Variant) As String
 '   *************************************************************
 '   シンクロキャッチ下穴加工確認
 '
@@ -3044,6 +3044,8 @@ Public Function strFncSynchro_ShitaanaKakou(in_varHinban As Variant, in_varTobir
 '       in_SekkeiBikou      建具設計備考    201901**時点では使用しない
         
 '   2.13.0 ADD
+'   2.14.0
+'       →吊元がNullで返る場合があるのでNz関数追加
 '   *************************************************************
     
     Dim objTateguHinban As cls_建具品番
@@ -3053,9 +3055,9 @@ Public Function strFncSynchro_ShitaanaKakou(in_varHinban As Variant, in_varTobir
     strFncSynchro_ShitaanaKakou = ""
     
     If IsNull(in_varHinban) Then Exit Function
-    If IsNull(in_varTobiraIchi) Then Exit Function
+    If IsNull(in_varTobiraichi) Then Exit Function
     
-    If in_varTobiraIchi <> "右" And in_varTobiraIchi <> "中" And in_varTobiraIchi <> "左" Then Exit Function
+    If in_varTobiraichi <> "右" And in_varTobiraichi <> "中" And in_varTobiraichi <> "左" Then Exit Function
     
     Set objTateguHinban = New cls_建具品番
     
@@ -3066,33 +3068,33 @@ Public Function strFncSynchro_ShitaanaKakou(in_varHinban As Variant, in_varTobir
     With objTateguHinban
         If .IsTateguHinban(strHinban) Then
             
-            strTsurimoto = .吊元(strHinban)
+            strTsurimoto = Nz(.吊元(strHinban), "")
             
             Select Case .開閉様式(strHinban)
             
                 Case "SH"
-                    If strTsurimoto = "L" And in_varTobiraIchi = "左" Then
+                    If strTsurimoto = "L" And in_varTobiraichi = "左" Then
                         strFncSynchro_ShitaanaKakou = "7・31"
                         
-                    ElseIf strTsurimoto = "R" And in_varTobiraIchi = "右" Then
+                    ElseIf strTsurimoto = "R" And in_varTobiraichi = "右" Then
                         strFncSynchro_ShitaanaKakou = "7・31"
                         
                     End If
                     
                 Case "SJ"
                 
-                    If in_varTobiraIchi = "中" Then
+                    If in_varTobiraichi = "中" Then
                         strFncSynchro_ShitaanaKakou = "57・81"
                         
                     ElseIf strTsurimoto = "L" Then
-                        If in_varTobiraIchi = "左" Then
+                        If in_varTobiraichi = "左" Then
                             strFncSynchro_ShitaanaKakou = "7・31"
                         Else
                             strFncSynchro_ShitaanaKakou = "57・81"
                         End If
                         
                     ElseIf strTsurimoto = "R" Then
-                        If in_varTobiraIchi = "右" Then
+                        If in_varTobiraichi = "右" Then
                             strFncSynchro_ShitaanaKakou = "7・31"
                         Else
                             strFncSynchro_ShitaanaKakou = "57・81"
@@ -3102,21 +3104,21 @@ Public Function strFncSynchro_ShitaanaKakou(in_varHinban As Variant, in_varTobir
                 
                 Case "SF", "TF"
                 
-                    If in_varTobiraIchi <> "中" Then
+                    If in_varTobiraichi <> "中" Then
                         strFncSynchro_ShitaanaKakou = "7・31"
                     End If
                     
                 Case "SY"
                 
                     If strTsurimoto = "L" Then
-                        If in_varTobiraIchi = "左" Then
+                        If in_varTobiraichi = "左" Then
                             strFncSynchro_ShitaanaKakou = "7・31"
                         Else
                             strFncSynchro_ShitaanaKakou = "57・81"
                         End If
                         
                     ElseIf strTsurimoto = "R" Then
-                        If in_varTobiraIchi = "右" Then
+                        If in_varTobiraichi = "右" Then
                             strFncSynchro_ShitaanaKakou = "7・31"
                         Else
                             strFncSynchro_ShitaanaKakou = "57・81"
@@ -3138,4 +3140,144 @@ Err_strFncSynchro_ShitaanaKakou:
 Exit_strFncSynchro_ShitaanaKakou:
     Set objTateguHinban = Nothing
 
+End Function
+
+Public Function IsHikichigai(in_strHinban As String) As Boolean
+'   *************************************************************
+'   引き違い扉確認
+
+'   戻り値:Boolean
+'       →True              引き違い扉
+'       →False             引き違い扉以外
+'
+'    Input項目
+'       in_strHinban        建具品番/枠品番/下地品番
+'
+'   2.14.0 ADD
+'   *************************************************************
+
+    On Error GoTo Err_IsHikichigai
+    
+    Dim strHinban As String
+    
+    strHinban = Replace(in_strHinban, "特 ", "")
+    
+    If strHinban Like "*DF-####*" Or strHinban Like "*VF-####*" Or strHinban Like "*DQ-####*" Or strHinban Like "*VQ-####*" _
+        Or strHinban Like "*DE-####*" Or strHinban Like "*ME-####*" _
+        Or strHinban Like "*SF-####*" Or strHinban Like "*TF-####*" Or strHinban Like "*SQ-####*" Or strHinban Like "*TQ-####*" Then
+        IsHikichigai = True
+    Else
+        IsHikichigai = False
+    End If
+    
+    Exit Function
+
+Err_IsHikichigai:
+    IsHikichigai = False
+End Function
+
+Public Function IsZENstyle(in_varHinban As Variant) As Boolean
+'   *************************************************************
+'   ZENstyle型 確認
+
+'   戻り値:Boolean
+'       →True              ZENstyle型
+'       →False             ZENstyle型 以外
+'
+'    Input項目
+'       in_varHinban        建具品番
+
+'   2.14.0 ADD
+'   *************************************************************
+    Dim strHinban As String
+    
+    On Error GoTo Err_IsZENstyle
+    
+    IsZENstyle = False
+    
+    If IsNull(in_varHinban) Then Exit Function
+
+    strHinban = Replace(in_varHinban, "特 ", "")
+    
+    If strHinban Like "??B*####K*" Then
+        IsZENstyle = True
+    End If
+    
+    Exit Function
+
+Err_IsZENstyle:
+    IsZENstyle = False
+    
+End Function
+
+Public Function IsCarloGiulia(in_varHinban As Variant) As Boolean
+'   *************************************************************
+'   カルロ/ジュリア確認
+'
+'   戻り値:Boolean
+'       →True              カルロ/ジュリア
+'       →False             カルロ/ジュリア以外
+'
+'    Input項目
+'       in_varHinban        建具品番
+
+'   2.14.0 ADD
+'   *************************************************************
+
+    Dim strHinban As String
+    
+    On Error GoTo Err_IsCarloGiulia
+    
+    IsCarloGiulia = False
+    
+    If IsNull(in_varHinban) Then Exit Function
+    
+    strHinban = Replace(in_varHinban, "特 ", "")
+    
+    If strHinban Like "Q*-####*" Then
+        IsCarloGiulia = True
+    Else
+        IsCarloGiulia = False
+    End If
+    
+    Exit Function
+
+Err_IsCarloGiulia:
+    IsCarloGiulia = False
+End Function
+
+Public Function IsCaesar(in_varHinban As Variant) As Boolean
+'   *************************************************************
+'   カエサル確認
+'
+'   戻り値:Boolean
+'       →True              カエサル
+'       →False             カエサル以外
+'
+'    Input項目
+'       in_varHinban        建具品番
+
+'   2.14.0 ADD
+'   *************************************************************
+
+    Dim strHinban As String
+    
+    On Error GoTo Err_IsCaesar
+    
+    IsCaesar = False
+    
+    If IsNull(in_varHinban) Then Exit Function
+    
+    strHinban = Replace(in_varHinban, "特 ", "")
+    
+    If strHinban Like "H*WA-####*" Then
+        IsCaesar = True
+    Else
+        IsCaesar = False
+    End If
+    
+    Exit Function
+
+Err_IsCaesar:
+    IsCaesar = False
 End Function

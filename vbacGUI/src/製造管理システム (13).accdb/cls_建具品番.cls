@@ -161,6 +161,8 @@ Public Property Get Style(in_Hinban As Variant) As Variant
     
 '2.3.0
 '   →タモシリーズ追加
+'2.14.0
+'   →Zenstyle,カルロ/ジュリア追加
 
     Dim strStyle1 As String
     Dim strStyle2 As String
@@ -190,6 +192,12 @@ Public Property Get Style(in_Hinban As Variant) As Variant
     
     If IsGranArt(CStr(strHinban)) Then
         strStyle1 = "G"
+    ElseIf IsZENstyle(CStr(strHinban)) Then
+        strStyle1 = "Z"
+        strStyle2 = "K"
+        strStyle3 = "1"
+    ElseIf IsCarloGiulia(CStr(strHinban)) Then
+        strStyle1 = "Q"
     ElseIf IsTerrace(CStr(strHinban)) Then
         strStyle1 = "Y"
     ElseIf IsLUCENTE(CStr(strHinban)) Then
