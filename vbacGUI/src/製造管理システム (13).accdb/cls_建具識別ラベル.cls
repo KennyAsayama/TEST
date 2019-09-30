@@ -57,6 +57,8 @@ Public Property Get 縁張_外(ByVal 契約番号 As String, ByVal 建具品番 As String, 
 
 '2.14.0
 '   →カルロ/ジュリア追加
+'2.14.0
+'   →Zenstyle追加
 
     Dim strHinban As String
     
@@ -86,7 +88,7 @@ Public Property Get 縁張_外(ByVal 契約番号 As String, ByVal 建具品番 As String, 
         Exit Property
     End If
 
-    If IsREALART(strHinban) Or IsLUCENTE(strHinban) Or IsCloset_Slide(strHinban) Then
+    If IsREALART(strHinban) Or IsLUCENTE(strHinban) Or IsCloset_Slide(strHinban) Or IsZENstyle(strHinban) Then
         縁張_外 = "1mm左右"
         Exit Property
     End If
@@ -349,6 +351,8 @@ Public Property Get 鎌錠センター(ByVal 建具品番 As String, ByVal 施錠 As Variant
 '2.14.0
 '   →引数に吊元と扉位置追加
 '   →長沢ハンドルを鎌錠表示
+'3.0.0
+'   →アウトセット引き戸錠修正
 
     Dim strHinban As String
     Dim strHandle As String
@@ -377,8 +381,14 @@ Public Property Get 鎌錠センター(ByVal 建具品番 As String, ByVal 施錠 As Variant
         If right(個別Spec, 4) >= "1507" Then
             'アウトセット引戸錠
             If IsEndWakunashi(strHinban) Then
-                鎌錠センター = 1040
-            ElseIf strHinban Like "???VL-*" Or strHinban Like "???VM-*" Or strHinban Like "???VN-*" Then
+                If strHinban Like "???VN-*" Then
+                    鎌錠センター = 1046
+                ElseIf strHinban Like "???KU-*" Then
+                    鎌錠センター = 1026
+                Else
+                    鎌錠センター = 1040
+                End If
+            ElseIf strHinban Like "???VL-*" Or strHinban Like "???VM-*" Then
                 鎌錠センター = 846
             ElseIf IsKabetsukeGuide(strHinban) Then
                 鎌錠センター = 826
@@ -770,6 +780,8 @@ End Property
 Public Property Get 戸開き図パス(ByVal 建具品番 As String, ByVal 開閉様式 As Variant, ByVal 吊元 As Variant, ByVal 扉位置 As Integer) As Variant
 '2.14.0
 '   →モンスターフォルダ追加
+'3.0.0
+'   →扉位置RCが間違っていたため訂正
 
     Dim strTobiraichi As String
     Dim strPath As String
@@ -821,7 +833,7 @@ Public Property Get 戸開き図パス(ByVal 建具品番 As String, ByVal 開閉様式 As Var
         ElseIf 扉位置 Like 4 Then
             strTobiraichi = "LC"
         ElseIf 扉位置 Like 5 Then
-            strTobiraichi = "LR"
+            strTobiraichi = "RC"
         End If
     End If
     
@@ -897,3 +909,62 @@ Public Function 建具設計備考(ByVal 建具品番 As String, ByVal 個別Spec As Variant
     End If
 
 End Function
+
+Public Property Get ルーバー溝加工位置(ByVal 建具品番 As String, ByVal 開閉様式 As String, ByVal ガラスレザー区分 As String, ByVal DH As Variant, ByVal 個別Spec As Variant) As Variant
+'3.0.0 ADD
+    
+    Dim strHinban As String
+    
+    ルーバー溝加工位置 = Null
+    
+    strHinban = fncGetTateguHinban(建具品番)
+    
+    If IsAir(strHinban) Then
+        
+        If ガラスレザー区分 = "L" Then 'FA2型のみ
+            
+            '開き戸
+            If IsHirakido(strHinban) Then
+                
+                'ステルス下がり壁
+                If 開閉様式 Like "??S" Then
+                    Select Case DH
+                        Case 1381
+                            ルーバー溝加工位置 = "828"
+                        Case 1381.5 To 1531
+                            ルーバー溝加工位置 = "932"
+                        Case 1531.5 To 2681
+                            ルーバー溝加工位置 = "1062"
+                        Case Else
+                            ルーバー溝加工位置 = "?"
+                    End Select
+                Else
+                    Select Case DH
+                        Case 1374
+                            ルーバー溝加工位置 = "828"
+                        Case 1374.5 To 1524
+                            ルーバー溝加工位置 = "932"
+                        Case 1524.5 To 2674
+                            ルーバー溝加工位置 = "1062"
+                        Case Else
+                            ルーバー溝加工位置 = "?"
+                    End Select
+                End If
+                
+            ElseIf IsHikido(strHinban) Then
+                Select Case DH
+                        Case 1367 To 1381
+                            ルーバー溝加工位置 = "849"
+                        Case 1381.5 To 1531
+                            ルーバー溝加工位置 = "953"
+                        Case 1531.5 To 2681
+                            ルーバー溝加工位置 = "1057"
+                        Case Else
+                            ルーバー溝加工位置 = "?"
+                    End Select
+            End If
+            
+        End If
+    End If
+    
+End Property

@@ -102,8 +102,8 @@ Public Function bolfncUwawakuShitaji_GroupADD() As Boolean
                         strSQL = strSQL & "," & varNullChk(rsADO![上枠下地総巾], 1) & " "
                         strSQL = strSQL & "," & varNullChk(rsADO![上枠下地固定値側], 1) & " "
                         strSQL = strSQL & "," & varNullChk(rsADO![上枠下地変動値側], 1) & " "
-                        strSQL = strSQL & "," & varNullChk(fncstrUwawakuShitajiT(varHinban, rsADO![下がり壁]), 1) & " "
-                        
+                        strSQL = strSQL & "," & varNullChk(fncstrUwawakuShitajiT(varHinban, rsADO![下がり壁], rsADO![ボード厚]), 1) & " "
+
                         If i = 1 Then
                             strSQL = strSQL & "," & varNullChk(rsADO![加工数], 1) & " "
                         Else
@@ -129,7 +129,7 @@ Public Function bolfncUwawakuShitaji_GroupADD() As Boolean
                 Err.Raise 9999, , "以降の帳票の出力を中止します" '1.12.2
             End If
         Else '図面あり
-            If fncstrUwawakuShitajiT(varHinban, rsADO![下がり壁]) <> "" Then
+            If fncstrUwawakuShitajiT(varHinban, rsADO![下がり壁], rsADO![ボード厚]) <> "" Then
                 strSQL = ""
                 strSQL = strSQL & "insert into WK_上枠下地グループ集計(  "
                 strSQL = strSQL & "契約番号,棟番号,部屋番号,邸名,項,下地材品番,開き戸,クローゼット,ステルス"
@@ -290,7 +290,7 @@ Public Function intFncUwawakuShitajiLengthGroup(in_dblLength As Double) As Integ
     
 End Function
 
-Public Function fncstrUwawakuShitajiT(ByVal in_varHinban As Variant, ByVal in_varSagari As Variant) As String
+Public Function fncstrUwawakuShitajiT(ByVal in_varHinban As Variant, ByVal in_varSagari As Variant, ByVal in_BoardT As Variant) As String
 '   *************************************************************
 '   上枠下地厚み抽出
 '   'ADD by K.Asayama 20170301
@@ -301,11 +301,14 @@ Public Function fncstrUwawakuShitajiT(ByVal in_varHinban As Variant, ByVal in_va
 '       in_varHinban        下地材品番
 '       in_varSagari        下がり壁
 
-'   1.12.2
-'       →ウォールスルー除外追加
+'1.12.2
+'   →ウォールスルー除外追加
+'3.0.0
+'   →ボード厚考慮 引数追加（BRD1908）
 '   *************************************************************
     Dim varHinban As String
     Dim strSagari As String
+    Dim strBoardT As String
     
     fncstrUwawakuShitajiT = ""
     
@@ -325,6 +328,19 @@ Public Function fncstrUwawakuShitajiT(ByVal in_varHinban As Variant, ByVal in_va
         strSagari = "無"
     End If
     
+    Select Case Nz(in_BoardT, 0)
+        Case 9.5
+            strBoardT = "21"
+        
+        Case 12.5
+            strBoardT = "18"
+            
+        Case 15
+            strBoardT = "15"
+            
+        Case Else
+            strBoardT = "30"
+    End Select
     
     Select Case IsStealth_Seizo_TEMP(varHinban)
         'ステルス
@@ -350,7 +366,7 @@ Public Function fncstrUwawakuShitajiT(ByVal in_varHinban As Variant, ByVal in_va
                                     fncstrUwawakuShitajiT = "12"
                                 End If
                             Else
-                                fncstrUwawakuShitajiT = "30"
+                                fncstrUwawakuShitajiT = strBoardT
                             End If
                         End If
                     
@@ -369,7 +385,7 @@ Public Function fncstrUwawakuShitajiT(ByVal in_varHinban As Variant, ByVal in_va
                         
                     ElseIf Not IsHirakido(varHinban) And Not IsCloset_Slide(varHinban) And Not IsYukazukeRail(varHinban) Then
                         
-                        fncstrUwawakuShitajiT = "30"
+                        fncstrUwawakuShitajiT = strBoardT
                         
                     End If
 
@@ -392,7 +408,7 @@ Public Function fncstrUwawakuShitajiT(ByVal in_varHinban As Variant, ByVal in_va
                             fncstrUwawakuShitajiT = "12"
                         End If
                     Else
-                        fncstrUwawakuShitajiT = "30"
+                        fncstrUwawakuShitajiT = strBoardT
                     End If
                     
                 '天井収まり
@@ -402,7 +418,7 @@ Public Function fncstrUwawakuShitajiT(ByVal in_varHinban As Variant, ByVal in_va
                     ElseIf IsOyatobira(varHinban) Then
                         fncstrUwawakuShitajiT = "12"
                     ElseIf Not IsHirakido(varHinban) Then
-                        fncstrUwawakuShitajiT = "30"
+                        fncstrUwawakuShitajiT = strBoardT
                     End If
                     
                         
@@ -501,9 +517,12 @@ Public Function strFncFuchibariColor(in_varHinban As Variant, in_strColor As Str
 '    Input項目
 '       in_varHinban        建具品番
 '       in_strColor         色
-'       in_varSpec          個別Spec（現在は使用しない）
+'       in_varSpec          個別Spec
 
 '   2.14.0 ADD
+
+'   3.0.0
+'   →ジュリアの縁貼り色変更(BA→MO)
 '   *************************************************************
     
     Dim strHinban As String
@@ -525,7 +544,11 @@ Public Function strFncFuchibariColor(in_varHinban As Variant, in_strColor As Str
         If in_strColor = "SB" Then
             strFncFuchibariColor = "EW"
         ElseIf in_strColor = "SH" Then
-            strFncFuchibariColor = "BA"
+            If Is40mm(in_varSpec) Then
+                strFncFuchibariColor = "MO"
+            Else
+                strFncFuchibariColor = "BA"
+            End If
         End If
     Else
         strFncFuchibariColor = in_strColor
@@ -534,6 +557,91 @@ Public Function strFncFuchibariColor(in_varHinban As Variant, in_strColor As Str
     Exit Function
 
 Err_strFncFuchibariColor:
+    MsgBox Err.Description
     strFncFuchibariColor = ""
     
+End Function
+
+Public Function varFncKanamonoSeizoBi(ByVal strKeiyakuNo As String, ByVal strTouNo As String, ByVal strHeyaNo As String, ByVal varDate As Variant, ByVal bytHinbanKubun As Byte) As Variant
+'   *************************************************************
+'   varFncKanamonoSeizoBi
+'       出荷金物がある場合、製造指示データから製造日（最大値）を返す
+'
+'   戻り値:Variant
+'       →Date型            製造日
+'       →Null              製造日なし、又はエラー
+'
+'    Input項目
+'       strKeiyakuNo        契約番号
+'       strTouNo            棟番号
+'       strHeyaNo           部屋番号
+'       varDate             製造日
+'       bytHinbanKubun      品番区分 (1→建具）
+
+'3.0.0 ADD
+'   *************************************************************
+    Dim strSQL As String
+    
+    varFncKanamonoSeizoBi = Null
+    
+    On Error GoTo Err_varFncKanamonoSeizoBi
+    
+    strSQL = ""
+    strSQL = strSQL & "契約番号 = '" & strKeiyakuNo & "' and  棟番号 = '" & strTouNo & "' and 部屋番号 = '" & strHeyaNo & "' "
+    strSQL = strSQL & "and  出荷金物あり = True AND 製造日 < #" & Format(varDate, "yyyy/MM/dd") & "# "
+    
+    varFncKanamonoSeizoBi = DMax("製造日", "TEMP_部材展開_製造日", strSQL)
+    
+    Exit Function
+    
+Err_varFncKanamonoSeizoBi:
+    'Debug.Print Err.Description
+    varFncKanamonoSeizoBi = Null
+End Function
+
+Public Function varFncKanamonoDaisha(ByVal strKeiyakuNo As String, ByVal strTouNo As String, ByVal strHeyaNo As String, ByVal bytHinbanKubun As Byte) As Variant
+'   *************************************************************
+'   varFncKanamonoDaisha
+'       出荷金物が台車データに登録されている場合、製造指示データから台車コードを返す
+
+'
+'   戻り値:Variant
+'       →String型          台車コード
+'       →Null              製造日なし、又はエラー
+'
+'    Input項目
+'       strKeiyakuNo        契約番号
+'       strTouNo            棟番号
+'       strHeyaNo           部屋番号
+'       bytHinbanKubun      品番区分 (1→建具）
+
+'3.0.0 ADD
+'   *************************************************************
+    Dim strSQL As String
+    Dim strKeiyakuBango As String
+    Dim bytKubun As Byte
+    
+    varFncKanamonoDaisha = Null
+    
+    On Error GoTo Err_varFncKanamonoDaisha
+    
+    strKeiyakuBango = strKeiyakuNo & "-" & strTouNo & "-" & strHeyaNo
+    
+    Select Case bytHinbanKubun
+        Case 1
+            bytKubun = 10
+    End Select
+    
+    If Not IsNull(bytKubun) Then
+            strSQL = ""
+            strSQL = strSQL & "契約番号 = '" & strKeiyakuNo & "' and  棟番号 = '" & strTouNo & "' and 部屋番号 = '" & strHeyaNo & "' "
+    
+            varFncKanamonoDaisha = DMax("台車コード", "TEMP_部材展開_製造日", strSQL)
+    End If
+    
+    Exit Function
+    
+Err_varFncKanamonoDaisha:
+    'Debug.Print Err.Description
+    varFncKanamonoDaisha = Null
 End Function

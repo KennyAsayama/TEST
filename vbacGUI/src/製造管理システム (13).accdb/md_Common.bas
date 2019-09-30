@@ -5,6 +5,8 @@ Option Explicit
 
 '2.6.0
 '   →bolShizaiUpdatable　追加
+'3.0.0
+'   →bolsekkei 追加
 '--------------------------------------------------------------------------------------------------------------------
 '本番データベース名
 Public Const strDBName As String = "DB02"
@@ -19,6 +21,8 @@ Public bolUpdatable As Boolean
 Public bolAdministrator As Boolean
 
 Public bolShizaiUpdatable As Boolean
+
+Public bolSekkei As Boolean
 
 '1.10.6 K.Asayama 20151211 追加
 'SxLローカルコピー,カレンダーコピー
@@ -233,15 +237,20 @@ Public Function strfncGetVersion() As String
 'バージョン取得処理
 '   →バージョンを取得し文字列で戻す
 '   →取得できない場合は空文字で返す
+
+'3.0.0
+'   →Rev追加
 '--------------------------------------------------------------------------------------------------------------------
     Dim objLOCALdb As New cls_LOCALDB
-
+    Dim strRev As String
+    
     On Error GoTo Err_strfncGetVersion
     
-    If objLOCALdb.ExecSelect("select Version from T_Version管理 order by 更新日時 desc ") Then
+    If objLOCALdb.ExecSelect("select Version,Rev from T_Version管理 order by 更新日時 desc ") Then
         
         If Not objLOCALdb.GetRS.EOF Then
             strfncGetVersion = objLOCALdb.GetRS![Version]
+            strRev = CStr(objLOCALdb.GetRS![Rev])
         Else
             Err.Raise 9999, , "バージョン取得エラー。メニューを開くことができません"
         End If
@@ -252,6 +261,8 @@ Public Function strfncGetVersion() As String
     
     End If
     
+    strfncGetVersion = strfncGetVersion & "." & strRev
+    
     GoTo Exit_strfncGetVersion
 
 Err_strfncGetVersion:
@@ -259,6 +270,44 @@ Err_strfncGetVersion:
     MsgBox Err.Description
     
 Exit_strfncGetVersion:
+'クラスのインスタンスを破棄
+    Set objLOCALdb = Nothing
+    
+End Function
+
+Public Function strfncGetVersionOnly() As String
+'--------------------------------------------------------------------------------------------------------------------
+'バージョン(レビジョン無し)取得処理
+'   →バージョンを取得し文字列で戻す
+'   →取得できない場合は空文字で返す
+
+'3.0.0 ADD
+'--------------------------------------------------------------------------------------------------------------------
+    Dim objLOCALdb As New cls_LOCALDB
+    
+    On Error GoTo Err_strfncGetVersionOnly
+    
+    If objLOCALdb.ExecSelect("select Version from T_Version管理 order by 更新日時 desc ") Then
+        
+        If Not objLOCALdb.GetRS.EOF Then
+            strfncGetVersionOnly = objLOCALdb.GetRS![Version]
+        Else
+            Err.Raise 9999, , "バージョン取得エラー。メニューを開くことができません"
+        End If
+        
+    Else
+    
+        Err.Raise 9999, , "バージョン取得エラー。メニューを開くことができません"
+    
+    End If
+    
+    GoTo Exit_strfncGetVersionOnly
+
+Err_strfncGetVersionOnly:
+    strfncGetVersionOnly = ""
+    MsgBox Err.Description
+    
+Exit_strfncGetVersionOnly:
 'クラスのインスタンスを破棄
     Set objLOCALdb = Nothing
     
@@ -1113,5 +1162,188 @@ Public Function fncFileSelector(ByVal inFolder As String, ByVal inShurui As Inte
 Err_fncFileSelector:
     MsgBox Err.Description
     
+    
+End Function
+
+Public Function isTableExist(ByVal strTableName As String) As Boolean
+'   *************************************************************
+'   isTableExist
+'   テーブル存在確認
+
+'
+'   戻り値:Boolean
+'       →True              テーブル有
+'       →False             テーブル無し
+'
+'    Input項目
+'       strTableName        テーブル名
+
+'3.0.0 ADD
+'   *************************************************************
+
+    Dim daoDB As DAO.Database
+    Dim daoTableDef As DAO.TableDef
+    Set daoDB = CurrentDb
+    
+    isTableExist = False
+    
+    On Error GoTo Err_isTableExist
+    
+    For Each daoTableDef In CurrentDb.TableDefs
+        If daoTableDef.Name = strTableName Then
+            isTableExist = True
+            Exit For
+        End If
+    Next
+    
+    GoTo Exit_isTableExist
+    
+Err_isTableExist:
+
+Exit_isTableExist:
+    Set daoTableDef = Nothing
+    Set daoDB = Nothing
+End Function
+
+Public Function UrlEncodeUtf8(ByVal strSource As String) As String
+'   *************************************************************
+'   UrlEncodeUtf8
+'   文字列をUTF8エンコードして戻す
+
+'
+'   戻り値:String
+'       →エンコード後の文字列
+'
+'    Input項目
+'       strSource        エンコード前の文字列
+
+'3.0.0 ADD
+'   *************************************************************
+    Dim objSC As Object
+    Set objSC = CreateObject("ScriptControl")
+    objSC.Language = "Jscript"
+    UrlEncodeUtf8 = objSC.CodeObject.encodeURIComponent(strSource)
+    Set objSC = Nothing
+End Function
+
+Public Function bolint40mmOrder() As Integer
+'--------------------------------------------------------------------------------------------------------------------
+'40mmソート順
+'   →ソート順で40mmを優先するか36mmを優先するか確認
+'
+'   :戻り値
+'       0       :40mm,36mmの順
+'       1       :36mm,40mmの順
+'--------------------------------------------------------------------------------------------------------------------
+    Dim objREMOTEdb As New cls_BRAND_MASTER
+    
+    bolint40mmOrder = 1
+    
+    On Error GoTo Err_bolint40mmOrder
+    
+    If objREMOTEdb.ExecSelect("select 値 from T_Control where [key] = 14") Then
+        
+        If Not objREMOTEdb.GetRS.EOF Then
+            If IsNull(objREMOTEdb.GetRS![値]) Then
+                Err.Raise 9999, , "40mmソート順が取得できないので36mm→40mmの順でソートします"
+                If Not IsNumeric(objREMOTEdb.GetRS![値]) Then
+                    Err.Raise 9999, , "コントロールマスタのソート順の値が異常です"
+                End If
+            End If
+        Else
+            Err.Raise 9999, , "コントロールマスタにキー[14]（40mmソート順）が存在しません"
+        End If
+    Else
+        Err.Raise 9999, , "コントロールマスタの取得エラー"
+    
+    End If
+
+    bolint40mmOrder = objREMOTEdb.GetRS![値]
+    
+    GoTo Exit_bolint40mmOrder
+    
+Err_bolint40mmOrder:
+    MsgBox Err.Description
+    
+Exit_bolint40mmOrder:
+
+    Set objREMOTEdb = Nothing
+End Function
+
+Public Function fncUserGroup_Belongs(in_strGroup As String) As Boolean
+'   *************************************************************
+'   ユーザーグループ所属確認
+'       ログインユーザーのADアカウントが
+'       引数のグループに登録されていればTrueを返す
+
+'       ※ドメインに参加していない場合、PCがネットワークに接続されていない場合
+'       　実行時エラーになる
+
+'   戻り値:Boolean
+'       →True              グループに所属している
+'       →False             グループに所属していない
+'
+'   引数
+'       in_strGroup        ActiveDirectoryユーザーグループ名
+
+'  3.0.0 K.Asayama ADD
+'   *************************************************************
+
+    Dim objADSysInfo As Object
+    Dim objUser As Object
+    Dim objGroup As Object
+    Dim varGroup As Variant
+    Dim strUser As String
+    
+    
+    Set objADSysInfo = CreateObject("ADSystemInfo")
+    strUser = objADSysInfo.UserName
+    Set objUser = GetObject("LDAP://" & strUser)
+    
+    On Error GoTo Err_fncUserGroup_Belongs
+        
+    strUser = objADSysInfo.UserName
+
+    'memberOf属性は複数ある場合のみオブジェクト配列になるため
+    '以下で配列か確認して処理を分岐
+
+    If IsArray(objUser.memberOf) Then
+    
+        For Each varGroup In objUser.memberOf
+            Set objGroup = GetObject("LDAP://" & varGroup)
+            If objGroup.cn = in_strGroup Then
+                fncUserGroup_Belongs = True
+                Exit For
+            End If
+        Next
+        
+        Set objGroup = Nothing
+
+    Else
+        '↓グループに１つも属してないとGetObjectでエラーになるためトラップ
+        On Error Resume Next
+        
+        Set objGroup = GetObject("LDAP://" & objUser.memberOf)
+        
+        If Err.Number = 0 Then
+            
+            If objGroup.cn = in_strGroup Then
+                fncUserGroup_Belongs = True
+            End If
+             
+            Set objGroup = Nothing
+        End If
+
+    End If
+    
+    GoTo Exit_fncUserGroup_Belongs
+    
+Err_fncUserGroup_Belongs:
+    'エラーの場合はFalseを返す
+    fncUserGroup_Belongs = False
+
+Exit_fncUserGroup_Belongs:
+    Set objADSysInfo = Nothing
+    Set objUser = Nothing
     
 End Function

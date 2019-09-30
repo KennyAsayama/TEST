@@ -73,7 +73,7 @@ Public Sub exp_EXCEL(strSQL As String, Optional boolFilter As Boolean, Optional 
         j = 1
     Else
         j = 2
-        objApp.Activesheet.Cells(1, 1).value = strMIDASHI
+        objApp.ActiveSheet.Cells(1, 1).value = strMIDASHI
     End If
     
     
@@ -81,7 +81,7 @@ Public Sub exp_EXCEL(strSQL As String, Optional boolFilter As Boolean, Optional 
         Set rsADO = objREMOTEdb.GetRS
         
         
-        With objApp.Activesheet
+        With objApp.ActiveSheet
             For i = 0 To rsADO.Fields.Count - 1
                 .Cells(j, i + 1).value = rsADO.Fields(i).Name
                 .Cells(j, i + 1).Interior.ColorIndex = 15 'Gray
@@ -219,7 +219,7 @@ Public Sub exp_EXCEL_LOCAL(strSQL As String, Optional boolFilter As Boolean, Opt
         j = 1
     Else
         j = 2
-        objApp.Activesheet.Cells(1, 1).value = strMIDASHI
+        objApp.ActiveSheet.Cells(1, 1).value = strMIDASHI
     End If
     
     
@@ -227,7 +227,7 @@ Public Sub exp_EXCEL_LOCAL(strSQL As String, Optional boolFilter As Boolean, Opt
         Set rsADO = objLOCALdb.GetRS
         
         
-        With objApp.Activesheet
+        With objApp.ActiveSheet
             For i = 0 To rsADO.Fields.Count - 1
                 .Cells(j, i + 1).value = rsADO.Fields(i).Name
                 .Cells(j, i + 1).Interior.ColorIndex = 15 'Gray
@@ -304,7 +304,7 @@ Public Sub sub_ClipBord_Paste_to_Excel()
     objApp.Visible = False
     objApp.Workbooks.Add
     
-    objApp.Activesheet.Paste
+    objApp.ActiveSheet.Paste
     objApp.CutCopyMode = False
     
     objApp.Visible = True
@@ -444,11 +444,11 @@ Public Function bolfncexp_EXCELOBJECT(in_objRS As ADODB.Recordset, in_ExcelObj A
         j = 1
     Else
         j = 2
-        in_ExcelObj.Activesheet.Cells(1, 1).value = strMIDASHI
+        in_ExcelObj.ActiveSheet.Cells(1, 1).value = strMIDASHI
     End If
     
     
-    With in_ExcelObj.Activesheet
+    With in_ExcelObj.ActiveSheet
         For i = 0 To in_objRS.Fields.Count - 1
             .Cells(j, i + 1).value = in_objRS.Fields(i).Name
             .Cells(j, i + 1).Interior.ColorIndex = 15 'Gray

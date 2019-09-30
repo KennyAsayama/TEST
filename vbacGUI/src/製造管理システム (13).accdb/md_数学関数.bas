@@ -71,3 +71,34 @@ Public Function Roundx(CurValue As Currency, Optional Intdp As Integer) As Doubl
     Roundx = (Int((Abs(CurValue) * 10 ^ Intdp) + 0.5) / 10 ^ Intdp) * Sgn(CurValue)
 
 End Function
+
+Public Function RoundUp(CurValue As Currency, Optional Intdp As Integer) As Currency
+'   *************************************************************
+'   切上げ関数
+'
+'   戻り値:Currency
+'       →丸め後の数字
+'
+'    Input項目
+'       CurValue        入力値
+'       Intdp           丸める桁数
+'
+'   IntDPの例       -2  →  10の位を丸める
+'                   -1  →  1の位を丸める
+'                   0   →  少数点以下第1位を丸める
+'                   1   →  少数点以下第2位を丸める
+'
+'   3.0.0 ADD
+'   *************************************************************
+
+    Dim W As Currency
+  
+    W = 10 ^ Abs(Intdp)
+    
+    If Intdp > 0 Then
+        RoundUp = Int(CurValue * W + 0.999) / W
+    Else
+        RoundUp = Int(CurValue / W + 0.999) * W
+    End If
+    
+End Function

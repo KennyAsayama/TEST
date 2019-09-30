@@ -712,9 +712,24 @@ Public Function bolFncKidoriData(ByVal varSpec As Variant, ByVal in_strHinban As
         If strHinban Like "*DN-####*" Or strHinban Like "*VN-####*" Then
         '20170105 K.Asayama Change END
         
-            dblGakuYoko1 = dblDW - 188
+            If dblDH <= 1800 Then
+                dblGakuYoko1 = dblDW - 248
+                intGakuYokoH1 = 1
+                
+            Else
+                dblGakuYoko1 = dblDW - 188
+                intGakuYokoH1 = 1
+                
+                dblGakuYoko2 = dblDW - 248
+                intGakuYokoH2 = 1
+            End If
         Else
             dblGakuYoko1 = dblDW - 248
+            If dblDH <= 1800 Then
+                intGakuYokoH1 = 1 * intMaisu
+            Else
+                intGakuYokoH1 = 2 * intMaisu
+            End If
         End If
         '20160825 K.Asayama Change END
         
@@ -722,7 +737,7 @@ Public Function bolFncKidoriData(ByVal varSpec As Variant, ByVal in_strHinban As
             '20180205 K.Asayama ADD
             Case 2589.5 To 2689
                 intSanH = 4 * intMaisu
-                intGakuYokoH1 = 2 * intMaisu
+                'intGakuYokoH1 = 2 * intMaisu
                 dblHashira = dblDH - 114
                 dblGakuYokoLVL30 = dblDW - 58
                 intGakuYokoLVL30 = 2 * intMaisu
@@ -734,21 +749,21 @@ Public Function bolFncKidoriData(ByVal varSpec As Variant, ByVal in_strHinban As
                 End If
             Case 2530 To 2589
                 intSanH = 6 * intMaisu
-                intGakuYokoH1 = 2 * intMaisu
+                'intGakuYokoH1 = 2 * intMaisu
                 dblHashira = dblDH - 174
                 
                 'strShingumizu = "SS-2"
                 
             Case 1801 To 2529
                 intSanH = 4 * intMaisu
-                intGakuYokoH1 = 2 * intMaisu
+                'intGakuYokoH1 = 2 * intMaisu
                 dblHashira = dblDH - 114
                 
                 'strShingumizu = "SS-1"
                 
             Case Is <= 1800
                 intSanH = 4 * intMaisu
-                intGakuYokoH1 = 1 * intMaisu
+                'intGakuYokoH1 = 1 * intMaisu
                 dblHashira = dblDH - 114
                 
                 'strShingumizu = "SS-1"
@@ -1404,9 +1419,24 @@ Public Function bolFncKidoriData(ByVal varSpec As Variant, ByVal in_strHinban As
         If strHinban Like "*DN-####*" Or strHinban Like "*VN-####*" Then
         '20170105 K.Asayama Change END
 
-            dblGakuYoko1 = dblDW - 186
+            If dblDH <= 1800 Then
+                dblGakuYoko1 = dblDW - 246
+                intGakuYokoH1 = 1
+                
+            Else
+                dblGakuYoko1 = dblDW - 186
+                intGakuYokoH1 = 1
+                
+                dblGakuYoko2 = dblDW - 246
+                intGakuYokoH2 = 1
+            End If
         Else
             dblGakuYoko1 = dblDW - 246
+            If dblDH <= 1800 Then
+                intGakuYokoH1 = 1 * intMaisu
+            Else
+                intGakuYokoH1 = 2 * intMaisu
+            End If
         End If
         '20160825 K.Asayama Change END
         
@@ -1415,7 +1445,7 @@ Public Function bolFncKidoriData(ByVal varSpec As Variant, ByVal in_strHinban As
             '20180205 K.Asayama ADD
             Case 2589.5 To 2689
                 intSanH = 4 * intMaisu
-                intGakuYokoH1 = 2 * intMaisu
+                'intGakuYokoH1 = 2 * intMaisu
                 dblHashira = dblDH - 114
                 dblGakuYokoLVL30 = dblDW - 56
                 intGakuYokoLVL30 = 2 * intMaisu
@@ -1428,21 +1458,21 @@ Public Function bolFncKidoriData(ByVal varSpec As Variant, ByVal in_strHinban As
                 
             Case 2530 To 2589
                 intSanH = 6 * intMaisu
-                intGakuYokoH1 = 2 * intMaisu
+                'intGakuYokoH1 = 2 * intMaisu
                 dblHashira = dblDH - 174
                 
                 'strShingumizu = "SS-2"
                 
             Case 1801 To 2529
                 intSanH = 4 * intMaisu
-                intGakuYokoH1 = 2 * intMaisu
+                'intGakuYokoH1 = 2 * intMaisu
                 dblHashira = dblDH - 114
                 
                 'strShingumizu = "SS-1"
                 
             Case Is <= 1800
                 intSanH = 4 * intMaisu
-                intGakuYokoH1 = 1 * intMaisu
+                'intGakuYokoH1 = 1 * intMaisu
                 dblHashira = dblDH - 114
                 
                 'strShingumizu = "SS-1"
@@ -1980,9 +2010,24 @@ Public Function bolFncKidoriData(ByVal varSpec As Variant, ByVal in_strHinban As
         If strHinban Like "*DN-####*" Or strHinban Like "*VN-####*" Then
         '20170105 K.Asayama Change END
 
-            dblGakuYoko1 = dblDW - 188
+            If dblDH <= 1800 Then
+                dblGakuYoko1 = dblDW - 248
+                intGakuYokoH1 = 1
+                
+            Else
+                dblGakuYoko1 = dblDW - 188
+                intGakuYokoH1 = 1
+                
+                dblGakuYoko2 = dblDW - 248
+                intGakuYokoH2 = 1
+            End If
         Else
             dblGakuYoko1 = dblDW - 248
+            If dblDH <= 1800 Then
+                intGakuYokoH1 = 1 * intMaisu
+            Else
+                intGakuYokoH1 = 2 * intMaisu
+            End If
         End If
         '20160825 K.Asayama Change END
         
@@ -1991,7 +2036,7 @@ Public Function bolFncKidoriData(ByVal varSpec As Variant, ByVal in_strHinban As
             '20180205 K.Asayama ADD
             Case 2589.5 To 2689
                 intSanH = 4 * intMaisu
-                intGakuYokoH1 = 2 * intMaisu
+                'intGakuYokoH1 = 2 * intMaisu
                 dblHashira = dblDH - 114
                 dblGakutate1 = (dblDH - 274) / 3
                 intGakutateH1 = 3 * intMaisu
@@ -2007,7 +2052,7 @@ Public Function bolFncKidoriData(ByVal varSpec As Variant, ByVal in_strHinban As
                 
             Case 2530 To 2589
                 intSanH = 6 * intMaisu
-                intGakuYokoH1 = 2 * intMaisu
+                'intGakuYokoH1 = 2 * intMaisu
                 dblHashira = dblDH - 174
                 dblGakutate1 = (dblDH - 214) / 3
                 intGakutateH1 = 3 * intMaisu
@@ -2016,7 +2061,7 @@ Public Function bolFncKidoriData(ByVal varSpec As Variant, ByVal in_strHinban As
                 
             Case 1801 To 2529
                 intSanH = 4 * intMaisu
-                intGakuYokoH1 = 2 * intMaisu
+                'intGakuYokoH1 = 2 * intMaisu
                 dblHashira = dblDH - 114
                 dblGakutate1 = (dblDH - 154) / 3
                 intGakutateH1 = 3 * intMaisu
@@ -2025,7 +2070,7 @@ Public Function bolFncKidoriData(ByVal varSpec As Variant, ByVal in_strHinban As
                 
             Case Is <= 1800
                 intSanH = 4 * intMaisu
-                intGakuYokoH1 = 1 * intMaisu
+                'intGakuYokoH1 = 1 * intMaisu
                 dblHashira = dblDH - 114
                 dblGakutate1 = (dblDH - 134) / 2
                 intGakutateH1 = 2 * intMaisu
@@ -2383,9 +2428,24 @@ Public Function bolFncKidoriData(ByVal varSpec As Variant, ByVal in_strHinban As
         If strHinban Like "*DN-####*" Or strHinban Like "*VN-####*" Then
         '20170105 K.Asayama Change END
 
-            dblGakuYoko1 = dblDW - 184
+            If dblDH <= 1800 Then
+                dblGakuYoko1 = dblDW - 244
+                intGakuYokoH1 = 1
+                
+            Else
+                dblGakuYoko1 = dblDW - 184
+                intGakuYokoH1 = 1
+                
+                dblGakuYoko2 = dblDW - 244
+                intGakuYokoH2 = 1
+            End If
         Else
             dblGakuYoko1 = dblDW - 244
+            If dblDH <= 1800 Then
+                intGakuYokoH1 = 1 * intMaisu
+            Else
+                intGakuYokoH1 = 2 * intMaisu
+            End If
         End If
         '20160825 K.Asayama Change END
         
@@ -2394,7 +2454,7 @@ Public Function bolFncKidoriData(ByVal varSpec As Variant, ByVal in_strHinban As
             '20180205 K.Asayama ADD
             Case 2589.5 To 2689
                 intSanH = 4 * intMaisu
-                intGakuYokoH1 = 2 * intMaisu
+                'intGakuYokoH1 = 2 * intMaisu
                 dblHashira = dblDH - 114
                 dblGakutate1 = (dblDH - 274) / 3
                 intGakutateH1 = 3 * intMaisu
@@ -2410,7 +2470,7 @@ Public Function bolFncKidoriData(ByVal varSpec As Variant, ByVal in_strHinban As
                 
             Case 2530 To 2589
                 intSanH = 6 * intMaisu
-                intGakuYokoH1 = 2 * intMaisu
+                'intGakuYokoH1 = 2 * intMaisu
                 dblHashira = dblDH - 174
                 dblGakutate1 = (dblDH - 214) / 3
                 intGakutateH1 = 3 * intMaisu
@@ -2419,7 +2479,7 @@ Public Function bolFncKidoriData(ByVal varSpec As Variant, ByVal in_strHinban As
 
             Case 1801 To 2529
                 intSanH = 4 * intMaisu
-                intGakuYokoH1 = 2 * intMaisu
+                'intGakuYokoH1 = 2 * intMaisu
                 dblHashira = dblDH - 114
                 dblGakutate1 = (dblDH - 154) / 3
                 intGakutateH1 = 3 * intMaisu
@@ -2428,7 +2488,7 @@ Public Function bolFncKidoriData(ByVal varSpec As Variant, ByVal in_strHinban As
 
             Case Is <= 1800
                 intSanH = 4 * intMaisu
-                intGakuYokoH1 = 1 * intMaisu
+                'intGakuYokoH1 = 1 * intMaisu
                 dblHashira = dblDH - 114
                 dblGakutate1 = (dblDH - 134) / 2
                 intGakutateH1 = 2 * intMaisu
@@ -2527,9 +2587,24 @@ Public Function bolFncKidoriData(ByVal varSpec As Variant, ByVal in_strHinban As
         If strHinban Like "*DN-####*" Or strHinban Like "*VN-####*" Then
         '20170105 K.Asayama Change END
 
-            dblGakuYoko1 = dblDW - 185
+            If dblDH <= 1800 Then
+                dblGakuYoko1 = dblDW - 245
+                intGakuYokoH1 = 1
+                
+            Else
+                dblGakuYoko1 = dblDW - 185
+                intGakuYokoH1 = 1
+                
+                dblGakuYoko2 = dblDW - 245
+                intGakuYokoH2 = 1
+            End If
         Else
             dblGakuYoko1 = dblDW - 245
+            If dblDH <= 1800 Then
+                intGakuYokoH1 = 1 * intMaisu
+            Else
+                intGakuYokoH1 = 2 * intMaisu
+            End If
         End If
         '20160825 K.Asayama Change END
         
@@ -2537,7 +2612,7 @@ Public Function bolFncKidoriData(ByVal varSpec As Variant, ByVal in_strHinban As
             '20180205 K.Asayama ADD
             Case 2589.5 To 2689
                 intSanH = 4 * intMaisu
-                intGakuYokoH1 = 2 * intMaisu
+                'intGakuYokoH1 = 2 * intMaisu
                 dblHashira = dblDH - 114
                 dblGakuYokoLVL30 = dblDW - 55
                 intGakuYokoLVL30 = 2 * intMaisu
@@ -2550,21 +2625,21 @@ Public Function bolFncKidoriData(ByVal varSpec As Variant, ByVal in_strHinban As
                 
             Case 2530 To 2589
                 intSanH = 6 * intMaisu
-                intGakuYokoH1 = 2 * intMaisu
+                'intGakuYokoH1 = 2 * intMaisu
                 dblHashira = dblDH - 174
                 
                 'strShingumizu = "SS-2"
                 
             Case 1801 To 2529
                 intSanH = 4 * intMaisu
-                intGakuYokoH1 = 2 * intMaisu
+                'intGakuYokoH1 = 2 * intMaisu
                 dblHashira = dblDH - 114
                 
                 'strShingumizu = "SS-1"
                 
             Case Is <= 1800
                 intSanH = 4 * intMaisu
-                intGakuYokoH1 = 1 * intMaisu
+                'intGakuYokoH1 = 1 * intMaisu
                 dblHashira = dblDH - 114
                 
                 'strShingumizu = "SS-1"
@@ -5733,8 +5808,8 @@ Public Function bolFncKidoriData(ByVal varSpec As Variant, ByVal in_strHinban As
         Else
             dblShinAtsu = 30.2
             dblSan = dblDW + 5
-            dblGakuYoko1 = dblDW - 245
-            intGakuYokoH1 = 2 * intMaisu
+            'dblGakuYoko1 = dblDW - 245
+            'intGakuYokoH1 = 2 * intMaisu
             intHashiraH = 2 * intMaisu
             dblSode1 = 60
             
@@ -5751,7 +5826,31 @@ Public Function bolFncKidoriData(ByVal varSpec As Variant, ByVal in_strHinban As
             
             intSode1H = intFncSode1Honsu_Group1(strHinban, intMaisu, dblDH)
             '20161121 K.Asayama Change END
-        
+            
+            If strHinban Like "*DN-####*" Or strHinban Like "*VN-####*" Then
+
+                If dblDH <= 1800 Then
+                    dblGakuYoko1 = dblDW - 245
+                    intGakuYokoH1 = 1
+                    
+                Else
+                    dblGakuYoko1 = dblDW - 185
+                    intGakuYokoH1 = 1
+                    
+                    dblGakuYoko2 = dblDW - 245
+                    intGakuYokoH2 = 1
+                End If
+            
+            Else
+                dblGakuYoko1 = dblDW - 245
+                If dblDH <= 1800 Then
+                    intGakuYokoH1 = 1 * intMaisu
+                Else
+                    intGakuYokoH1 = 2 * intMaisu
+                End If
+                
+            End If
+            
             Select Case dblDH
                 
                 '20180205 K.Asayama ADD
@@ -6934,7 +7033,7 @@ Err_fncstrTateguSearchKey:
     
 End Function
 
-Public Function fncstrGetKihonzu(in_strKensakuHinban As String, in_spec As Variant) As String
+Public Function fncstrGetKihonzu(in_strKensakuHinban As String, in_Spec As Variant) As String
 '   *************************************************************
 '   T_建具関数ﾏｽﾀ基本図番号取得
 
@@ -6943,6 +7042,9 @@ Public Function fncstrGetKihonzu(in_strKensakuHinban As String, in_spec As Varia
 '
 '    Input項目
 '       in_strHinban        建具品番
+
+'   3.0.0
+'       →新関数追加
 '   *************************************************************
     Dim objREMOTEdb As New cls_BRAND_MASTER
     Dim strSQL As String
@@ -6952,7 +7054,9 @@ Public Function fncstrGetKihonzu(in_strKensakuHinban As String, in_spec As Varia
     On Error GoTo Err_fncstrGetKihonzu
     
     With objREMOTEdb
-        If in_spec Like "*1007" Or in_spec Like "*1011" Or in_spec Like "*1111" Or in_spec Like "*1103" Or in_spec Like "*1105" Or in_spec Like "*1010" Or in_spec Like "*1009" Or right(in_spec, 4) >= "1304" Then
+        If Is40mm(in_Spec) Then
+            strSQL = "select 基本図 from T_建具関数ﾏｽﾀ_1908仕様 where 建具品番 = '" & fncstrTateguSearchKey(in_strKensakuHinban) & "'"
+        ElseIf in_Spec Like "*1007" Or in_Spec Like "*1011" Or in_Spec Like "*1111" Or in_Spec Like "*1103" Or in_Spec Like "*1105" Or in_Spec Like "*1010" Or in_Spec Like "*1009" Or right(in_Spec, 4) >= "1304" Then
            strSQL = "select 基本図 from T_建具関数ﾏｽﾀ_1007仕様 where 建具品番 = '" & fncstrTateguSearchKey(in_strKensakuHinban) & "'"
         Else
            strSQL = "select 基本図 from T_建具関数ﾏｽﾀ where 建具品番 = '" & fncstrTateguSearchKey(in_strKensakuHinban) & "'"
@@ -8483,4 +8587,1249 @@ Public Function IsAWKansuSearch_Needed(in_varHinban As Variant) As Boolean
 
 Err_IsAWKansuSearch_Needed:
     IsAWKansuSearch_Needed = False
+End Function
+
+Public Sub subKidoriData_Init(ByRef in_KidoriData As KidoriData)
+'   *************************************************************
+'   KidoriDataタイプ初期化
+
+'   KidoriDataタイプをNullで初期化
+
+'   3.0.0 ADD
+'   *************************************************************
+    With in_KidoriData
+            .out_dblShinAtsu = Null
+            .out_dblsan = Null
+            .out_dblgakuyoko1 = Null
+            .out_dblgakuYoko2 = Null
+            .out_dblGakuyokoLVL30 = Null
+            .out_dblhashira = Null
+            .out_dblhashira2 = Null
+            .out_dblgakutate1 = Null
+            .out_dblgakutate2 = Null
+            .out_dblgakutate3 = Null
+            .out_dbltegakeShurui = Null
+            .out_dbltegake = Null
+            .out_dblsode1 = Null
+            .out_dblsode2 = Null
+            .out_dbldaboshitaji = Null
+            .out_dblCupShitaji = Null
+            .out_intsan = Null
+            .out_intgakuyoko1 = Null
+            .out_intgakuyoko2 = Null
+            .out_intgakuyokoLVL30 = Null
+            .out_inthashira = Null
+            .out_inthashira2 = Null
+            .out_intgakutate1 = Null
+            .out_intgakutate2 = Null
+            .out_intgakutate3 = Null
+            .out_inttegake = Null
+            .out_intsode1 = Null
+            .out_intsode2 = Null
+            .out_intdaboshitaji = Null
+            .out_intcupshitaji = Null
+            .out_dblShinAtsu_N = Null
+            .out_dblsan_N = Null
+            .out_dblgakuyoko1_N = Null
+            .out_dblhashira_N = Null
+            .out_dblhashira2_N = Null
+            .out_dblhashiraSt_N = Null
+            .out_dblYokosan_N = Null
+            .out_dblsanH2_N = Null
+            .out_intsanh_N = Null
+            .out_intsanh2_N = Null
+            .out_inthashiraH2_N = Null
+            .out_intgakuyokoH1_N = Null
+            .out_inthashiraH_N = Null
+            .out_inthashiraStH_N = Null
+            .out_intYokosanh_N = Null
+            .out_strShingumizu = Null
+        End With
+End Sub
+
+Public Function fncstrShingumiShousai_40mm(in_strBrandHinban As String, dblDH As Double, in_varHandleName As Variant) As String
+'***********************************************************
+'芯組詳細図(BRD1908以降)
+' 品番とDHから図面番号を取得
+'
+'
+'***********************************************************
+    Dim blnHirakido As Boolean
+    Dim blnHikido As Boolean
+    Dim blnKakushiChoban As Boolean
+    Dim blnOutsetJou_DU As Boolean
+    Dim blnDN As Boolean
+    
+
+    Dim strSejou As String
+    Dim strKaiheiyousiki As String
+    Dim strTateguSeries As String
+    Dim strTateguStyle As String
+    Dim strPanelGrass As String
+    Dim strGlassLeather As String
+    
+    Dim objTateguHinban As New cls_建具品番
+    
+    strTateguSeries = ""
+    strTateguStyle = ""
+    strKaiheiyousiki = ""
+    strPanelGrass = ""
+    strGlassLeather = ""
+    
+    If Not IsNull(in_varHandleName) Then
+        strSejou = in_varHandleName
+    End If
+    
+    blnHirakido = False
+    blnHikido = False
+    blnKakushiChoban = False
+    blnOutsetJou_DU = False
+    blnDN = False
+    fncstrShingumiShousai_40mm = ""
+    
+    With objTateguHinban
+        If .IsTateguHinban(in_strBrandHinban) Then
+            strTateguSeries = .シリーズ(in_strBrandHinban)
+            strTateguStyle = .建具スタイル(in_strBrandHinban)
+            strKaiheiyousiki = .開閉様式(in_strBrandHinban)
+            strPanelGrass = .パネルガラス(in_strBrandHinban)
+            strGlassLeather = .ガラスレザー種類(in_strBrandHinban)
+        End If
+    End With
+    
+    Set objTateguHinban = Nothing
+    
+    If IsHirakido(in_strBrandHinban) Then
+        blnHirakido = True
+        If IsHidden_Hinge(in_strBrandHinban) Then
+            blnKakushiChoban = True
+        End If
+    ElseIf IsHikido(in_strBrandHinban) Then
+        blnHikido = True
+        If IsEndWakunashi(in_strBrandHinban) Then
+            'DUのアウトセット引戸錠
+            If strKaiheiyousiki = "DU" And Not strSejou Like "*N" Then
+                blnOutsetJou_DU = True
+            
+            ElseIf strKaiheiyousiki Like "[DV]N" Then
+                blnDN = True
+                
+            End If
+            
+        'SH,SF,TF,SJ,SQ,TQ,SYも引戸錠と同じ図面
+        ElseIf strKaiheiyousiki Like "S[FHJQY]" Or strKaiheiyousiki Like "T[FQ]" Then
+                blnOutsetJou_DU = True
+        End If
+    End If
+    
+    'クローゼット
+    If strKaiheiyousiki = "SA" Then
+    
+        fncstrShingumiShousai_40mm = "P4A-19"
+        Exit Function
+        
+    End If
+    
+    '開き戸
+    If blnHirakido Then
+    
+        'CF1/EF1/TF1/RF1/BF1/QF1
+        If strTateguSeries Like "[BFTRQ]" And strPanelGrass = "F" And strGlassLeather = "" Then
+
+            '隠し丁番
+            If blnKakushiChoban Then
+                Select Case dblDH
+                    Case Is <= 2539
+                        fncstrShingumiShousai_40mm = "P4A-2"
+                    Case Is > 2539
+                        fncstrShingumiShousai_40mm = "P4A-3"
+                End Select
+
+            'フルハイトヒンジ
+            Else
+                Select Case dblDH
+                    Case Is <= 2539
+                        fncstrShingumiShousai_40mm = "P4A-1"
+                    Case Is > 2539
+                        fncstrShingumiShousai_40mm = "P4A-3"
+                End Select
+            End If
+
+        'CF6/EF6
+        ElseIf strTateguSeries = "F" And strPanelGrass = "F" And strGlassLeather <> "" Then
+
+            '隠し丁番
+            If blnKakushiChoban Then
+                Select Case dblDH
+                    Case Is <= 2539
+                        fncstrShingumiShousai_40mm = "P4A-5"
+                    Case Is > 2539
+                        fncstrShingumiShousai_40mm = "P4A-6"
+                End Select
+
+            'フルハイトヒンジ
+            Else
+                Select Case dblDH
+                    Case Is <= 2539
+                        fncstrShingumiShousai_40mm = "P4A-4"
+                    Case Is > 2539
+                        fncstrShingumiShousai_40mm = "P4A-6"
+                End Select
+            End If
+
+        'PF1
+        ElseIf strTateguSeries = "P" And strKaiheiyousiki <> "SA" And strPanelGrass = "F" And strGlassLeather = "" Then
+
+            '隠し丁番
+            If blnKakushiChoban Then
+                Select Case dblDH
+                    Case Is <= 2400
+                        fncstrShingumiShousai_40mm = "P4A-8"
+                    Case Is > 2539
+                        fncstrShingumiShousai_40mm = "P4A-9"
+                    Case Else
+                        fncstrShingumiShousai_40mm = "P4A-8A"
+                End Select
+
+            'フルハイトヒンジ
+            Else
+                Select Case dblDH
+                    Case Is <= 2400
+                        fncstrShingumiShousai_40mm = "P4A-7"
+                    Case Is > 2539
+                        fncstrShingumiShousai_40mm = "P4A-9"
+                    Case Else
+                        fncstrShingumiShousai_40mm = "P4A-7A"
+                End Select
+            End If
+
+        'KF1/KF7
+        ElseIf strTateguSeries = "S" And strPanelGrass Like "[FZ]" And strGlassLeather = "" Then
+
+            '隠し丁番
+            If blnKakushiChoban Then
+                Select Case dblDH
+                    Case Is <= 2539
+                        fncstrShingumiShousai_40mm = "P4A-11"
+                    Case Is > 2539
+                        fncstrShingumiShousai_40mm = "P4A-12"
+                End Select
+
+            'フルハイトヒンジ
+            Else
+                Select Case dblDH
+                    Case Is <= 2539
+                        fncstrShingumiShousai_40mm = "P4A-10"
+                    Case Is > 2539
+                        fncstrShingumiShousai_40mm = "P4A-12"
+                End Select
+            End If
+
+        'YF1
+        ElseIf strTateguSeries = "Y" And strPanelGrass = "F" And strGlassLeather = "" Then
+
+            '隠し丁番
+            If blnKakushiChoban Then
+                Select Case dblDH
+                    Case Is <= 2539
+                        fncstrShingumiShousai_40mm = "P4A-16"
+                End Select
+
+            'フルハイトヒンジ
+            Else
+                Select Case dblDH
+                    Case Is <= 2539
+                        fncstrShingumiShousai_40mm = "P4A-15"
+                End Select
+            End If
+
+        'YG6
+        ElseIf strTateguSeries = "Y" And strPanelGrass = "T" And strGlassLeather <> "" Then
+
+            '隠し丁番
+            If blnKakushiChoban Then
+                Select Case dblDH
+                    Case Is <= 2539
+                        fncstrShingumiShousai_40mm = "P4A-18"
+                End Select
+
+            'フルハイトヒンジ
+            Else
+                Select Case dblDH
+                    Case Is <= 2539
+                        fncstrShingumiShousai_40mm = "P4A-17"
+                End Select
+            End If
+            
+        'CG1/EG1/TG1/RG1/BG1/QG1
+        ElseIf strTateguSeries Like "[BFTRQ]" And strPanelGrass = "S" And strGlassLeather <> "" Then
+
+            '隠し丁番
+            If blnKakushiChoban Then
+                Select Case dblDH
+                    Case Is <= 2539
+                        fncstrShingumiShousai_40mm = "G4A-2"
+                    Case Is > 2539
+                        fncstrShingumiShousai_40mm = "G4A-3"
+                End Select
+
+            'フルハイトヒンジ
+            Else
+                Select Case dblDH
+                    Case Is <= 2539
+                        fncstrShingumiShousai_40mm = "G4A-1"
+                    Case Is > 2539
+                        fncstrShingumiShousai_40mm = "G4A-3"
+                End Select
+            End If
+
+        
+        'CG2/EG2/TG2/RG2/BG2/QG2
+        ElseIf strTateguSeries Like "[BFTRQ]" And strPanelGrass = "C" And strGlassLeather <> "" Then
+
+            '隠し丁番
+            If blnKakushiChoban Then
+                Select Case dblDH
+                    Case Is <= 2539
+                        fncstrShingumiShousai_40mm = "G4A-5"
+                    Case Is > 2539
+                        fncstrShingumiShousai_40mm = "G4A-6"
+                End Select
+
+            'フルハイトヒンジ
+            Else
+                Select Case dblDH
+                    Case Is <= 2539
+                        fncstrShingumiShousai_40mm = "G4A-4"
+                    Case Is > 2539
+                        fncstrShingumiShousai_40mm = "G4A-6"
+                End Select
+            End If
+               
+        'CG3/EG3
+        ElseIf strTateguSeries = "F" And strPanelGrass = "G" And strGlassLeather <> "" Then
+
+            '隠し丁番
+            If blnKakushiChoban Then
+                Select Case dblDH
+                    Case Is <= 2539
+                        fncstrShingumiShousai_40mm = "G4A-8"
+                    Case Is > 2539
+                        fncstrShingumiShousai_40mm = "G4A-9"
+                End Select
+
+            'フルハイトヒンジ
+            Else
+                Select Case dblDH
+                    Case Is <= 2539
+                        fncstrShingumiShousai_40mm = "G4A-7"
+                    Case Is > 2539
+                        fncstrShingumiShousai_40mm = "G4A-9"
+                End Select
+            End If
+            
+        'CG7/EG7
+        ElseIf strTateguSeries = "F" And strPanelGrass = "M" And strGlassLeather = "F" Then
+
+            '隠し丁番
+            If blnKakushiChoban Then
+                Select Case dblDH
+                    Case Is <= 2539
+                        fncstrShingumiShousai_40mm = "G4A-11"
+                    Case Is > 2539
+                        fncstrShingumiShousai_40mm = "G4A-12"
+                End Select
+
+            'フルハイトヒンジ
+            Else
+                Select Case dblDH
+                    Case Is <= 2539
+                        fncstrShingumiShousai_40mm = "G4A-10"
+                    Case Is > 2539
+                        fncstrShingumiShousai_40mm = "G4A-12"
+                End Select
+            End If
+            
+        'CG8/EG8/RG8/QG8
+        ElseIf strTateguSeries Like "[FRQ]" And strPanelGrass = "D" And strGlassLeather <> "" Then
+
+            '隠し丁番
+            If blnKakushiChoban Then
+                Select Case dblDH
+                    Case Is <= 2539
+                        fncstrShingumiShousai_40mm = "G4A-14"
+                End Select
+
+            'フルハイトヒンジ
+            Else
+                Select Case dblDH
+                    Case Is <= 2539
+                        fncstrShingumiShousai_40mm = "G4A-13"
+                End Select
+            End If
+        
+        'PG1
+        ElseIf strTateguSeries = "P" And strPanelGrass = "S" And strGlassLeather <> "" Then
+
+            '隠し丁番
+            If blnKakushiChoban Then
+                Select Case dblDH
+                    Case Is <= 2400
+                        fncstrShingumiShousai_40mm = "G4A-16"
+                    Case Is > 2539
+                        fncstrShingumiShousai_40mm = "G4A-17"
+                    Case Else
+                        fncstrShingumiShousai_40mm = "G4A-16A"
+                End Select
+
+            'フルハイトヒンジ
+            Else
+                Select Case dblDH
+                    Case Is <= 2400
+                        fncstrShingumiShousai_40mm = "G4A-15"
+                    Case Is > 2539
+                        fncstrShingumiShousai_40mm = "G4A-17"
+                    Case Else
+                        fncstrShingumiShousai_40mm = "G4A-15A"
+                End Select
+            End If
+            
+        'PG2
+        ElseIf strTateguSeries = "P" And strPanelGrass = "C" And strGlassLeather <> "" Then
+
+            '隠し丁番
+            If blnKakushiChoban Then
+                Select Case dblDH
+                    Case Is <= 2400
+                        fncstrShingumiShousai_40mm = "G4A-19"
+                    Case Is > 2539
+                        fncstrShingumiShousai_40mm = "G4A-20"
+                    Case Else
+                        fncstrShingumiShousai_40mm = "G4A-19A"
+                End Select
+
+            'フルハイトヒンジ
+            Else
+                Select Case dblDH
+                    Case Is <= 2400
+                        fncstrShingumiShousai_40mm = "G4A-18"
+                    Case Is > 2539
+                        fncstrShingumiShousai_40mm = "G4A-20"
+                    Case Else
+                        fncstrShingumiShousai_40mm = "G4A-18A"
+                End Select
+            End If
+            
+        'YF5/YG5
+        ElseIf strTateguSeries = "Y" And strPanelGrass = "W" And strGlassLeather <> "" Then
+
+            '隠し丁番
+            If blnKakushiChoban Then
+                Select Case dblDH
+                    Case Is <= 2539
+                        fncstrShingumiShousai_40mm = "G4A-22"
+                End Select
+
+            'フルハイトヒンジ
+            Else
+                Select Case dblDH
+                    Case Is <= 2539
+                        fncstrShingumiShousai_40mm = "G4A-21"
+                End Select
+            End If
+        
+        'CA2/EA2(Air2型)
+        ElseIf strTateguSeries = "A" And strPanelGrass = "S" And strGlassLeather = "L" Then
+
+            '隠し丁番
+            If blnKakushiChoban Then
+                Select Case dblDH
+                    Case Is <= 2539
+                        fncstrShingumiShousai_40mm = "G4A-24"
+                    Case Is > 2539
+                        fncstrShingumiShousai_40mm = "G4A-25"
+                End Select
+
+            'フルハイトヒンジ
+            Else
+                Select Case dblDH
+                    Case Is <= 2539
+                        fncstrShingumiShousai_40mm = "G4A-23"
+                    Case Is > 2539
+                        fncstrShingumiShousai_40mm = "G4A-25"
+                End Select
+            End If
+        
+        'CC1/EC1(Caro1型パネル)
+        ElseIf strTateguSeries = "F" And strTateguStyle = "B" And strPanelGrass = "A" Then
+
+            '隠し丁番
+            If blnKakushiChoban Then
+                Select Case dblDH
+                    Case Is <= 2539
+                        fncstrShingumiShousai_40mm = "G4A-27"
+                End Select
+
+            'フルハイトヒンジ
+            Else
+                Select Case dblDH
+                    Case Is <= 2539
+                        fncstrShingumiShousai_40mm = "G4A-26"
+                End Select
+            End If
+            
+        'CC2/EC2(Caro2型パネル)
+        ElseIf strTateguSeries = "F" And strTateguStyle = "B" And strPanelGrass = "B" Then
+
+            '隠し丁番
+            If blnKakushiChoban Then
+                Select Case dblDH
+                    Case Is <= 2539
+                        fncstrShingumiShousai_40mm = "G4A-29"
+                End Select
+
+            'フルハイトヒンジ
+            Else
+                Select Case dblDH
+                    Case Is <= 2539
+                        fncstrShingumiShousai_40mm = "G4A-28"
+                End Select
+            End If
+            
+        'CC3/EC3(Caro3型パネル)
+        ElseIf strTateguSeries = "F" And strTateguStyle = "B" And strPanelGrass = "O" Then
+
+            '隠し丁番
+            If blnKakushiChoban Then
+                Select Case dblDH
+                    Case Is <= 2539
+                        fncstrShingumiShousai_40mm = "G4A-31"
+                End Select
+
+            'フルハイトヒンジ
+            Else
+                Select Case dblDH
+                    Case Is <= 2539
+                        fncstrShingumiShousai_40mm = "G4A-30"
+                End Select
+            End If
+        
+        'CC4/EC4(Caro1型スルーガラス)
+        ElseIf strTateguSeries = "F" And strTateguStyle = "C" And strPanelGrass = "A" Then
+
+            '隠し丁番
+            If blnKakushiChoban Then
+                Select Case dblDH
+                    Case Is <= 2539
+                        fncstrShingumiShousai_40mm = "G4A-33"
+                End Select
+
+            'フルハイトヒンジ
+            Else
+                Select Case dblDH
+                    Case Is <= 2539
+                        fncstrShingumiShousai_40mm = "G4A-32"
+                End Select
+            End If
+        
+        'CC5/EC5(Caro2型スルーガラス)
+        ElseIf strTateguSeries = "F" And strTateguStyle = "C" And strPanelGrass = "B" Then
+
+            '隠し丁番
+            If blnKakushiChoban Then
+                Select Case dblDH
+                    Case Is <= 2539
+                        fncstrShingumiShousai_40mm = "G4A-35"
+                End Select
+
+            'フルハイトヒンジ
+            Else
+                Select Case dblDH
+                    Case Is <= 2539
+                        fncstrShingumiShousai_40mm = "G4A-34"
+                End Select
+            End If
+        
+        'CC6/EC6(Caro3型スルーガラス)
+        ElseIf strTateguSeries = "F" And strTateguStyle = "C" And strPanelGrass = "O" Then
+
+            '隠し丁番
+            If blnKakushiChoban Then
+                Select Case dblDH
+                    Case Is <= 2539
+                        fncstrShingumiShousai_40mm = "G4A-37"
+                End Select
+
+            'フルハイトヒンジ
+            Else
+                Select Case dblDH
+                    Case Is <= 2539
+                        fncstrShingumiShousai_40mm = "G4A-36"
+                End Select
+            End If
+        End If
+        
+        Exit Function
+        
+    End If
+    
+    '引戸
+    If blnHikido Then
+    
+     'CF1/EF1/TF1/RF1/BF1/QF1
+        If strTateguSeries Like "[BFTRQ]" And strPanelGrass = "F" And strGlassLeather = "" Then
+
+            'DU錠
+            If blnOutsetJou_DU Then
+                Select Case dblDH
+                    Case Is <= 2539
+                        fncstrShingumiShousai_40mm = "P4C-3"
+                    Case Is > 2539
+                        fncstrShingumiShousai_40mm = "P4C-6"
+                End Select
+            
+            'DN/VN
+            ElseIf blnDN Then
+                Select Case dblDH
+                    Case Is <= 2539
+                        fncstrShingumiShousai_40mm = "P4C-2"
+                    Case Is > 2539
+                        fncstrShingumiShousai_40mm = "P4C-5"
+                End Select
+                
+            'その他
+            Else
+                Select Case dblDH
+                    Case Is <= 2539
+                        fncstrShingumiShousai_40mm = "P4C-1"
+                    Case Is > 2539
+                        fncstrShingumiShousai_40mm = "P4C-4"
+                End Select
+            End If
+
+        'CF6/EF6
+        ElseIf strTateguSeries = "F" And strPanelGrass = "F" And strGlassLeather <> "" Then
+
+            'DU錠
+            If blnOutsetJou_DU Then
+                Select Case dblDH
+                    Case Is <= 2539
+                        fncstrShingumiShousai_40mm = "P4C-9"
+                    Case Is > 2539
+                        fncstrShingumiShousai_40mm = "P4C-12"
+                End Select
+            
+            'DN/VN
+            ElseIf blnDN Then
+                Select Case dblDH
+                    Case Is <= 2539
+                        fncstrShingumiShousai_40mm = "P4C-8"
+                    Case Is > 2539
+                        fncstrShingumiShousai_40mm = "P4C-11"
+                End Select
+                
+            'その他
+            Else
+                Select Case dblDH
+                    Case Is <= 2539
+                        fncstrShingumiShousai_40mm = "P4C-7"
+                    Case Is > 2539
+                        fncstrShingumiShousai_40mm = "P4C-10"
+                End Select
+            End If
+        
+        'OF1/OG1
+        ElseIf strTateguSeries = "O" Then
+        
+            Select Case dblDH
+                Case Is <= 2539
+                    fncstrShingumiShousai_40mm = "P4C-13"
+                Case Is > 2539
+                    fncstrShingumiShousai_40mm = "P4C-14"
+            End Select
+
+        'PF1
+        ElseIf strTateguSeries = "P" And strKaiheiyousiki <> "SA" And strPanelGrass = "F" And strGlassLeather = "" Then
+
+            'DU錠
+            If blnOutsetJou_DU Then
+                Select Case dblDH
+                    Case Is <= 2400
+                        fncstrShingumiShousai_40mm = "P4C-17"
+                    Case Is > 2539
+                        fncstrShingumiShousai_40mm = "P4C-20"
+                    Case Else
+                        fncstrShingumiShousai_40mm = "P4C-17A"
+                End Select
+            
+            'DN/VN
+            ElseIf blnDN Then
+                Select Case dblDH
+                    Case Is <= 2400
+                        fncstrShingumiShousai_40mm = "P4C-16"
+                    Case Is > 2539
+                        fncstrShingumiShousai_40mm = "P4C-19"
+                    Case Else
+                        fncstrShingumiShousai_40mm = "P4C-16A"
+                End Select
+                
+            'その他
+            Else
+                Select Case dblDH
+                    Case Is <= 2400
+                        fncstrShingumiShousai_40mm = "P4C-15"
+                    Case Is > 2539
+                        fncstrShingumiShousai_40mm = "P4C-18"
+                    Case Else
+                        fncstrShingumiShousai_40mm = "P4C-15A"
+                End Select
+            End If
+
+        'KF1/KF7
+        ElseIf strTateguSeries = "S" And strPanelGrass Like "[FZ]" And strGlassLeather = "" Then
+
+            'DU錠
+            If blnOutsetJou_DU Then
+                Select Case dblDH
+                    Case Is <= 2539
+                        fncstrShingumiShousai_40mm = "P4C-23"
+                    Case Is > 2539
+                        fncstrShingumiShousai_40mm = "P4C-26"
+                End Select
+            
+            'DN/VN
+            ElseIf blnDN Then
+                Select Case dblDH
+                    Case Is <= 2539
+                        fncstrShingumiShousai_40mm = "P4C-22"
+                    Case Is > 2539
+                        fncstrShingumiShousai_40mm = "P4C-25"
+                End Select
+                
+            'その他
+            Else
+                Select Case dblDH
+                    Case Is <= 2539
+                        fncstrShingumiShousai_40mm = "P4C-21"
+                    Case Is > 2539
+                        fncstrShingumiShousai_40mm = "P4C-24"
+                End Select
+            End If
+
+        'CF4/EF4/CG4/EG4
+        ElseIf strTateguSeries = "F" And strTateguStyle = "V" Then
+         
+            'DU錠
+            If blnOutsetJou_DU Then
+                Select Case dblDH
+                    Case Is <= 2539
+                        fncstrShingumiShousai_40mm = "P4C-29"
+                    Case Is > 2539
+                        fncstrShingumiShousai_40mm = "P4C-32"
+                End Select
+            
+            'DN/VN
+            ElseIf blnDN Then
+                Select Case dblDH
+                    Case Is <= 2539
+                        fncstrShingumiShousai_40mm = "P4C-28"
+                    Case Is > 2539
+                        fncstrShingumiShousai_40mm = "P4C-31"
+                End Select
+                
+            'その他
+            Else
+                Select Case dblDH
+                    Case Is <= 2539
+                        fncstrShingumiShousai_40mm = "P4C-27"
+                    Case Is > 2539
+                        fncstrShingumiShousai_40mm = "P4C-30"
+                End Select
+            End If
+
+        'YF1
+        ElseIf strTateguSeries = "Y" And strPanelGrass = "F" And strGlassLeather = "" Then
+
+            'DU錠
+            If blnOutsetJou_DU Then
+                Select Case dblDH
+                    Case Is <= 2539
+                        fncstrShingumiShousai_40mm = "P4C-35"
+                End Select
+            
+            'DN/VN
+            ElseIf blnDN Then
+                Select Case dblDH
+                    Case Is <= 2539
+                        fncstrShingumiShousai_40mm = "P4C-34"
+                End Select
+                
+            'その他
+            Else
+                Select Case dblDH
+                    Case Is <= 2539
+                        fncstrShingumiShousai_40mm = "P4C-33"
+                End Select
+            End If
+
+        'YG6
+        ElseIf strTateguSeries = "Y" And strPanelGrass = "T" And strGlassLeather <> "" Then
+
+            'DU錠
+            If blnOutsetJou_DU Then
+                Select Case dblDH
+                    Case Is <= 2539
+                        fncstrShingumiShousai_40mm = "P4C-38"
+                End Select
+            
+            'DN/VN
+            ElseIf blnDN Then
+                Select Case dblDH
+                    Case Is <= 2539
+                        fncstrShingumiShousai_40mm = "P4C-37"
+                End Select
+                
+            'その他
+            Else
+                Select Case dblDH
+                    Case Is <= 2539
+                        fncstrShingumiShousai_40mm = "P4C-36"
+                End Select
+            End If
+            
+        'CG1/EG1/TG1/RG1/BG1/QG1
+        ElseIf strTateguSeries Like "[BFTRQ]" And strPanelGrass = "S" And strGlassLeather <> "" Then
+
+            'DU錠
+            If blnOutsetJou_DU Then
+                Select Case dblDH
+                    Case Is <= 2539
+                        fncstrShingumiShousai_40mm = "G4C-3"
+                    Case Is > 2539
+                        fncstrShingumiShousai_40mm = "G4C-6"
+                End Select
+            
+            'DN/VN
+            ElseIf blnDN Then
+                Select Case dblDH
+                    Case Is <= 2539
+                        fncstrShingumiShousai_40mm = "G4C-2"
+                    Case Is > 2539
+                        fncstrShingumiShousai_40mm = "G4C-5"
+                End Select
+                
+            'その他
+            Else
+                Select Case dblDH
+                    Case Is <= 2539
+                        fncstrShingumiShousai_40mm = "G4C-1"
+                    Case Is > 2539
+                        fncstrShingumiShousai_40mm = "G4C-4"
+                End Select
+            End If
+
+        
+        'CG2/EG2/TG2/RG2/BG2/QG2
+        ElseIf strTateguSeries Like "[BFTRQ]" And strPanelGrass = "C" And strGlassLeather <> "" Then
+
+            'DU錠
+            If blnOutsetJou_DU Then
+                Select Case dblDH
+                    Case Is <= 2539
+                        fncstrShingumiShousai_40mm = "G4C-9"
+                    Case Is > 2539
+                        fncstrShingumiShousai_40mm = "G4C-12"
+                End Select
+            
+            'DN/VN
+            ElseIf blnDN Then
+                Select Case dblDH
+                    Case Is <= 2539
+                        fncstrShingumiShousai_40mm = "G4C-8"
+                    Case Is > 2539
+                        fncstrShingumiShousai_40mm = "G4C-11"
+                End Select
+                
+            'その他
+            Else
+                Select Case dblDH
+                    Case Is <= 2539
+                        fncstrShingumiShousai_40mm = "G4C-7"
+                    Case Is > 2539
+                        fncstrShingumiShousai_40mm = "G4C-10"
+                End Select
+            End If
+               
+        'CG3/EG3
+        ElseIf strTateguSeries = "F" And strPanelGrass = "G" And strGlassLeather <> "" Then
+
+            'DU錠
+            If blnOutsetJou_DU Then
+                Select Case dblDH
+                    Case Is <= 2539
+                        fncstrShingumiShousai_40mm = "G4C-15"
+                    Case Is > 2539
+                        fncstrShingumiShousai_40mm = "G4C-18"
+                End Select
+            
+            'DN/VN
+            ElseIf blnDN Then
+                Select Case dblDH
+                    Case Is <= 2539
+                        fncstrShingumiShousai_40mm = "G4C-14"
+                    Case Is > 2539
+                        fncstrShingumiShousai_40mm = "G4C-17"
+                End Select
+                
+            'その他
+            Else
+                Select Case dblDH
+                    Case Is <= 2539
+                        fncstrShingumiShousai_40mm = "G4C-13"
+                    Case Is > 2539
+                        fncstrShingumiShousai_40mm = "G4C-16"
+                End Select
+            End If
+            
+            
+        'CG7/EG7
+        ElseIf strTateguSeries = "F" And strPanelGrass = "M" And strGlassLeather = "F" Then
+
+            'DU錠
+            If blnOutsetJou_DU Then
+                Select Case dblDH
+                    Case Is <= 2539
+                        fncstrShingumiShousai_40mm = "G4C-21"
+                    Case Is > 2539
+                        fncstrShingumiShousai_40mm = "G4C-24"
+                End Select
+            
+            'DN/VN
+            ElseIf blnDN Then
+                Select Case dblDH
+                    Case Is <= 2539
+                        fncstrShingumiShousai_40mm = "G4C-20"
+                    Case Is > 2539
+                        fncstrShingumiShousai_40mm = "G4C-23"
+                End Select
+                
+            'その他
+            Else
+                Select Case dblDH
+                    Case Is <= 2539
+                        fncstrShingumiShousai_40mm = "G4C-19"
+                    Case Is > 2539
+                        fncstrShingumiShousai_40mm = "G4C-22"
+                End Select
+            End If
+            
+        'CG8/EG8/RG8/QG8
+        ElseIf strTateguSeries Like "[FRQ]" And strPanelGrass = "D" And strGlassLeather <> "" Then
+
+            'DU錠
+            If blnOutsetJou_DU Then
+                Select Case dblDH
+                    Case Is <= 2539
+                        fncstrShingumiShousai_40mm = "G4C-27"
+                End Select
+            
+            'DN/VN
+            ElseIf blnDN Then
+                Select Case dblDH
+                    Case Is <= 2539
+                        fncstrShingumiShousai_40mm = "G4C-26"
+                End Select
+                
+            'その他
+            Else
+                Select Case dblDH
+                    Case Is <= 2539
+                        fncstrShingumiShousai_40mm = "G4C-25"
+                End Select
+            End If
+        
+        'PG1
+        ElseIf strTateguSeries = "P" And strPanelGrass = "S" And strGlassLeather <> "" Then
+
+            'DU錠
+            If blnOutsetJou_DU Then
+                Select Case dblDH
+                    Case Is <= 2400
+                        fncstrShingumiShousai_40mm = "G4C-30"
+                    Case Is > 2539
+                        fncstrShingumiShousai_40mm = "G4C-33"
+                    Case Else
+                        fncstrShingumiShousai_40mm = "G4C-30A"
+                End Select
+            
+            'DN/VN
+            ElseIf blnDN Then
+                Select Case dblDH
+                    Case Is <= 2400
+                        fncstrShingumiShousai_40mm = "G4C-29"
+                    Case Is > 2539
+                        fncstrShingumiShousai_40mm = "G4C-32"
+                    Case Else
+                        fncstrShingumiShousai_40mm = "G4C-29A"
+                End Select
+                
+            'その他
+            Else
+                Select Case dblDH
+                    Case Is <= 2400
+                        fncstrShingumiShousai_40mm = "G4C-28"
+                    Case Is > 2539
+                        fncstrShingumiShousai_40mm = "G4C-31"
+                    Case Else
+                        fncstrShingumiShousai_40mm = "G4C-28A"
+                End Select
+            End If
+            
+        'PG2
+        ElseIf strTateguSeries = "P" And strPanelGrass = "C" And strGlassLeather <> "" Then
+
+            'DU錠
+            If blnOutsetJou_DU Then
+                Select Case dblDH
+                    Case Is <= 2400
+                        fncstrShingumiShousai_40mm = "G4C-36"
+                    Case Is > 2539
+                        fncstrShingumiShousai_40mm = "G4C-39"
+                    Case Else
+                        fncstrShingumiShousai_40mm = "G4C-36A"
+                End Select
+            
+            'DN/VN
+            ElseIf blnDN Then
+                Select Case dblDH
+                    Case Is <= 2400
+                        fncstrShingumiShousai_40mm = "G4C-35"
+                    Case Is > 2539
+                        fncstrShingumiShousai_40mm = "G4C-38"
+                    Case Else
+                        fncstrShingumiShousai_40mm = "G4C-35A"
+                End Select
+                
+            'その他
+            Else
+                Select Case dblDH
+                    Case Is <= 2400
+                        fncstrShingumiShousai_40mm = "G4C-34"
+                    Case Is > 2539
+                        fncstrShingumiShousai_40mm = "G4C-37"
+                    Case Else
+                        fncstrShingumiShousai_40mm = "G4C-34A"
+                End Select
+            End If
+            
+        'YF5/YG5
+        ElseIf strTateguSeries = "Y" And strPanelGrass = "W" And strGlassLeather <> "" Then
+
+            'DU錠
+            If blnOutsetJou_DU Then
+                Select Case dblDH
+                    Case Is <= 2539
+                        fncstrShingumiShousai_40mm = "G4C-42"
+                End Select
+            
+            'DN/VN
+            ElseIf blnDN Then
+                Select Case dblDH
+                    Case Is <= 2539
+                        fncstrShingumiShousai_40mm = "G4C-41"
+                End Select
+                
+            'その他
+            Else
+                Select Case dblDH
+                    Case Is <= 2539
+                        fncstrShingumiShousai_40mm = "G4C-40"
+                End Select
+            End If
+            
+        'CA2/EA2(Air2型)
+        ElseIf strTateguSeries = "A" And strPanelGrass = "S" And strGlassLeather = "L" Then
+
+            'DU錠
+            If blnOutsetJou_DU Then
+                Select Case dblDH
+                    Case Is <= 2539
+                        fncstrShingumiShousai_40mm = "G4C-45"
+                    Case Is > 2539
+                        fncstrShingumiShousai_40mm = "G4C-48"
+                End Select
+            
+            'DN/VN
+            ElseIf blnDN Then
+                Select Case dblDH
+                    Case Is <= 2539
+                        fncstrShingumiShousai_40mm = "G4C-44"
+                    Case Is > 2539
+                        fncstrShingumiShousai_40mm = "G4C-47"
+                End Select
+                
+            'その他
+            Else
+                Select Case dblDH
+                    Case Is <= 2539
+                        fncstrShingumiShousai_40mm = "G4C-43"
+                    Case Is > 2539
+                        fncstrShingumiShousai_40mm = "G4C-46"
+                End Select
+            End If
+        
+        'CC1/EC1(Caro1型パネル)
+        ElseIf strTateguSeries = "F" And strTateguStyle = "B" And strPanelGrass = "A" Then
+
+            'DU錠
+            If blnOutsetJou_DU Then
+                Select Case dblDH
+                    Case Is <= 2539
+                        fncstrShingumiShousai_40mm = "G4C-51"
+                End Select
+            
+            'DN/VN
+            ElseIf blnDN Then
+                Select Case dblDH
+                    Case Is <= 2539
+                        fncstrShingumiShousai_40mm = "G4C-50"
+                End Select
+                
+            'その他
+            Else
+                Select Case dblDH
+                    Case Is <= 2539
+                        fncstrShingumiShousai_40mm = "G4C-49"
+                End Select
+            End If
+            
+        'CC2/EC2(Caro2型パネル)
+        ElseIf strTateguSeries = "F" And strTateguStyle = "B" And strPanelGrass = "B" Then
+
+            'DU錠
+            If blnOutsetJou_DU Then
+                Select Case dblDH
+                    Case Is <= 2539
+                        fncstrShingumiShousai_40mm = "G4C-54"
+                End Select
+            
+            'DN/VN
+            ElseIf blnDN Then
+                Select Case dblDH
+                    Case Is <= 2539
+                        fncstrShingumiShousai_40mm = "G4C-53"
+                End Select
+                
+            'その他
+            Else
+                Select Case dblDH
+                    Case Is <= 2539
+                        fncstrShingumiShousai_40mm = "G4C-52"
+                End Select
+            End If
+            
+        'CC3/EC3(Caro3型パネル)
+        ElseIf strTateguSeries = "F" And strTateguStyle = "B" And strPanelGrass = "O" Then
+
+            'DU錠
+            If blnOutsetJou_DU Then
+                Select Case dblDH
+                    Case Is <= 2539
+                        fncstrShingumiShousai_40mm = "G4C-57"
+                End Select
+            
+            'DN/VN
+            ElseIf blnDN Then
+                Select Case dblDH
+                    Case Is <= 2539
+                        fncstrShingumiShousai_40mm = "G4C-56"
+                End Select
+                
+            'その他
+            Else
+                Select Case dblDH
+                    Case Is <= 2539
+                        fncstrShingumiShousai_40mm = "G4C-55"
+                End Select
+            End If
+            
+        'CC4/EC4(Caro1型ガラス)
+        ElseIf strTateguSeries = "F" And strTateguStyle = "C" And strPanelGrass = "A" Then
+
+            'DU錠
+            If blnOutsetJou_DU Then
+                Select Case dblDH
+                    Case Is <= 2539
+                        fncstrShingumiShousai_40mm = "G4C-60"
+                End Select
+            
+            'DN/VN
+            ElseIf blnDN Then
+                Select Case dblDH
+                    Case Is <= 2539
+                        fncstrShingumiShousai_40mm = "G4C-59"
+                End Select
+                
+            'その他
+            Else
+                Select Case dblDH
+                    Case Is <= 2539
+                        fncstrShingumiShousai_40mm = "G4C-58"
+                End Select
+            End If
+            
+        'CC5/EC5(Caro2型ガラス)
+        ElseIf strTateguSeries = "F" And strTateguStyle = "C" And strPanelGrass = "B" Then
+
+            'DU錠
+            If blnOutsetJou_DU Then
+                Select Case dblDH
+                    Case Is <= 2539
+                        fncstrShingumiShousai_40mm = "G4C-63"
+                End Select
+            
+            'DN/VN
+            ElseIf blnDN Then
+                Select Case dblDH
+                    Case Is <= 2539
+                        fncstrShingumiShousai_40mm = "G4C-62"
+                End Select
+                
+            'その他
+            Else
+                Select Case dblDH
+                    Case Is <= 2539
+                        fncstrShingumiShousai_40mm = "G4C-61"
+                End Select
+            End If
+            
+
+        
+        'CC6/EC6(Caro3型ガラス)
+        ElseIf strTateguSeries = "F" And strTateguStyle = "C" And strPanelGrass = "O" Then
+
+            'DU錠
+            If blnOutsetJou_DU Then
+                Select Case dblDH
+                    Case Is <= 2539
+                        fncstrShingumiShousai_40mm = "G4C-66"
+                End Select
+            
+            'DN/VN
+            ElseIf blnDN Then
+                Select Case dblDH
+                    Case Is <= 2539
+                        fncstrShingumiShousai_40mm = "G4C-65"
+                End Select
+                
+            'その他
+            Else
+                Select Case dblDH
+                    Case Is <= 2539
+                        fncstrShingumiShousai_40mm = "G4C-64"
+                End Select
+            End If
+        End If
+    End If
+    
 End Function

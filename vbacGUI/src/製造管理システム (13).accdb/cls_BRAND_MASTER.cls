@@ -269,3 +269,10 @@ Err_GetSystemDate:
 Exit_GetSystemDate:
     Set RsDate = Nothing
 End Property
+
+Public Property Let CursorLocation(inValue As ADODB.CursorLocationEnum)
+'3.0.0 ADD
+
+    cnADO.CursorLocation = inValue
+    
+End Property

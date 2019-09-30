@@ -35,6 +35,8 @@ Private Sub mctl_DblClick(Cancel As Integer)
 '   →F_製造先行受付を追加
 '2.0.0
 '   →F_フルハイトライン_数量を追加
+'3.0.0
+'   →対応できないオブジェクト名を想定してカッコ[]をセット
 '--------------------------------------------------------------------------------------------------------------------
 'フォーム別処理をここにセット
 '--------------------------------------------------------------------------------------------------------------------
@@ -56,10 +58,10 @@ Private Sub mctl_DblClick(Cancel As Integer)
         'MsgBox strSortName
         
         If bolASC Then
-            Forms(mctl.Parent.Name).OrderBy = strSortName
+            Forms(mctl.Parent.Name).OrderBy = "[" & strSortName & "]"
             mctl.ForeColor = vbGreen
         Else
-            Forms(mctl.Parent.Name).OrderBy = strSortName & " DESC"
+            Forms(mctl.Parent.Name).OrderBy = "[" & strSortName & "] DESC"
             mctl.ForeColor = RGB(&HF5, &H9D, &H56)
         End If
         

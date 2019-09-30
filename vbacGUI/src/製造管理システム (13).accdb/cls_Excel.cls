@@ -115,7 +115,7 @@ Public Function WorkSheetADD(Optional byName As String = "") As Boolean
     With objExcel
         .Worksheets.Add After:=.Worksheets(.Worksheets.Count)
         If Not IsMissing(byName) Then
-            .Activesheet.Name = byName
+            .ActiveSheet.Name = byName
         End If
         
     End With

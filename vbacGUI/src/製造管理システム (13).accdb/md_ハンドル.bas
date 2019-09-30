@@ -156,6 +156,9 @@ Public Function fncbol_Handle_WanNyan(施錠 As String, 個別Spec As String) As Boo
 '引数       施錠            : 施錠コード(2 or 3桁)
 '           個別Spec        : 仕様コード(7桁)
 '戻り値     Boolean         : True  →わんにゃんハンドル  False   →わんにゃんハンドルではない
+
+'3.0.0
+'   →1908仕様追加
 '--------------------------------------------------------------------------------
     Dim str会社 As String
     Dim strSPEC As String
@@ -165,6 +168,12 @@ Public Function fncbol_Handle_WanNyan(施錠 As String, 個別Spec As String) As Boo
     
 
     Select Case strSPEC
+        Case Is >= "1908"
+            If 施錠 Like "AC?" Or 施錠 Like "AD?" Or 施錠 Like "AV?" Or 施錠 Like "AW?" Then
+                fncbol_Handle_WanNyan = True
+            Else
+                fncbol_Handle_WanNyan = False
+            End If
         Case Is >= "1410"
             If 施錠 Like "AE?" Or 施錠 Like "AF?" Or 施錠 Like "AN?" Or 施錠 Like "AO?" Then
                 fncbol_Handle_WanNyan = True
@@ -267,7 +276,7 @@ Public Function fncbol_Handle_Vertica(施錠 As String, 個別Spec As String) As Boo
                                
 End Function
 
-Public Function fncstrHandleKigoFileName(ByVal in_Hinban As String, ByVal in_Handle As String, ByVal in_spec As String) As String
+Public Function fncstrHandleKigoFileName(ByVal in_Hinban As String, ByVal in_Handle As String, ByVal in_Spec As String) As String
 '   *************************************************************
 '   ハンドル記号から記号図のファイル名を取得
 
@@ -289,6 +298,8 @@ Public Function fncstrHandleKigoFileName(ByVal in_Hinban As String, ByVal in_Han
 '   →1808仕様追加
 '2.13.0
 '   →1901仕様追加(HE-HI)
+'3.0.0
+'   →1908仕様追加
 '   *************************************************************
     Dim Reg As Object
     'ディクショナリ
@@ -301,7 +312,7 @@ Public Function fncstrHandleKigoFileName(ByVal in_Hinban As String, ByVal in_Han
     
     fncstrHandleKigoFileName = ""
     
-    If in_Hinban = "" Or in_Handle = "" Or in_spec = "" Then Exit Function
+    If in_Hinban = "" Or in_Handle = "" Or in_Spec = "" Then Exit Function
     
     '施錠コードが3桁（特注除く）以外は対応しない（過去のコードは対応しない）
     If Len(in_Handle) <> 3 Then Exit Function
@@ -323,15 +334,18 @@ Public Function fncstrHandleKigoFileName(ByVal in_Hinban As String, ByVal in_Han
     
             
             .Add "^(C[B-KST]|D[B-FI-KST])", "SHIBUTANI"
-            .Add "^(H[A-IPQR])", "KAWAJ_LJ"
+            .Add "^(H[A-S])", "KAWAJ_LJ"
             .Add "^(C[N-R]|D[NO])", "KAWAJUN"
             .Add "^(C[LM]|B[YZ]|B[ACDEFHIJLMNOPQRS]|D[PQ])", "KURAMAE"
-            .Add "^A[EFON]", "NAGASAWA"
+            .Add "^A[CDEFONVW]", "NAGASAWA"
             .Add "^F[C-H]", "OLIVARI"
 
         ElseIf IsHikido(in_Hinban) Or IsCloset_Hikichigai(in_Hinban) Then
     
-            .Add "^Z[ACEV]", "OKUDAIRATK"
+            .Add "^Z[ACEFV]", "OKUDAIRATK"
+            .Add "^Y[ABEF]", "PC422"
+            .Add "^Y[CD]", "PC210"
+            .Add "^Z[PQRS]", "BEST"
             .Add "^Z[BDHG]", "OKUDAIRA"
             .Add "^-(?!-).(?!N)", "HIKITELESS"
            
@@ -361,17 +375,24 @@ Public Function fncstrHandleKigoFileName(ByVal in_Hinban As String, ByVal in_Han
         'Debug.Print "Nomatch!"
     Else
         '錠付きの場合はファイル名にさらに錠の名前を付加
-        If fncbol錠(in_Handle, in_spec) Then
+        If fncbol錠(in_Handle, in_Spec) Then
         
             strHandleHikiteName = strHandleHikiteName & "_Lock"
             
             'ワンニャンの場合はシリンダー錠、間仕切り錠の区別あり
-            If fncbol_Handle_WanNyan(in_Handle, in_spec) Then
+            If fncbol_Handle_WanNyan(in_Handle, in_Spec) Then
                 Select Case right(in_Handle, 1)
                     Case "C"
                         strHandleHikiteName = strHandleHikiteName & "_Cylinder"
                     Case "M", "K"
                         strHandleHikiteName = strHandleHikiteName & "_Majikiri"
+                End Select
+            
+            'カワジュンLJのシリンダー錠対応(40mm以降)
+            ElseIf Is40mm(in_Spec) And strHandleHikiteName = "KAWAJ_LJ_Lock" Then
+                Select Case right(in_Handle, 1)
+                    Case "C"
+                        strHandleHikiteName = strHandleHikiteName & "_Cylinder"
                 End Select
             
             'エンド枠無しはアウトセット引戸錠
@@ -397,7 +418,7 @@ Exit_fncstrHandleKigoFileName:
         
 End Function
 
-Public Function fncstrHikiteColorName(ByVal in_Handle As String, ByVal in_spec As String) As String
+Public Function fncstrHikiteColorName(ByVal in_Handle As String, ByVal in_Spec As String) As String
 '   *************************************************************
 '   引き手記号から引き手色を取得
 
@@ -409,11 +430,13 @@ Public Function fncstrHikiteColorName(ByVal in_Handle As String, ByVal in_spec A
 '       in_Handle           施錠
 '       in_Spec             個別SPec
 
+'3.0.0
+'   1908仕様追加
 '   *************************************************************
     
     fncstrHikiteColorName = ""
     
-    If in_Handle = "" Or in_spec = "" Then Exit Function
+    If in_Handle = "" Or in_Spec = "" Then Exit Function
     
     '施錠コードが3桁（特注除く）以外は対応しない（過去のコードは対応しない）
     If Len(in_Handle) <> 3 Then Exit Function
@@ -427,6 +450,18 @@ Public Function fncstrHikiteColorName(ByVal in_Handle As String, ByVal in_spec A
         fncstrHikiteColorName = "ホワイト"
     ElseIf in_Handle Like "ZE*" Or in_Handle Like "ZD*" Then
         fncstrHikiteColorName = "ブラック"
+    '>=BRD1908仕様
+    ElseIf in_Handle Like "YB*" Or in_Handle Like "YC*" Or in_Handle Like "ZR*" Then
+        fncstrHikiteColorName = "サテンニッケル"
+    ElseIf in_Handle Like "YA*" Or in_Handle Like "ZS*" Then
+        fncstrHikiteColorName = "クローム"
+    ElseIf in_Handle Like "YD*" Or in_Handle Like "YE*" Or in_Handle Like "ZQ*" Then
+        fncstrHikiteColorName = "ブラック"
+    ElseIf in_Handle Like "YF*" Or in_Handle Like "ZF*" Then
+        fncstrHikiteColorName = "ホワイト"
+    ElseIf in_Handle Like "ZP*" Then
+        fncstrHikiteColorName = "鏡面ニッケル"
+        
     End If
     
 End Function

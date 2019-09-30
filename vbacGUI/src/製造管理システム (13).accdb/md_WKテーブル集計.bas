@@ -39,6 +39,8 @@ Public Function SetOrderData(ByVal inDate As Date, ByVal inDateKbn As Byte, inSe
 '       →DoEvents追加
 '2.13.0
 '       →Verticaシンクロ枚数対応
+'3.0.0
+'       →Specを転送
 '--------------------------------------------------------------------------------------------------------------------
     Dim objREMOTEdb As New cls_BRAND_MASTER
     Dim objLOCALdb As New cls_LOCALDB
@@ -150,6 +152,8 @@ Public Function SetOrderData(ByVal inDate As Date, ByVal inDateKbn As Byte, inSe
     '1.10.7 ADD End
     strSQL = strSQL & ",建具LT,枠LT,下地材LT,WTLT,金物LT,玄関収納LT,造作材LT "
     
+    strSQL = strSQL & ",m.Spec,s.登録時個別Spec 個別Spec "
+    
     If inSeizoKbn = "建具" Then
         strSQL = strSQL & ",ガラス入荷日,ルーバー入荷日,その他入荷日,出荷金物入荷日 "
     Else
@@ -252,6 +256,8 @@ Public Function SetOrderData(ByVal inDate As Date, ByVal inDateKbn As Byte, inSe
     strSQLWK = strSQLWK & ",その他入荷日        DATE "
     strSQLWK = strSQLWK & ",出荷金物入荷日      DATE "
     strSQLWK = strSQLWK & ",計算出荷日          DATE "
+    strSQLWK = strSQLWK & ",Spec                TEXT(20) "
+    strSQLWK = strSQLWK & ",個別Spec            TEXT(20) "
     strSQLWK = strSQLWK & ") "
         
     If Not objLOCALdb.ExecSQL(strSQLWK) Then
@@ -418,6 +424,9 @@ Public Function SetOrderData(ByVal inDate As Date, ByVal inDateKbn As Byte, inSe
                     objLOCALdb.GetRS![ルーバー入荷日] = .GetRS![ルーバー入荷日]
                     objLOCALdb.GetRS![その他入荷日] = .GetRS![その他入荷日]
                     objLOCALdb.GetRS![出荷金物入荷日] = .GetRS![出荷金物入荷日]
+                    
+                    objLOCALdb.GetRS![Spec] = .GetRS![Spec]
+                    objLOCALdb.GetRS![個別Spec] = .GetRS![個別Spec]
                     
                     objLOCALdb.GetRS.Update
                                         
@@ -978,11 +987,11 @@ Public Function bolfncTableCopyToLocal(in_RS As ADODB.Recordset, out_LocalTableN
     Dim strErrMsg As String
     Dim varAutoNumber As Variant
     
-    Dim DAODB As DAO.Database
+    Dim daoDB As DAO.Database
     Dim DAORs As DAO.Recordset
     
-    Set DAODB = CurrentDb
-    Set DAORs = DAODB.OpenRecordset(out_LocalTableName)
+    Set daoDB = CurrentDb
+    Set DAORs = daoDB.OpenRecordset(out_LocalTableName)
     
     On Error GoTo Err_bolfncTableCopyToLocal
     
@@ -1002,7 +1011,7 @@ Public Function bolfncTableCopyToLocal(in_RS As ADODB.Recordset, out_LocalTableN
     End With
     
     DAORs.Close
-    DAODB.Close
+    daoDB.Close
     
     With objLOCALdb
     
@@ -1046,7 +1055,7 @@ Err_bolfncTableCopyToLocal:
 Exit_bolfncTableCopyToLocal:
     Set objLOCALdb = Nothing
     Set DAORs = Nothing
-    Set DAODB = Nothing
+    Set daoDB = Nothing
 End Function
 
 Public Function bolfncMiseizoToExcel() As Boolean

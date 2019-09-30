@@ -85,7 +85,7 @@ Public Function fncintReport_PrintOut(ByVal strReportName As String, ByVal blnPr
 '           blnPreView          : previewモード
 '           varWhereCondition   : パラメータ
 '           intCopies(Option)   : 印刷部数（デフォルト値:1）
-'           bolVisible(Option)  : True→可視　Flse→不可視（デフォルト値:True）
+'           bolVisible(Option)  : True→可視　False→不可視（デフォルト値:True）
 
 '   *************************************************************
     

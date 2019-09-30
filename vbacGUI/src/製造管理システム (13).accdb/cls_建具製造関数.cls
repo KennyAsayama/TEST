@@ -7,6 +7,9 @@ Option Explicit
 
 'Ver2.10
 
+'3.0.0
+'   →Air框関数追加
+
 '*************************************
 '接続先データベース定数              *
 ' "ACCESS"又は"SQLSERVER"を指定      *
@@ -22,6 +25,7 @@ Private rsADOSF4 As ADODB.Recordset
 Private rsADOSTREET As ADODB.Recordset
 Private rsADOKihonzu As ADODB.Recordset
 Private rsADODaboPitch As ADODB.Recordset
+Private rsADOAirKamachi As ADODB.Recordset
 
 Private blnKansuMatch As Boolean
 Private blnZumenKansuMatch As Boolean
@@ -30,6 +34,7 @@ Private blnSF4KansuMatch As Boolean
 Private blnSF2KansuMatch As Boolean
 Private blnSTREETKansuMatch As Boolean
 Private blnDaboPitchKansuMatch As Boolean
+Private blnAirKamachiKansuMatch As Boolean
 
 Private varDaboPitch(1 To 10) As Variant
 
@@ -313,6 +318,18 @@ End Type
 
 Private STREETKansu As STREET割付関数
 
+Private Type 框ガラスDH寸法
+'*************************************
+'框ガラスDH寸法関数                  *
+'3.0.0 ADD
+'*************************************
+    上框H関数 As String
+    Glass1H関数 As String
+    Glass2H関数 As String
+End Type
+
+Private GlassKamachiKansu As 框ガラスDH寸法
+
 Private Sub Class_Initialize()
 '*************************************
 'コンストラクタ                      *
@@ -330,6 +347,8 @@ End Sub
 Private Sub Class_Terminate()
 '*************************************
 'デストラクタ　                      *
+'3.0.0
+'   →rsADOAirKamachi追加
 '*************************************
     On Error Resume Next
     
@@ -342,6 +361,7 @@ Private Sub Class_Terminate()
     Set rsADOSTREET = Nothing
     Set rsADOKihonzu = Nothing
     Set rsADODaboPitch = Nothing
+    Set rsADOAirKamachi = Nothing
     
     cnADO.Close
     Set cnADO = Nothing
@@ -449,6 +469,8 @@ Private Function GetTateguKansu() As Boolean
 '関数テーブル引当
 '
 '
+'3.0.0
+'   →框ガラスDH寸法検索追加
 '***********************************************************
 
     '初期化用。データは移送しないこと！******
@@ -458,6 +480,7 @@ Private Function GetTateguKansu() As Boolean
     Dim typSF2SF3KansuInit As SF2SF3関数
     Dim typSTREETKansuInit As STREET割付関数
     Dim typTateguZumenKansuInit As 建具図面
+    Dim typGlassKamachiKansuInit As 框ガラスDH寸法
     '****************************************
     
     Dim strSQL As String
@@ -467,12 +490,15 @@ Private Function GetTateguKansu() As Boolean
     Dim strSQLSF2 As String
     Dim strSQLSTREET As String
     Dim strSQLDabo As String
+    Dim strSQLAirKamachi As String
     
     Dim strKansuTable As String
     
     Dim bytStreetKbn As Byte
     
     Dim i As Integer
+    
+    Dim objTateguHinban As New cls_建具品番
     
     On Error GoTo Err_GetTateguKansu
     
@@ -482,6 +508,8 @@ Private Function GetTateguKansu() As Boolean
     SF2Kansu = typSF2SF3KansuInit
     STREETKansu = typSTREETKansuInit
     TateguZumen = typTateguZumenKansuInit
+    GlassKamachiKansu = typGlassKamachiKansuInit
+    
     Erase varDaboPitch
 
     strGetTateguKansuErrMsg = ""
@@ -928,7 +956,45 @@ Private Function GetTateguKansu() As Boolean
         End If
         
     End If
+            
+    'Air框ガラス関数
+    strSQLAirKamachi = ""
+    
+    With inArgument
+        If .in検索品番 Like "*-####SL*" Or .in検索品番 Like "*-####SK*" Then
+            strSQLAirKamachi = strSQLAirKamachi & "select 上框H関数,Glass1H関数,Glass2H関数 "
+            strSQLAirKamachi = strSQLAirKamachi & "from T_框ガラスDH寸法関数マスタ "
+            strSQLAirKamachi = strSQLAirKamachi & "where Design = '" & objTateguHinban.パネルガラス(.in検索品番) & objTateguHinban.ガラスレザー種類(.in検索品番) & "' "
+            strSQLAirKamachi = strSQLAirKamachi & "and 開閉様式 = '" & objTateguHinban.開閉様式(.in検索品番) & "' "
+            strSQLAirKamachi = strSQLAirKamachi & "and " & .inDH & " Between DH下限 AND DH上限 "
+            strSQLAirKamachi = strSQLAirKamachi & "and 仕様 = '" & left(Nz(.in個別Spec, "ZZZ"), 3) & "' "
+            strSQLAirKamachi = strSQLAirKamachi & "and '" & right(Nz(.in個別Spec, "0000"), 4) & "' Between 開始 AND 終了 "
+            
+        End If
+    End With
+    
+    If strSQLAirKamachi <> "" Then
+        Set rsADOAirKamachi = New ADODB.Recordset
+        rsADOAirKamachi.Open strSQLAirKamachi, cnADO, adOpenForwardOnly, adLockReadOnly
+    
+        If Not rsADOAirKamachi.EOF Then
+            With GlassKamachiKansu
+                .上框H関数 = Nz(rsADOAirKamachi![上框H関数], "0")
+                .Glass1H関数 = Nz(rsADOAirKamachi![Glass1H関数], "0")
+                .Glass2H関数 = Nz(rsADOAirKamachi![Glass2H関数], "0")
+            End With
+            
+            blnAirKamachiKansuMatch = True
+                
+        End If
         
+        If Not blnAirKamachiKansuMatch Then
+            Err.Raise 9999, , "Air框関数検索エラー" & vbCrLf & "品番 = " & inArgument.in受注品番 & ",CH = " & inArgument.inCH
+        End If
+    
+    End If
+    
+    
     GetTateguKansu = True
     
     GoTo Exit_GetTateguKansu
@@ -950,6 +1016,7 @@ Err_GetTateguKansu:
 Exit_GetTateguKansu:
 
     RS_AllClose
+    Set objTateguHinban = Nothing
     
 End Function
 
@@ -1312,7 +1379,7 @@ Public Property Get テノナH中板() As Variant
                 テノナH中板 = dblFIVEorZERO(Eval(Replace(SF4Kansu.中板テノーナH関数, "DH", .inDH)))
             End If
             
-        ElseIf IsTerraceKamachi(.in検索品番) Then
+        ElseIf IsTerraceKamachi(.in検索品番) And Not IsG9(.in検索品番) Then
             If .inCH <= 2100 And .inCH >= 1800 Then
                 テノナH中板 = 723
                 
@@ -1331,7 +1398,7 @@ Public Property Get テノナH中板2() As Variant
 '2.1.0 ADD テラス計算式追加
 
     With inArgument
-        If IsTerraceKamachi(.in検索品番) And IsTerraceGlass(.in検索品番) = False Then
+        If IsTerraceKamachi(.in検索品番) And Not IsTerraceGlass(.in検索品番) And Not IsG9(.in検索品番) Then
             If .inCH <= 2100 And .inCH >= 1800 Then
                 テノナH中板2 = dblFIVEorZERO(Eval(.inDH - 1197))
                 
@@ -1578,15 +1645,16 @@ End Property
 
 Public Property Get AS_AW中板H1() As Variant
 '2.1.0 ADD テラス計算式追加
-
+'3.0.0
+'   →バグ修正
     With inArgument
         
         If IsTerraceKamachi(.in検索品番) Then
             If .inCH <= 2100 And .inCH >= 1800 Then
-                テノナH中板 = 723
+                AS_AW中板H1 = 723 'テノナH中板 = 723
                 
             ElseIf .inCH <= 2400 And .inCH > 2100 Then
-                テノナH中板 = 823
+                AS_AW中板H1 = 823 'テノナH中板 = 823
                 
             End If
         Else
@@ -1608,14 +1676,16 @@ End Property
 
 Public Property Get AS_AW中板H2() As Variant
 '2.1.0 ADD テラス計算式追加
-    
+'3.0.0
+'   →バグ修正
+
     With inArgument
         If IsTerraceKamachi(.in検索品番) And IsTerraceGlass(.in検索品番) = False Then
             If .inCH <= 2100 And .inCH >= 1800 Then
-                テノナH中板2 = dblFIVEorZERO(Eval(.inDH - 1197))
+                AS_AW中板H2 = dblFIVEorZERO(Eval(.inDH - 1197)) 'テノナH中板2 = dblFIVEorZERO(Eval(.inDH - 1197))
                 
             ElseIf .inCH <= 2400 And .inCH > 2100 Then
-                テノナH中板2 = dblFIVEorZERO(Eval(.inDH - 1297))
+                AS_AW中板H2 = dblFIVEorZERO(Eval(.inDH - 1297)) 'テノナH中板2 = dblFIVEorZERO(Eval(.inDH - 1297))
                 
             End If
         Else
@@ -1765,8 +1835,13 @@ End Property
 
 Public Property Get 上框高さ() As Variant
 '2.1.0 ADD
-
-    上框高さ = dblFIVEorZERO(TateguKansu.上框高さ)
+'2.5.0
+'   →Air框関数追加
+    If blnAirKamachiKansuMatch Then
+        上框高さ = CDbl(Eval(Replace(GlassKamachiKansu.上框H関数, "DH", inArgument.inDH)))
+    Else
+        上框高さ = dblFIVEorZERO(TateguKansu.上框高さ)
+    End If
 
 End Property
 
@@ -2575,3 +2650,17 @@ Private Sub FLG_Init()
     blnDaboPitchKansuMatch = False
     
 End Sub
+
+Private Function blnfncAirKamachiDH() As Boolean
+'***********************************************************
+'ガラス框検索(Air)
+'
+'3.0.0 ADD
+'***********************************************************
+    '初期化用。データは移送しないこと！************
+    Dim typGlassKamachiKansuInit As 框ガラスDH寸法
+    '**********************************************
+    '初期化
+    GlassKamachiKansu = typGlassKamachiKansuInit
+    
+End Function

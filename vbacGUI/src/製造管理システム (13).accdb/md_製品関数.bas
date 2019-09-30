@@ -41,7 +41,7 @@ Public Function IsCloset(in_strSetHinban As Variant) As Boolean
     
 End Function
 
-Public Function IsCloset_Isehara(in_strHinban As Variant) As Boolean
+Public Function IsCloset_Isehara(in_strHinban As Variant, in_strSpec As Variant) As Boolean
 '   *************************************************************
 '   伊勢原生産クローゼット確認
 '
@@ -51,14 +51,26 @@ Public Function IsCloset_Isehara(in_strHinban As Variant) As Boolean
 '
 '    Input項目
 '       in_strHinban        建具品番
+'       in_strSpec          個別Spec
 
+'3.0.0
+'   →引数に個別Spec追加
+'   →塗装クローゼット追加
 '   *************************************************************
     IsCloset_Isehara = False
     
+    
     If in_strHinban Like "*CME-####*-*" Or in_strHinban Like "*CSA-####*-*" Then
         IsCloset_Isehara = True
+        Exit Function
     End If
     
+    '塗装クローゼット(BRD,CTS)1908仕様以降は伊勢原生産
+    If right(Nz(in_strSpec, "XXX0000"), 4) >= "1908" Then
+        If (IsCloset_Hiraki(in_strHinban) Or IsCloset_Oredo(in_strHinban)) And IsPainted(in_strHinban) Then
+            IsCloset_Isehara = True
+        End If
+    End If
 End Function
 
 Public Function IsStealth(in_strHinban As Variant) As Boolean
@@ -108,7 +120,7 @@ Public Function IsStealth_Seizo(in_strHinban As Variant) As Boolean
     
     
 End Function
-Public Function intFncSeizokubun(in_strShurui As String, in_varHinban As Variant) As Integer
+Public Function intFncSeizokubun(in_strShurui As String, in_varHinban As Variant, in_varSpec As Variant) As Integer
 '   *************************************************************
 '   製造区分取得
 '
@@ -118,9 +130,12 @@ Public Function intFncSeizokubun(in_strShurui As String, in_varHinban As Variant
 '    Input項目
 '       in_strShurui        種類
 '       in_varHinban        品番
+'       in_varSpec          個別Spec
 
 '2.7.0
 '   →フルガラスは区分0（製造しない）
+'3.0.0
+'   →引数に個別Spec追加
 '   *************************************************************
     
     intFncSeizokubun = 0
@@ -149,7 +164,7 @@ Public Function intFncSeizokubun(in_strShurui As String, in_varHinban As Variant
             
         Case "ｸﾛｾﾞｯﾄ"
         
-            If IsCloset_Isehara(in_varHinban) Then  'ｸﾛｾﾞｯﾄ(伊勢原生産)
+            If IsCloset_Isehara(in_varHinban, in_varSpec) Then 'ｸﾛｾﾞｯﾄ(伊勢原生産)
                 intFncSeizokubun = 1
             End If
         Case "枠"
@@ -340,36 +355,42 @@ Public Function IsFkamachi(in_strHinban As Variant) As Boolean
 '           →1801仕様追加　G9型
 '   2.5.2
 '           →1801仕様追加　格子扉
+'   3.0.0
+'           →特注品番対応
 '   *************************************************************
+    
+    Dim strHinban As String
     
     IsFkamachi = False
     
     If IsNull(in_strHinban) Then Exit Function
-       
+    
+    strHinban = Replace(in_strHinban, "特 ", "")
+    
     '1.10.19
     'If in_strHinban Like "*-####G*-*" Or in_strHinban Like "*-####MF*-*" Or in_strHinban Like "*O*-####P*-*" Then
-    If in_strHinban Like "*-####G*-*" Or in_strHinban Like "F?B*-####MF*-*" Or in_strHinban Like "特 F?B*-####MF*-*" Or IsMonster(in_strHinban) Then
+    If strHinban Like "*-####G*-*" Or strHinban Like "F?B*-####MF*-*" Or strHinban Like "特 F?B*-####MF*-*" Or IsMonster(strHinban) Then
         IsFkamachi = True
        
     'Caro
-    ElseIf in_strHinban Like "F?B??*-####A*-*" Or in_strHinban Like "F?B??*-####B*-*" Or in_strHinban Like "F?B??*-####O*-*" Then
+    ElseIf strHinban Like "F?B??*-####A*-*" Or strHinban Like "F?B??*-####B*-*" Or strHinban Like "F?B??*-####O*-*" Then
          IsFkamachi = True
     
     'Terrace(YG6型,YG5型)
-    ElseIf in_strHinban Like "Y?B??*-####W*-*" Then
+    ElseIf strHinban Like "Y?B??*-####W*-*" Then
          IsFkamachi = True
          
     'G9型
-    ElseIf IsG9(in_strHinban) Then
+    ElseIf IsG9(strHinban) Then
          IsFkamachi = True
          
     '格子型
-    ElseIf IsKousi(in_strHinban) Then
+    ElseIf IsKousi(strHinban) Then
          IsFkamachi = True
     End If
     
     '1.10.11 ADD エスパスライドウォール
-    If in_strHinban Like "*PSW*-####FV*-*" Then
+    If strHinban Like "*PSW*-####FV*-*" Then
         IsFkamachi = True
     End If
     
@@ -436,16 +457,22 @@ Public Function IsThruGlass(in_strHinban As Variant) As Boolean
 '           →テラスドア(YG6型)
 '   2.5.2
 '           →YG6型はスルーガラスから外す
+'   3.0.0
+'           →特注品番対応
 '   *************************************************************
     On Error GoTo Err_IsThruGlass
+    
+    Dim strHinban As String
     
     IsThruGlass = False
     
     If IsNull(in_strHinban) Then Exit Function
-     
-    If in_strHinban Like "*-####S*-*" Or in_strHinban Like "*-####C*-*" Or in_strHinban Like "*-####D*-*" _
-        Or in_strHinban Like "F?C??*-####A*-*" Or in_strHinban Like "F?C??*-####B*-*" Or in_strHinban Like "F?C??*-####O*-*" _
-        Or in_strHinban Like "*ME-####M*-*" Or in_strHinban Like "*SA-####M*-*" Or IsVertica(in_strHinban) Or in_strHinban Like "F?C??*-####MF*-*" Then
+    
+    strHinban = Replace(in_strHinban, "特 ", "")
+    
+    If strHinban Like "*-####S*-*" Or strHinban Like "*-####C*-*" Or strHinban Like "*-####D*-*" _
+        Or strHinban Like "F?C??*-####A*-*" Or strHinban Like "F?C??*-####B*-*" Or strHinban Like "F?C??*-####O*-*" _
+        Or strHinban Like "*ME-####M*-*" Or strHinban Like "*SA-####M*-*" Or IsVertica(strHinban) Or strHinban Like "F?C??*-####MF*-*" Then
         
         IsThruGlass = True
     'YG6型
@@ -1066,14 +1093,20 @@ Public Function IsAir(in_strHinban As Variant) As Boolean
 '    Input項目
 '       in_strHinban        建具品番
 
+'3.0.0
+'   →FA3型（固定ルーバー）追加
 '   *************************************************************
     On Error GoTo Err_IsAir
+    
+    Dim strHinban As String
     
     IsAir = False
     
     If IsNull(in_strHinban) Then Exit Function
     
-    If in_strHinban Like "A*-####SC*-*" Or in_strHinban Like "A*-####SL*-*" Or in_strHinban Like "特 A*-####SC*-*" Or in_strHinban Like "特 A*-####SL*-*" Then
+    strHinban = Replace(in_strHinban, "特 ", "")
+    
+    If strHinban Like "A*-####SC*-*" Or strHinban Like "A*-####SL*-*" Or strHinban Like "A*-####SK*-*" Then
         IsAir = True
     Else
         IsAir = False
@@ -1204,6 +1237,8 @@ Public Function IsStealth_Seizo_TEMP(in_strHinban As Variant) As Boolean
 '       →1701新品番追加(VM)
 '2.9.0
 '       →1808新品番追加(GU)
+'3.0.0
+'       →"CG"が漏れていたの追加
 '   *************************************************************
     '
     IsStealth_Seizo_TEMP = False
@@ -1214,7 +1249,7 @@ Public Function IsStealth_Seizo_TEMP(in_strHinban As Variant) As Boolean
         Exit Function
     End If
     
-    If (in_strHinban Like "*SG*-####*" Or in_strHinban Like "*NG*-####*" Or in_strHinban Like "*AG*-####*" Or in_strHinban Like "*BG*-####*") _
+    If (in_strHinban Like "*SG*-####*" Or in_strHinban Like "*NG*-####*" Or in_strHinban Like "*AG*-####*" Or in_strHinban Like "*BG*-####*" Or in_strHinban Like "*CG*-####*") _
         And Not in_strHinban Like "*ML-####*" And Not in_strHinban Like "*MK-####*" And Not in_strHinban Like "*MT-####*" And Not in_strHinban Like "*DU-####*" And Not in_strHinban Like "*DN-####*" And Not in_strHinban Like "*VN-####*" And Not in_strHinban Like "*CTSG*MK-####*" And Not in_strHinban Like "*CTSG*ML-####*" And Not in_strHinban Like "*CTSG*MT-####*" And Not in_strHinban Like "*KU-####*" And Not in_strHinban Like "*KN-####*" And Not in_strHinban Like "*DV-####*" And Not in_strHinban Like "*GU-####*" Then
         IsStealth_Seizo_TEMP = True
     End If
@@ -1564,6 +1599,9 @@ Public Function IsTerrace(in_varHinban As Variant) As Boolean
 '       in_strHinban        建具品番
 
 '   1.11.0 ADD
+
+'   3.0.0
+'           →特注品番対応
 '   *************************************************************
 
     IsTerrace = False
@@ -1574,7 +1612,7 @@ Public Function IsTerrace(in_varHinban As Variant) As Boolean
         Exit Function
     End If
     
-    If in_varHinban Like "Y*-####*-*" Then
+    If in_varHinban Like "Y*-####*-*" Or in_varHinban Like "特 Y*-####*-*" Then
         
         IsTerrace = True
         
@@ -2155,6 +2193,8 @@ Public Function IsTerraceGlass(in_varHinban As Variant) As Boolean
 '       in_varHinban        建具品番
 
 '   2.1.0 ADD
+'   3.0.0
+'       →パネル戸を拾ってしまうことがある件を修正
 '   *************************************************************
 
     Dim strHinban As String
@@ -2164,6 +2204,8 @@ Public Function IsTerraceGlass(in_varHinban As Variant) As Boolean
     If IsNull(in_varHinban) Then Exit Function
 
     strHinban = Replace(in_varHinban, "特 ", "")
+    
+    If strHinban Like "Y*-####F*" Then Exit Function
     
     If strHinban Like "Y*-####?A*" Or strHinban Like "Y*-####?C*" Or strHinban Like "Y*-####?D*" Or strHinban Like "Y*-####?P*" Or strHinban Like "Y*-####?V*" Then
         IsTerraceGlass = True
@@ -3280,4 +3322,66 @@ Public Function IsCaesar(in_varHinban As Variant) As Boolean
 
 Err_IsCaesar:
     IsCaesar = False
+End Function
+
+Public Function Is40mm(in_varSpec As Variant) As Boolean
+'   *************************************************************
+'   扉厚40mm確認
+
+'   戻り値:Boolean
+'       →True              40mm
+'       →False             40mm以外
+'
+'    Input項目
+'       in_varSpec          Spec
+
+'   3.0.0 ADD
+'   *************************************************************
+    On Error GoTo Err_Is40mm
+        
+        Is40mm = False
+        
+        If IsNull(in_varSpec) Then Exit Function
+        
+        Dim intSpec As Integer
+        Dim strMaker As String
+        
+        strMaker = left(Trim(CStr(in_varSpec)), 3)
+        
+        intSpec = CInt(right(Trim(CStr(in_varSpec)), 4))
+        
+        If strMaker = "BRD" Then
+            If intSpec >= 1908 Then
+                Is40mm = True
+            End If
+        End If
+    
+        Exit Function
+    
+Err_Is40mm:
+        Is40mm = False
+
+End Function
+
+Public Function IsTategu_Outsourcing(in_strHinban As Variant) As Boolean
+'   *************************************************************
+'   外注建具確認
+'
+'   戻り値:Boolean
+'       →True              外注建具
+'       →False             社内生産建具
+'
+'    Input項目
+'       in_strHinban        建具品番
+
+'   3.0.0 ADD
+'   *************************************************************
+    IsTategu_Outsourcing = False
+    
+    If IsNull(in_strHinban) Then Exit Function
+    
+    If in_strHinban Like "*GU-####*" Then
+        IsTategu_Outsourcing = True
+    End If
+    
 End Function
